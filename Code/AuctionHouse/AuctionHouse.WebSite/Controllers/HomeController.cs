@@ -8,16 +8,20 @@ namespace AuctionHouse.WebSite.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
+        
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();
