@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionHouse.Test", "Auctio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionHouse.DataAccessLayer", "AuctionHouse.DataAccessLayer\AuctionHouse.DataAccessLayer.csproj", "{2F986D10-8FF3-49BF-B24A-FF429C4CF769}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionHouse.WebSite", "AuctionHouse.WebSite\AuctionHouse.WebSite.csproj", "{302E022C-94CB-4F25-A4AE-60733A649867}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionHouse.WebSite", "AuctionHouse.WebSite\AuctionHouse.WebSite.csproj", "{AE753E83-63C6-4F55-AD1A-6185D04CB819}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{2F986D10-8FF3-49BF-B24A-FF429C4CF769}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F986D10-8FF3-49BF-B24A-FF429C4CF769}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F986D10-8FF3-49BF-B24A-FF429C4CF769}.Release|Any CPU.Build.0 = Release|Any CPU
-		{302E022C-94CB-4F25-A4AE-60733A649867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{302E022C-94CB-4F25-A4AE-60733A649867}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{302E022C-94CB-4F25-A4AE-60733A649867}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{302E022C-94CB-4F25-A4AE-60733A649867}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE753E83-63C6-4F55-AD1A-6185D04CB819}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE753E83-63C6-4F55-AD1A-6185D04CB819}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE753E83-63C6-4F55-AD1A-6185D04CB819}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE753E83-63C6-4F55-AD1A-6185D04CB819}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
