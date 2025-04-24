@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuctionHouse.ClassLibrary
+namespace AuctionHouse.ClassLibrary.Model
 {
     public class Wallet
     {

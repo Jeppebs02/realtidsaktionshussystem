@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuctionHouse.ClassLibrary
+namespace AuctionHouse.ClassLibrary.Model
 {
     public class Transaction
     {
@@ -13,7 +13,7 @@ namespace AuctionHouse.ClassLibrary
 
      #region Constructors
 
-        public Transaction (TransactionType type, Decimal amount, DateTime timeStamp, string? description)
+        public Transaction (TransactionType type, decimal amount, DateTime timeStamp, string? description)
         {
             Type = type;
             Amount = amount;
