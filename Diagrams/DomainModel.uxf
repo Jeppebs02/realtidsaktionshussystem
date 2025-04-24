@@ -15,7 +15,7 @@ Amount
 TimeStamp
 
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -39,7 +39,7 @@ LastName
 Email
 PhoneNumber
 Address
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -62,7 +62,7 @@ AuctionStatus
 Version
 Notify
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -77,7 +77,7 @@ bg=BLUE</panel_attributes>
 --
 TotalBalance
 ReservedBalance
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -92,7 +92,7 @@ bg=BLUE</panel_attributes>
 m1=1
 m2=0..*
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
   </element>
   <element>
@@ -106,7 +106,7 @@ bg=BLUE</panel_attributes>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 m1=1
 m2=0..*
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
   </element>
   <element>
@@ -121,7 +121,7 @@ bg=BLUE</panel_attributes>
 m1=1
 m2=1
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>110.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
@@ -139,7 +139,7 @@ Amount
 TimeStamp
 Description
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -157,7 +157,7 @@ Description
 Category
 Image
 ItemStatus
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -175,7 +175,7 @@ AVAILABLE
 IN_AUCTION
 SOLD
 WITHDRAWN
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -195,7 +195,7 @@ ACTION_PAYMENT
 AUCTION_PAYOUT
 FEE
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -210,7 +210,7 @@ bg=BLUE</panel_attributes>
 m1=0..*
 m2=1
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>90.0;120.0;90.0;90.0;10.0;90.0;10.0;10.0</additional_attributes>
   </element>
   <element>
@@ -224,7 +224,7 @@ bg=BLUE</panel_attributes>
     <panel_attributes>lt=-
 m1=1
 m2=0..1
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>90.0;10.0;90.0;70.0;10.0;70.0</additional_attributes>
   </element>
   <element>
@@ -243,7 +243,7 @@ ACTIVE
 ENDED_SOLD
 ENDED_UNSOLD
 CANCELLED
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -258,7 +258,7 @@ bg=BLUE</panel_attributes>
 m1=1
 m2=0..*
 
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
   </element>
   <element>
@@ -271,7 +271,7 @@ bg=BLUE</panel_attributes>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
   </element>
   <element>
@@ -284,7 +284,7 @@ bg=BLUE</panel_attributes>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>110.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
@@ -297,7 +297,7 @@ bg=BLUE</panel_attributes>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
   </element>
   <element>
@@ -326,7 +326,7 @@ Category
  TOYS_GAMES
  INDUSTRIAL_MATERIALS
  OTHER
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -339,7 +339,7 @@ bg=BLUE</panel_attributes>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;
-bg=BLUE</panel_attributes>
+bg=NONE</panel_attributes>
     <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
   </element>
 </diagram>
