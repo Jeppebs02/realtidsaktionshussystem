@@ -1,0 +1,129 @@
+﻿@page
+@model AuctionHouse.WebSite.Pages.CreateAuction.IndexModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Create Auction";
+}
+
+
+<html>
+
+<head>
+
+</head>
+
+
+<body>
+    <h1>Create Auction</h1>
+    <br />
+
+    <form method="post" asp-page-handler="CreateAuction">
+        
+        <!-- Create Item -->
+        <div>
+            <label for="itemName"> Write the name of the item here: </label>
+            <input type="text" name="itemName" required />
+            <br />
+        </div>
+        <div>
+            <label for="itemDescription"> Write the description of the item here: </label>
+            <input type="text" name="itemDescription" required />
+            <br />
+        </div>
+        <div>
+            <label for="category">Choose a category:</label>
+
+            <select id="category" name="category">
+                <option value="">— Select a category —</option>
+                <option value="ART_ANTIQUES">Art &amp; Antiques</option>
+                <option value="JEWELRY_LUXURY_GOODS">Jewelry &amp; Luxury Goods</option>
+                <option value="COLLECTIBLES">Collectibles</option>
+                <option value="BOOKS_MANUSCRIPTS">Books &amp; Manuscripts</option>
+                <option value="FURNITURE_HOME_DECOR">Furniture &amp; Home Décor</option>
+                <option value="ELECTRONICS">Electronics</option>
+                <option value="VEHICLES">Vehicles</option>
+                <option value="REAL_ESTATE">Real Estate</option>
+                <option value="TOOLS_EQUIPMENT">Tools &amp; Equipment</option>
+                <option value="FASHION_APPAREL">Fashion &amp; Apparel</option>
+                <option value="MUSIC_INSTRUMENTS">Music Instruments</option>
+                <option value="SPORTS_OUTDOORS">Sports &amp; Outdoors</option>
+                <option value="TOYS_GAMES">Toys &amp; Games</option>
+                <option value="INDUSTRIAL_MATERIALS">Industrial Materials</option>
+                <option value="OTHER">Other</option>
+            </select>
+            <br />
+        </div>
+        <div>
+            <label for="image">Upload a picture (JPEG/PNG/GIF):</label>
+            <input type="file"
+                   id="image"
+                   name="image"
+                   accept="image/*"
+                   required />
+
+            <!-- Live preview -->
+            <img id="preview" alt="Image preview" hidden style="max-width:240px;margin-top:1rem;" />
+        </div>
+        <!-- Create Auction -->
+        <div>
+            <label for="startTime"> Choose the time ur auction should start: </label>
+            <input type="dateTime-local" name="startTime" required />
+            <br />
+        </div>
+        <div>
+            <label for="endTime"> Choose the time ur auction should end: </label>
+            <input type="dateTime-local" name="endTime" required />
+            <br />
+        </div>
+        <div>
+            <label for="startPrice"> Start price of ur item: </label>
+            <input type="number" step="0.01" name="startprice" required />
+            <br />
+        </div>
+        <div>
+            <label for="buyOutPrice"> Choose the buyout price: </label>
+            <input type="number" step="0.01" name="buyOutPrice" />
+            <br />
+        </div>
+        <div>
+            <label for="minimumBidIncrement"> Choose the minimum bid increment my sir: </label>
+            <input type="number"step="0.01" name="minimumBidIncrement" required />
+            <br />
+        </div>
+        
+
+
+        <button type="submit">Create Auction</button>
+    </form>
+    
+
+
+   
+
+
+</body>
+
+
+
+</html>
+
+
+<script>
+
+      const fileInput = document.getElementById('image');
+    const preview   = document.getElementById('preview');
+
+    fileInput.addEventListener('change', () => {
+      const [file] = fileInput.files;
+      if (file) {
+        preview.src = URL.createObjectURL(file); // create a local blob URL
+        preview.hidden = false;
+      } else {
+        preview.hidden = true;
+        preview.removeAttribute('src');
+      }
+    });
+
+</script>
