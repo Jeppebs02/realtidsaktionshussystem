@@ -7,11 +7,20 @@ using System.Threading.Tasks;
 
 namespace AuctionHouse.ClassLibrary
 {
-    internal class Bid
+    public class Bid
     {
-        private int amount { get; set; }
-        private DateTime TimeStamp { get; set; }
+        #region Constructor
+        public Bid(int amount, DateTime timeStamp)
+        {
+            Amount = amount;
+            TimeStamp = timeStamp;
+        }
+        #endregion
 
+        #region Properties
+        public int Amount { get; set; }
+        public DateTime TimeStamp { get; set; }
+        #endregion
 
     }
 }
