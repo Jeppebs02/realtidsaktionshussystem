@@ -6,21 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace AuctionHouse.ClassLibrary
+namespace AuctionHouse.ClassLibrary.Model
 {
     public class Auction
     {
         #region Constructor
         public Auction(string auctionID, DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement)
         {
-            this.AuctionID = auctionID;
-            this.StartTime = startTime;
-            this.EndTime = endTime;
-            this.StartPrice = startPrice;
-            this.BuyOutPrice = buyOutPrice;
-            this.MinimumBidIncrement = minimumBidIncrement;
-            this.AuctionStatus = AuctionStatus;
-            this.Version = 1;
+            AuctionID = auctionID;
+            StartTime = startTime;
+            EndTime = endTime;
+            StartPrice = startPrice;
+            BuyOutPrice = buyOutPrice;
+            MinimumBidIncrement = minimumBidIncrement;
+            AuctionStatus = AuctionStatus;
+            Version = 1;
         }
         #endregion
 
@@ -34,7 +34,7 @@ namespace AuctionHouse.ClassLibrary
         public decimal MinimumBidIncrement { get; set; }
         public AuctionStatus AuctionStatus { get; set; }
         public int Version { get; set; }
-        public String Notify { get; set; }
+        public string Notify { get; set; }
         #endregion
     }
 }

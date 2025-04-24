@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AuctionHouse.ClassLibrary.Enum;
 
-namespace AuctionHouse.ClassLibrary
+namespace AuctionHouse.ClassLibrary.Model
 {
     public class Item
     {
