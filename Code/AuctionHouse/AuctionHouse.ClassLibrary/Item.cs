@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AuctionHouse.ClassLibrary.Enum;
 
 namespace AuctionHouse.ClassLibrary
 {
     public class Item
     {
         #region Constructor
-        public Item(string name, string description, string category, byte[] imageData, string itemStatus)
+        public Item(string name, string description, Category category, byte[] imageData, ItemStatus itemStatus)
         {
             Name = name;
             Description = description;
@@ -24,11 +25,11 @@ namespace AuctionHouse.ClassLibrary
 
         public string Description { get; set; }
 
-        public string Category { get; set; }
+        public Category Category { get; set; }
 
         public byte[] ImageData { get; set; }
 
-        public string ItemStatus { get; set; }
+        public ItemStatus ItemStatus { get; set; }
         #endregion
     }
 }
