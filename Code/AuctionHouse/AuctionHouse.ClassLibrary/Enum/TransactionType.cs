@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace AuctionHouse.ClassLibrary.Enum
 {
-    public enum Type
+    public enum TransactionType
     {
-
+        WITHDRAWAL,
+        DEPOSIT,
+        ACTION_PAYMENT,
+        AUCTION_PAYOUT,
+        FEE
     }
 }
     
