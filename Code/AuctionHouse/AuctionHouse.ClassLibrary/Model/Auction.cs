@@ -35,6 +35,16 @@ namespace AuctionHouse.ClassLibrary.Model
         public AuctionStatus AuctionStatus { get; set; }
         public int Version { get; set; }
         public string Notify { get; set; }
+        public Item item { get; set; }
+        public List<Bid> Bids { get; set; } = new List<Bid>();
+
+
+        public void AddBid(Bid bid)
+        {
+            Bids.Add(bid);
+        }   
+
+
         #endregion
     }
 }
