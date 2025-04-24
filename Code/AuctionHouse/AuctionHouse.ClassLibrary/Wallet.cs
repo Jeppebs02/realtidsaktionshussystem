@@ -6,9 +6,22 @@ using System.Threading.Tasks;
 
 namespace AuctionHouse.ClassLibrary
 {
-    internal class Wallet
+    public class Wallet
     {
-        private decimal TotalBalance { get; set; }
-        private decimal ReservedBalance { get; set; }
+        #region Constructor
+        public Wallet(decimal totalBalance, decimal reservedBalance)
+        {
+            TotalBalance = totalBalance;
+            ReservedBalance = reservedBalance;
+        }
+        #endregion
+
+        #region Properties
+        public decimal TotalBalance { get; set; }
+        public decimal ReservedBalance { get; set; }
+        #endregion
+
+
+
     }
 }
