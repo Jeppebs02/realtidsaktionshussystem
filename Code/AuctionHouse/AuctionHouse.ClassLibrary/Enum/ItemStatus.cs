@@ -8,5 +8,9 @@ namespace AuctionHouse.ClassLibrary.Enum
 {
     public enum ItemStatus
     {
+        AVAILABLE,
+        IN_AUCTION,
+        SOLD,
+        WITHDRAWN
     }
 }
