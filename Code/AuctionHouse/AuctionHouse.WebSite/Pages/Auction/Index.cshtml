@@ -1,0 +1,53 @@
+﻿@page
+@model AuctionHouse.WebSite.Pages.Auction.IndexModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Auction";
+}
+
+
+<html>
+
+    <head>
+
+    </head>
+
+
+<body>
+    <h1>Auction</h1>
+    <br />
+
+    <form method="post" asp-page-handler="Bid">
+        <div>
+            <label for="bid">Place your bid here: </label>
+            <br />
+            <input type="number" name="amount" required />
+        </div>
+        <button type="submit">Bid</button>
+    </form>
+
+
+
+    @if (!string.IsNullOrEmpty(Model.errorMessage))
+    {
+        <script>
+            alert('@Model.errorMessage');
+        </script>
+    }
+
+
+    </body>
+
+
+
+</html>
+
+
+<script>
+
+//Write some scrip here maybe.
+
+</script>
+

@@ -10,15 +10,15 @@ namespace AuctionHouse.ClassLibrary.Model
     public class Bid
     {
         #region Constructor
-        public Bid(int amount, DateTime timeStamp)
+        public Bid(decimal amount, DateTime timeStamp)
         {
-            Amount = amount;
-            TimeStamp = timeStamp;
+            this.Amount = amount;
+            this.TimeStamp = timeStamp;
         }
         #endregion
 
         #region Properties
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
         public DateTime TimeStamp { get; set; }
         #endregion
 
