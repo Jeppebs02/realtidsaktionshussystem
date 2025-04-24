@@ -1,4 +1,5 @@
 ﻿@page
+@using AuctionHouse.ClassLibrary.Enum
 @model AuctionHouse.WebSite.Pages.CreateAuction.IndexModel
 @{
 }
@@ -37,21 +38,10 @@
 
             <select id="category" name="category">
                 <option value="">— Select a category —</option>
-                <option value="ART_ANTIQUES">Art &amp; Antiques</option>
-                <option value="JEWELRY_LUXURY_GOODS">Jewelry &amp; Luxury Goods</option>
-                <option value="COLLECTIBLES">Collectibles</option>
-                <option value="BOOKS_MANUSCRIPTS">Books &amp; Manuscripts</option>
-                <option value="FURNITURE_HOME_DECOR">Furniture &amp; Home Décor</option>
-                <option value="ELECTRONICS">Electronics</option>
-                <option value="VEHICLES">Vehicles</option>
-                <option value="REAL_ESTATE">Real Estate</option>
-                <option value="TOOLS_EQUIPMENT">Tools &amp; Equipment</option>
-                <option value="FASHION_APPAREL">Fashion &amp; Apparel</option>
-                <option value="MUSIC_INSTRUMENTS">Music Instruments</option>
-                <option value="SPORTS_OUTDOORS">Sports &amp; Outdoors</option>
-                <option value="TOYS_GAMES">Toys &amp; Games</option>
-                <option value="INDUSTRIAL_MATERIALS">Industrial Materials</option>
-                <option value="OTHER">Other</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category">@category.ToString().Replace("_", " ")</option>
+                }
             </select>
             <br />
         </div>
