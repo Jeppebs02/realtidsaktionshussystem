@@ -12,7 +12,7 @@ namespace AuctionHouse.ClassLibrary
         #region Constructor
         public Bid(int amount, DateTime timeStamp)
         {
-            amount = Amount;
+            Amount = amount;
             TimeStamp = timeStamp;
         }
         #endregion
