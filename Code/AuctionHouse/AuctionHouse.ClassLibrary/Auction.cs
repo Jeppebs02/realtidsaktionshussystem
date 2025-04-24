@@ -10,7 +10,7 @@ namespace AuctionHouse.ClassLibrary
 {
     public class Auction
     {
-
+        #region Constructor
         public Auction(string auctionID, DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement)
         {
             this.AuctionID = auctionID;
@@ -22,7 +22,10 @@ namespace AuctionHouse.ClassLibrary
             this.AuctionStatus = AuctionStatus;
             this.Version = 1;
         }
+        #endregion
 
+
+        #region Properties
         public string AuctionID { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
@@ -31,7 +34,7 @@ namespace AuctionHouse.ClassLibrary
         public decimal MinimumBidIncrement { get; set; }
         public AuctionStatus AuctionStatus { get; set; }
         public int Version { get; set; }
-        public String Notify { get; set; } 
-
+        public String Notify { get; set; }
+        #endregion
     }
 }
