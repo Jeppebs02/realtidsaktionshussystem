@@ -8,5 +8,7 @@ namespace AuctionHouse.ClassLibrary
 {
     internal class Wallet
     {
+        private decimal TotalBalance { get; set; }
+        private decimal ReservedBalance { get; set; }
     }
 }

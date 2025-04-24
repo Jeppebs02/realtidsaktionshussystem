@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="15.1">
-  <zoom_level>7</zoom_level>
+  <zoom_level>9</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>553</x>
-      <y>301</y>
-      <w>147</w>
-      <h>56</h>
+      <x>630</x>
+      <y>333</y>
+      <w>189</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>Bid
 --
@@ -20,17 +20,17 @@ TimeStamp
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>623</x>
-      <y>63</y>
-      <w>147</w>
-      <h>154</h>
+      <x>720</x>
+      <y>27</y>
+      <w>189</w>
+      <h>198</h>
     </coordinates>
     <panel_attributes>User
 --
 CantBuy
 CantSell
 UserName
-PasswordHash
+Password
 RegistrationDate
 LastLoginDate
 FirstName
@@ -43,10 +43,10 @@ Address</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>623</x>
-      <y>483</y>
-      <w>147</w>
-      <h>133</h>
+      <x>720</x>
+      <y>567</y>
+      <w>189</w>
+      <h>171</h>
     </coordinates>
     <panel_attributes>Auction
 --
@@ -65,10 +65,10 @@ Notify
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>294</x>
-      <y>63</y>
-      <w>147</w>
-      <h>56</h>
+      <x>297</x>
+      <y>27</y>
+      <w>189</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>Wallet
 --
@@ -79,10 +79,10 @@ ReservedBalance</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>644</x>
-      <y>210</y>
-      <w>35</w>
-      <h>105</h>
+      <x>747</x>
+      <y>216</y>
+      <w>45</w>
+      <h>135</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1
@@ -93,10 +93,10 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>658</x>
-      <y>350</y>
-      <w>35</w>
-      <h>147</h>
+      <x>765</x>
+      <y>396</y>
+      <w>45</w>
+      <h>189</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 m1=1
@@ -106,10 +106,10 @@ m2=0..*</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>434</x>
-      <y>70</y>
-      <w>203</w>
-      <h>35</h>
+      <x>477</x>
+      <y>36</y>
+      <w>261</w>
+      <h>45</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 m1=1
@@ -120,10 +120,10 @@ m2=1
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>294</x>
-      <y>259</y>
-      <w>147</w>
-      <h>91</h>
+      <x>297</x>
+      <y>279</y>
+      <w>189</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>Transaction
 --
@@ -137,10 +137,10 @@ Description
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>854</x>
-      <y>294</y>
-      <w>147</w>
-      <h>84</h>
+      <x>1017</x>
+      <y>324</y>
+      <w>189</w>
+      <h>108</h>
     </coordinates>
     <panel_attributes>Item
 --
@@ -154,10 +154,10 @@ ItemStatus</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1064</x>
-      <y>336</y>
-      <w>147</w>
-      <h>84</h>
+      <x>1287</x>
+      <y>378</y>
+      <w>189</w>
+      <h>108</h>
     </coordinates>
     <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
 ITEMSTATUS
@@ -171,10 +171,10 @@ WITHDRAWN</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>63</x>
-      <y>259</y>
-      <w>147</w>
-      <h>91</h>
+      <x>0</x>
+      <y>279</y>
+      <w>189</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
 Type
@@ -190,10 +190,10 @@ FEE
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>763</x>
-      <y>133</y>
-      <w>203</w>
-      <h>175</h>
+      <x>900</x>
+      <y>117</y>
+      <w>261</w>
+      <h>225</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=0..*
@@ -204,10 +204,10 @@ m2=1
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>763</x>
-      <y>371</y>
-      <w>196</w>
-      <h>161</h>
+      <x>900</x>
+      <y>423</y>
+      <w>252</w>
+      <h>207</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1
@@ -217,10 +217,10 @@ m2=0..1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>623</x>
-      <y>714</y>
-      <w>147</w>
-      <h>91</h>
+      <x>720</x>
+      <y>864</y>
+      <w>189</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
 CURRENTSTATUS
@@ -235,10 +235,10 @@ CANCELLED</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>357</x>
-      <y>112</y>
-      <w>35</w>
-      <h>161</h>
+      <x>378</x>
+      <y>90</y>
+      <w>45</w>
+      <h>207</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1
@@ -249,10 +249,10 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>203</x>
-      <y>294</y>
-      <w>105</w>
-      <h>28</h>
+      <x>180</x>
+      <y>324</y>
+      <w>135</w>
+      <h>36</h>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;</panel_attributes>
@@ -261,10 +261,10 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>686</x>
-      <y>609</y>
-      <w>56</w>
-      <h>119</h>
+      <x>801</x>
+      <y>729</y>
+      <w>72</w>
+      <h>153</h>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;</panel_attributes>
@@ -273,10 +273,10 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>994</x>
-      <y>357</y>
-      <w>84</w>
-      <h>28</h>
+      <x>1197</x>
+      <y>405</y>
+      <w>108</w>
+      <h>36</h>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;</panel_attributes>
@@ -285,10 +285,10 @@ m2=0..*
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1064</x>
-      <y>126</y>
-      <w>147</w>
-      <h>203</h>
+      <x>1287</x>
+      <y>108</y>
+      <w>189</w>
+      <h>261</h>
     </coordinates>
     <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
 Category
@@ -313,10 +313,10 @@ Category
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>994</x>
-      <y>294</y>
-      <w>84</w>
-      <h>28</h>
+      <x>1197</x>
+      <y>324</y>
+      <w>108</w>
+      <h>36</h>
     </coordinates>
     <panel_attributes>lt=.&gt;
 &lt;&lt;Uses&gt;&gt;</panel_attributes>
