@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>693</x>
-      <y>294</y>
+      <x>553</x>
+      <y>301</y>
       <w>147</w>
       <h>56</h>
     </coordinates>
@@ -20,8 +20,8 @@ TimeStamp
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>763</x>
-      <y>56</y>
+      <x>623</x>
+      <y>63</y>
       <w>147</w>
       <h>154</h>
     </coordinates>
@@ -43,8 +43,8 @@ Address</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>763</x>
-      <y>476</y>
+      <x>623</x>
+      <y>483</y>
       <w>147</w>
       <h>133</h>
     </coordinates>
@@ -65,8 +65,8 @@ Notify
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>434</x>
-      <y>56</y>
+      <x>294</x>
+      <y>63</y>
       <w>147</w>
       <h>56</h>
     </coordinates>
@@ -79,8 +79,8 @@ ReservedBalance</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>784</x>
-      <y>203</y>
+      <x>644</x>
+      <y>210</y>
       <w>35</w>
       <h>105</h>
     </coordinates>
@@ -93,8 +93,8 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>798</x>
-      <y>343</y>
+      <x>658</x>
+      <y>350</y>
       <w>35</w>
       <h>147</h>
     </coordinates>
@@ -106,8 +106,8 @@ m2=0..*</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>574</x>
-      <y>63</y>
+      <x>434</x>
+      <y>70</y>
       <w>203</w>
       <h>35</h>
     </coordinates>
@@ -120,8 +120,8 @@ m2=1
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>434</x>
-      <y>252</y>
+      <x>294</x>
+      <y>259</y>
       <w>147</w>
       <h>91</h>
     </coordinates>
@@ -137,8 +137,8 @@ Description
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>994</x>
-      <y>287</y>
+      <x>854</x>
+      <y>294</y>
       <w>147</w>
       <h>84</h>
     </coordinates>
@@ -154,8 +154,8 @@ ItemStatus</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1204</x>
-      <y>329</y>
+      <x>1064</x>
+      <y>336</y>
       <w>147</w>
       <h>84</h>
     </coordinates>
@@ -171,8 +171,8 @@ WITHDRAWN</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>203</x>
-      <y>252</y>
+      <x>63</x>
+      <y>259</y>
       <w>147</w>
       <h>91</h>
     </coordinates>
@@ -190,8 +190,8 @@ FEE
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>903</x>
-      <y>126</y>
+      <x>763</x>
+      <y>133</y>
       <w>203</w>
       <h>175</h>
     </coordinates>
@@ -204,8 +204,8 @@ m2=1
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>903</x>
-      <y>364</y>
+      <x>763</x>
+      <y>371</y>
       <w>196</w>
       <h>161</h>
     </coordinates>
@@ -217,8 +217,8 @@ m2=0..1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>763</x>
-      <y>707</y>
+      <x>623</x>
+      <y>714</y>
       <w>147</w>
       <h>91</h>
     </coordinates>
@@ -235,8 +235,8 @@ CANCELLED</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>497</x>
-      <y>105</y>
+      <x>357</x>
+      <y>112</y>
       <w>35</w>
       <h>161</h>
     </coordinates>
@@ -249,8 +249,8 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>343</x>
-      <y>287</y>
+      <x>203</x>
+      <y>294</y>
       <w>105</w>
       <h>28</h>
     </coordinates>
@@ -261,8 +261,8 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>826</x>
-      <y>602</y>
+      <x>686</x>
+      <y>609</y>
       <w>56</w>
       <h>119</h>
     </coordinates>
@@ -273,8 +273,8 @@ m2=0..*
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1134</x>
-      <y>350</y>
+      <x>994</x>
+      <y>357</y>
       <w>84</w>
       <h>28</h>
     </coordinates>
@@ -285,8 +285,8 @@ m2=0..*
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1204</x>
-      <y>119</y>
+      <x>1064</x>
+      <y>126</y>
       <w>147</w>
       <h>203</h>
     </coordinates>
@@ -313,8 +313,8 @@ Category
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1134</x>
-      <y>287</y>
+      <x>994</x>
+      <y>294</y>
       <w>84</w>
       <h>28</h>
     </coordinates>
