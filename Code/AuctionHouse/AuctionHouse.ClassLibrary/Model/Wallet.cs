@@ -34,5 +34,15 @@ namespace AuctionHouse.ClassLibrary.Model
             TotalBalance += amount;
         }
 
+        public bool reserveFunds(decimal amount)
+        {
+            if (amount <= AvailableBalance)
+            {
+                ReservedBalance += amount;
+                return true;
+            }
+            return false;
+        }
+
     }
 }
