@@ -12,7 +12,7 @@ namespace AuctionHouse.ClassLibrary.Model
     {
         
         
-        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, string notify, Item item)
+        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, bool notify, Item item)
         {
             StartTime=startTime;
             EndTime=endTime;
@@ -21,7 +21,7 @@ namespace AuctionHouse.ClassLibrary.Model
             MinimumBidIncrement=minimumBidIncrement;
             AuctionStatus=AuctionStatus.ACTIVE;
             Version=1;
-            Notify=notify;
+            Notify = notify;
             this.item=item;
             Bids = new List<Bid>();
         }
