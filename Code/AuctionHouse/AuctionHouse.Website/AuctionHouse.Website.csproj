@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AuctionHouse.ClassLibrary\AuctionHouse.ClassLibrary.csproj" />
     <ProjectReference Include="..\AuctionHouse.DataAccessLayer\AuctionHouse.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\AuctionHouse.WebAPI\AuctionHouse.WebAPI.csproj" />
   </ItemGroup>
 
 </Project>
