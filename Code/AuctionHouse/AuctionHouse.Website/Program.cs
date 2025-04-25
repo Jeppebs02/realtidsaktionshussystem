@@ -1,7 +1,10 @@
+using AuctionHouse.DataAccessLayer;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<IWalletAccess, WalletAccess>();
 
 var app = builder.Build();
 
