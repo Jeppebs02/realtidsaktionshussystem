@@ -15,27 +15,35 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
         public void OnGet()
         {
             Categories = Enum.GetValues(typeof(Category)).Cast<Category>().ToList();
-            Console.WriteLine("desadsa");
+            Console.WriteLine("Page loaded");
         }
 
 
         public async Task<IActionResult> OnPostCreateAuctionAsync(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, string itemName, string itemDescription, Category category)
         {
             Item item;
+            Console.WriteLine("Item object declared");
             try
             {
+
+                Console.WriteLine("About to check img file");
                 if (ImageFile == null || ImageFile.Length == 0)
                 {
                     ModelState.AddModelError("ImageFile", "Please upload an image file.");
                     return Page();
                 }
+
                 else
                 {
+                    Console.WriteLine("Image file checked, about to load to byte[]");
                     using (var memoryStream = new MemoryStream())
                     {
+                        Console.WriteLine("Copying to memory stream");
                         await ImageFile.CopyToAsync(memoryStream);
+                        Console.WriteLine("Creating bytearray");
                         byte[] imageData = memoryStream.ToArray();
                         // Create the item with the provided data
+                        Console.WriteLine("Creating item Object");
                         item = new Item(itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
                     }
                 }
