@@ -21,7 +21,18 @@ namespace AuctionHouse.ClassLibrary.Model
         public decimal ReservedBalance { get; set; }
         #endregion
 
+        public decimal AvailableBalance
+        {
+            get
+            {
+                return TotalBalance - ReservedBalance;
+            }
+        }
 
+        public void AddFunds(decimal amount)
+        {
+            TotalBalance += amount;
+        }
 
     }
 }

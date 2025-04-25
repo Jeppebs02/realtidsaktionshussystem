@@ -12,7 +12,7 @@ namespace AuctionHouse.ClassLibrary.Model
 
 
         #region Constructors
-        public User(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string address)
+        public User(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string address, Wallet wallet)
         {
             UserName = userName;
             Password = password;
@@ -24,6 +24,7 @@ namespace AuctionHouse.ClassLibrary.Model
             RegistrationDate = DateTime.Now;
             CantBuy = false;
             CantSell = false;
+            Wallet = wallet;
         }
 
         #endregion
@@ -39,6 +40,8 @@ namespace AuctionHouse.ClassLibrary.Model
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
+        public Wallet Wallet { get; set; }
+
         #endregion
     }
 }
