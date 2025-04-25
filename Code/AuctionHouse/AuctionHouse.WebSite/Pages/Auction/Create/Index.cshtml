@@ -20,7 +20,7 @@
     <h1>Create Auction</h1>
     <br />
 
-    <form method="post" asp-page-handler="CreateAuction">
+    <form method="post" enctype="multipart/form-data" asp-page-handler="CreateAuction">
         
         <!-- Create Item -->
         <div>
@@ -49,7 +49,7 @@
             <label for="image">Upload a picture (JPEG/PNG/GIF):</label>
             <input type="file"
                    id="image"
-                   name="image"
+                   name="ImageFile"
                    accept="image/*"
                    required />
 

@@ -19,31 +19,43 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
         }
 
 
-        public async Task<IActionResult> OnPostCreateAuction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minumimBidIncrement, bool notify, string itemName, string itemDescription, Category category) {
+        public async Task<IActionResult> OnPostCreateAuctionAsync(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, string itemName, string itemDescription, Category category)
+        {
             Item item;
-            if (ImageFile == null || ImageFile.Length == 0)
+            try
             {
-                ModelState.AddModelError("ImageFile", "Please upload an image file.");
-                return Page();
-            }else{
-                using (var memoryStream = new MemoryStream())
+                if (ImageFile == null || ImageFile.Length == 0)
                 {
-                    await ImageFile.CopyToAsync(memoryStream);
-                    byte[] imageData = memoryStream.ToArray();
-                    // Create the item with the provided data
-                    item = new Item(itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
+                    ModelState.AddModelError("ImageFile", "Please upload an image file.");
+                    return Page();
                 }
+                else
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await ImageFile.CopyToAsync(memoryStream);
+                        byte[] imageData = memoryStream.ToArray();
+                        // Create the item with the provided data
+                        item = new Item(itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("ImageFile", "Error processing the image file: " + ex.Message);
+                return Page();
             }
 
             // Using full namespace because "Auction" is a namespace in this project
-            AuctionHouse.ClassLibrary.Model.Auction auction = new AuctionHouse.ClassLibrary.Model.Auction(startTime, endTime, startPrice, buyOutPrice, minumimBidIncrement, notify, item);
+            AuctionHouse.ClassLibrary.Model.Auction auction = new AuctionHouse.ClassLibrary.Model.Auction(startTime, endTime, startPrice, buyOutPrice, minimumBidIncrement, false, item);
 
             var JSONData = JsonConvert.SerializeObject(auction);
 
             Console.WriteLine("Auction Created: " + JSONData);
 
 
-            return Page(); 
+            return Page();
         }
     }
 }
