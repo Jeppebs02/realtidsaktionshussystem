@@ -21,7 +21,7 @@
     <br />
 
     <form method="post" enctype="multipart/form-data" asp-page-handler="CreateAuction">
-        
+
         <!-- Create Item -->
         <div>
             <label for="itemName"> Write the name of the item here: </label>
@@ -59,17 +59,17 @@
         <!-- Create Auction -->
         <div>
             <label for="startTime"> Choose the time ur auction should start: </label>
-            <input type="datetime-local" name="startTime" required />
+            <input type="datetime-local" id="startTime" name="startTime" required />
             <br />
         </div>
         <div>
             <label for="endTime"> Choose the time ur auction should end: </label>
-            <input type="datetime-local" name="endTime" required />
+            <input type="datetime-local" id="endTime" name="endTime" required />
             <br />
         </div>
         <div>
             <label for="startPrice"> Start price of ur item: </label>
-            <input type="number" step="0.01" name="startprice" required />
+            <input type="number" step="0.01" name="startPrice" required />
             <br />
         </div>
         <div>
@@ -79,18 +79,25 @@
         </div>
         <div>
             <label for="minimumBidIncrement"> Choose the minimum bid increment my sir: </label>
-            <input type="number"step="0.01" name="minimumBidIncrement" required />
+            <input type="number" step="0.01" name="minimumBidIncrement" required />
             <br />
         </div>
-        
+
 
 
         <button type="submit">Create Auction</button>
     </form>
-    
 
 
-   
+    <!-- Error string check -->
+    @if (!string.IsNullOrEmpty(Model.errorMessage))
+    {
+        <script>
+            alert('@Model.errorMessage');
+        </script>
+    }
+
+
 
 
 </body>
@@ -100,24 +107,43 @@
 </html>
 
 
+
+
+
+
 <script>
+
 
     const fileInput = document.getElementById('image');
     const preview   = document.getElementById('preview');
 
+
+
+    let objectUrl;
+
     fileInput.addEventListener('change', () => {
-      try {
-        const [file] = fileInput.files;
-        if (file) {
-          preview.src = URL.createObjectURL(file);
-          preview.hidden = false;
-        } else {
-          preview.hidden = true;
-          preview.removeAttribute('src');
+        try {
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl); // Free previous object URL
+            }
+
+            //Possibly make it take only the first file.
+            const [file] = fileInput.files;
+            if (file) {
+                objectUrl = URL.createObjectURL(file);
+                preview.src = objectUrl;
+                preview.hidden = false;
+            } else {
+                preview.hidden = true;
+                preview.removeAttribute('src');
+            }
+        } catch (err) {
+            console.error("Image preview error:", err);
+            alert("Preview failed: " + err.message);
         }
-      } catch (err) {
-        console.error("Image preview error:", err);
-      }
     });
+
+
+
 
 </script>

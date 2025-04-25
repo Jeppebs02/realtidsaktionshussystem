@@ -8,8 +8,14 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
 {
     public class IndexModel : PageModel
     {
+
+        // BindProperty takes attributes from the cshtml page and binds them to the properties in this class
         [BindProperty]
         public IFormFile? ImageFile { get; set; }
+
+        //Error message to show on the page.
+        [BindProperty]
+        public String? errorMessage { get; set; } = null;
 
         public List<Category> Categories { get; set; } = new List<Category>();
         public void OnGet()
