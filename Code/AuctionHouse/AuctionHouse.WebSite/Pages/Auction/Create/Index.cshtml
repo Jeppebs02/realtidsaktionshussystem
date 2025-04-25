@@ -38,7 +38,7 @@
 
             <select id="category" name="category">
                 <option value="">— Select a category —</option>
-                @foreach (var category in Model.Categories)
+                @foreach (var category in @Model.Categories)
                 {
                     <option value="@category">@category.ToString().Replace("_", " ")</option>
                 }
