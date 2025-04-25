@@ -61,6 +61,12 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                 return Page();
             }
 
+            // Validate the auction dates
+            if (!IsValidDate(startTime, endTime))
+            {
+                return Page();
+            }
+
             // Using full namespace because "Auction" is a namespace in this project
             AuctionHouse.ClassLibrary.Model.Auction auction = new AuctionHouse.ClassLibrary.Model.Auction(startTime, endTime, startPrice, buyOutPrice, minimumBidIncrement, false, item);
 
@@ -71,5 +77,23 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
 
             return Page();
         }
+
+
+        public bool IsValidDate(DateTime startDate, DateTime endDate)
+        {
+            // Check if the date is in the past
+            TimeSpan timeSpan = startDate - endDate;
+
+            if (startDate > endDate && timeSpan.TotalHours < 1)
+            {
+                errorMessage = "The Auction duration must exceed 1 hour";
+                return false;
+            }
+
+            return true;
+        }
     }
+
+
+
 }
