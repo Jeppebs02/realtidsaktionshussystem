@@ -20,7 +20,7 @@
     <h1>Create Auction</h1>
     <br />
 
-    <form method="post" asp-page-handler="CreateAuction">
+    <form method="post" enctype="multipart/form-data" asp-page-handler="CreateAuction">
         
         <!-- Create Item -->
         <div>
@@ -49,7 +49,7 @@
             <label for="image">Upload a picture (JPEG/PNG/GIF):</label>
             <input type="file"
                    id="image"
-                   name="image"
+                   name="ImageFile"
                    accept="image/*"
                    required />
 
@@ -59,12 +59,12 @@
         <!-- Create Auction -->
         <div>
             <label for="startTime"> Choose the time ur auction should start: </label>
-            <input type="dateTime-local" name="startTime" required />
+            <input type="datetime-local" name="startTime" required />
             <br />
         </div>
         <div>
             <label for="endTime"> Choose the time ur auction should end: </label>
-            <input type="dateTime-local" name="endTime" required />
+            <input type="datetime-local" name="endTime" required />
             <br />
         </div>
         <div>
@@ -102,17 +102,21 @@
 
 <script>
 
-      const fileInput = document.getElementById('image');
+    const fileInput = document.getElementById('image');
     const preview   = document.getElementById('preview');
 
     fileInput.addEventListener('change', () => {
-      const [file] = fileInput.files;
-      if (file) {
-        preview.src = URL.createObjectURL(file); // create a local blob URL
-        preview.hidden = false;
-      } else {
-        preview.hidden = true;
-        preview.removeAttribute('src');
+      try {
+        const [file] = fileInput.files;
+        if (file) {
+          preview.src = URL.createObjectURL(file);
+          preview.hidden = false;
+        } else {
+          preview.hidden = true;
+          preview.removeAttribute('src');
+        }
+      } catch (err) {
+        console.error("Image preview error:", err);
       }
     });
 

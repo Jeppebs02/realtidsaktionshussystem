@@ -10,25 +10,32 @@ namespace AuctionHouse.ClassLibrary.Model
 {
     public class Auction
     {
+        
         #region Constructor
         public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, bool notify, Item item)
         {
-            StartTime = startTime;
-            EndTime = endTime;
-            StartPrice = startPrice;
-            BuyOutPrice = buyOutPrice;
-            MinimumBidIncrement = minimumBidIncrement;
-            AuctionStatus = AuctionStatus.ACTIVE;
-            Version = 1;
+            StartTime=startTime;
+            EndTime=endTime;
+            StartPrice=startPrice;
+            BuyOutPrice=buyOutPrice;
+            MinimumBidIncrement=minimumBidIncrement;
+            AuctionStatus=AuctionStatus.ACTIVE;
+            Version=1;
             Notify = notify;
-            this.item = item;
+            this.item=item;
             Bids = new List<Bid>();
         }
+
+
+
+
+        
+
         #endregion
 
 
         #region Properties
-        public string AuctionID { get; set; }
+        public string? AuctionID { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public decimal StartPrice { get; set; }
