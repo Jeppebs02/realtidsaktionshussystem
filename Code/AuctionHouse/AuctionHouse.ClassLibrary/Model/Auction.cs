@@ -11,7 +11,7 @@ namespace AuctionHouse.ClassLibrary.Model
     public class Auction
     {
         
-        
+        #region Constructor
         public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, bool notify, Item item)
         {
             StartTime=startTime;
@@ -29,13 +29,13 @@ namespace AuctionHouse.ClassLibrary.Model
 
 
 
-        #region Constructor
+        
 
         #endregion
 
 
         #region Properties
-        public string AuctionID { get; set; }
+        public string? AuctionID { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public decimal StartPrice { get; set; }
