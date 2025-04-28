@@ -1,4 +1,11 @@
-﻿
+﻿@using AuctionHouse.DataAccessLayer;
+@inject IWalletAccess WalletAcces
+
+@{
+	var userName = User.Identity?.Name ?? "alice";
+    var Wallet = WalletAcces.GetWalletForUser(userName);
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,15 +41,43 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Auction/Create/Index">Create Auction</a>
                         </li>
                     </ul>
+                        <!-- Overfør penge button -->
+                    <div>
+                        <button class="btn btn-outline-primary ms-3"
+                                data-bs-toggle="modal" data-bs-target="#depositModal">
+                            Add Funds
+                        </button>
+                    </div>
+
+                    <!-- Bootstrap modal -->
+                    <div class="modal fade" id="depositModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form id="depositForm" class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add funds to wallet</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <label for="amount" class="form-label">Amount (DKK)</label>
+                                    <input type="number" min="1" step="0.01"
+                                           class="form-control" id="amount" required />
+                                    <div class="invalid-feedback">Amount must be positive</div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+
                     <!-- Wallet info to the right -->
                     <div class="navbar-text fw-semibold">
-                        @inject AuctionHouse.DataAccessLayer.IWalletAccess WalletAcces
-
-                        @{
-                            var Wallet = WalletAcces.GetWalletForUser(User.Identity?.Name ?? "alice");
-                        }
-                        💰 Available: <span class="text-success"> @Wallet.AvailableBalance DKK</span> |
-                        🔒 Reserved: <span class="text-danger"> @Wallet.ReservedBalance DKK</span>
+                        💰 Available: <span id="availLbl" class="text-success">@Wallet.AvailableBalance DKK</span> |
+                        🔒 Reserved:  <span id="resLbl" class="text-danger">@Wallet.ReservedBalance DKK</span>
                     </div>
                 </div>
             </div>
@@ -63,6 +98,40 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        (() => {
+            const form   = document.getElementById('depositForm');
+            const input  = document.getElementById('amount');
+            const avail  = document.getElementById('availLbl');
+            const reserv = document.getElementById('resLbl');
+            const user   = '@userName';                            // Razor variable
+
+            form.addEventListener('submit', async e => {
+                e.preventDefault();
+                const amt = parseFloat(input.value);
+                if (amt <= 0) { input.classList.add('is-invalid'); return; }
+
+                const resp = await fetch('/wallet/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, amount: amt })
+                });
+
+                if (!resp.ok) { alert(await resp.text()); return; }
+                
+                const wallet = await resp.json();        // { available, reserved }
+
+                avail.textContent  = wallet.availableBalance.toFixed(2);
+                reserv.textContent = wallet.reservedBalance.toFixed(2);
+
+                bootstrap.Modal.getInstance(
+                    document.getElementById('depositModal')).hide();
+                input.value = '';
+            });
+        })();
+    </script>
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

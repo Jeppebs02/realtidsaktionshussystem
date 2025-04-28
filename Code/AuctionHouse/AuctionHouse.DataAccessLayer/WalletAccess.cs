@@ -5,7 +5,16 @@ namespace AuctionHouse.DataAccessLayer
 {
     public class WalletAccess : IWalletAccess
     {
-        
+        public Wallet Deposit(string username, decimal amount)
+        {
+            if (amount <= 0) throw new ArgumentException("Amount must be positive");
+
+            if (!WalletLogic._wallets.TryGetValue(username.ToLower(), out var w))
+                w = WalletLogic._wallets[username.ToLower()] = new Wallet(0, 0);
+
+            w.AvailableBalance += amount;
+            return w;
+        }
 
         public Wallet GetWalletForUser(string username)
         {

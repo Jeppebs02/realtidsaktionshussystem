@@ -11,5 +11,6 @@ namespace AuctionHouse.DataAccessLayer
     public interface IWalletAccess
     {
         Wallet GetWalletForUser(string username);
+        Wallet Deposit(string username, decimal amount);
     }
 }
