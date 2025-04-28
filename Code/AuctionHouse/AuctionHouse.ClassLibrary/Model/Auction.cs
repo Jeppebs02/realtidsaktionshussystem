@@ -25,12 +25,6 @@ namespace AuctionHouse.ClassLibrary.Model
             this.item=item;
             Bids = new List<Bid>();
         }
-
-
-
-
-        
-
         #endregion
 
 
