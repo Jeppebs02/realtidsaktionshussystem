@@ -7,10 +7,4 @@
   </PropertyGroup>
 
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Stubs\" />
-  </ItemGroup>
-
-
 </Project>

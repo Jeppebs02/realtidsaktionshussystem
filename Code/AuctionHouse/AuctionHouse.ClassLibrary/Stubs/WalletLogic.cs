@@ -12,7 +12,7 @@ namespace AuctionHouse.ClassLibrary.Stubs
     {
         public bool subtractBidAmountFromTotalBalance(string username, decimal amount)
         {
-            if (_wallets.TryGetValue(username.ToLower(), out var wallet))
+            if (wallets.TryGetValue(username.ToLower(), out var wallet))
             {
                 return wallet.reserveFunds(amount);
             }
@@ -20,7 +20,7 @@ namespace AuctionHouse.ClassLibrary.Stubs
 
         }
 
-        public static readonly Dictionary<string, Wallet> _wallets = new()
+        public static readonly Dictionary<string, Wallet> wallets = new()
            {
                { "alice", new Wallet(2000, 200) },
                

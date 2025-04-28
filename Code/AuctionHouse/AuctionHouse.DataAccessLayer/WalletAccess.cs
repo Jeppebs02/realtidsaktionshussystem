@@ -9,8 +9,8 @@ namespace AuctionHouse.DataAccessLayer
         {
             if (amount <= 0) throw new ArgumentException("Amount must be positive");
 
-            if (!WalletLogic._wallets.TryGetValue(username.ToLower(), out var w))
-                w = WalletLogic._wallets[username.ToLower()] = new Wallet(0, 0);
+            if (!WalletLogic.wallets.TryGetValue(username.ToLower(), out var w))
+                w = WalletLogic.wallets[username.ToLower()] = new Wallet(0, 0);
 
             w.AvailableBalance += amount;
             return w;
@@ -18,7 +18,7 @@ namespace AuctionHouse.DataAccessLayer
 
         public Wallet GetWalletForUser(string username)
         {
-            if (WalletLogic._wallets.TryGetValue(username, out var wallet))
+            if (WalletLogic.wallets.TryGetValue(username, out var wallet))
             {
                 return wallet;
             }

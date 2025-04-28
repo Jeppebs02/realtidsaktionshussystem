@@ -12,7 +12,7 @@ namespace AuctionHouse.ClassLibrary.Model
     {
         
         #region Constructor
-        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, bool notify, Item item)
+        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement,bool notify, Item item, int auctionId=-1)
         {
             StartTime=startTime;
             EndTime=endTime;
@@ -24,6 +24,14 @@ namespace AuctionHouse.ClassLibrary.Model
             Notify = notify;
             this.item=item;
             Bids = new List<Bid>();
+            if (auctionId != -1)
+            {
+                AuctionID = auctionId;
+            }
+            else
+            {
+                AuctionID = null;
+            }
         }
 
 
@@ -35,7 +43,7 @@ namespace AuctionHouse.ClassLibrary.Model
 
 
         #region Properties
-        public string? AuctionID { get; set; }
+        public int? AuctionID { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public decimal StartPrice { get; set; }

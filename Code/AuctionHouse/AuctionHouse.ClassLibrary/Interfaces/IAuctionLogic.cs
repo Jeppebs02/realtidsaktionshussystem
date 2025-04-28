@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace AuctionHouse.ClassLibrary.Interfaces
 {
-    public interface IBidLogic
+    public interface IAuctionLogic
     {
-        Bid PlaceBid(int auctionId, string userName, decimal amount);
-
+        Auction getAuctionByID(int auctionId);
+        bool addBidToAuction(int auctionId, string userName, Bid bid);
     }
 }

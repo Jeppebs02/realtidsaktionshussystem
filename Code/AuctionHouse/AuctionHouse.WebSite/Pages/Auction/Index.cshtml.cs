@@ -24,6 +24,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
         public async Task<IActionResult> OnPostBid(decimal amount)
         {
             _walletLogic = new WalletLogic(); 
+            BidLogic bidlogic = new();
 
             Bid newBid = new Bid(amount, DateTime.Now);
 
@@ -34,7 +35,8 @@ namespace AuctionHouse.WebSite.Pages.Auction
             else
             {
                 var username = User.Identity?.Name ?? "alice";
-                if(!_walletLogic.subtractBidAmountFromTotalBalance(username, amount)){
+                var auctionId = 1; // This should be replaced with the actual auction ID
+                if (bidlogic.PlaceBid(auctionId, username, amount)!=null) {
                     errorMessage = "Insufficient funds.";
 
                 }
