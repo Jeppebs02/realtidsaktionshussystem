@@ -8,9 +8,6 @@ namespace AuctionHouse.ClassLibrary.Model
 {
     public class User
     {
-
-
-
         #region Constructors
         public User(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string address, Wallet wallet)
         {
