@@ -14,7 +14,7 @@ html>
     <br />
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
-        @foreach (var auction in Model.ActiveAuctions)
+        @foreach (var auction in Model.TestAuctions)
         {
             <div style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px;">
                 <a asp-page="/Auction/Details" asp-route-id="@auction.AuctionID" style="text-decoration: none; color: inherit;">
