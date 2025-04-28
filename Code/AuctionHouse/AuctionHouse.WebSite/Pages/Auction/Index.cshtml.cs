@@ -36,7 +36,8 @@ namespace AuctionHouse.WebSite.Pages.Auction
             {
                 var username = User.Identity?.Name ?? "alice";
                 var auctionId = 1; // This should be replaced with the actual auction ID
-                if (bidlogic.PlaceBid(auctionId, username, amount)!=null) {
+                WalletLogic.wallets.TryGetValue("alice", out Wallet w);
+                if (bidlogic.PlaceBid(auctionId, username, amount).Amount > w.AvailableBalance) {
                     errorMessage = "Insufficient funds.";
 
                 }
