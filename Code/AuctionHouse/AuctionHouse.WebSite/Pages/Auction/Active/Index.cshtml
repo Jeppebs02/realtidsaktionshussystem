@@ -1,0 +1,72 @@
+﻿@page
+@using AuctionHouse.ClassLibrary.Enum
+@model AuctionHouse.WebSite.Pages.Auction.Active.IndexModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Active Auction";
+}
+
+html>
+
+<h1>Active Auctions</h1>
+<br />
+
+
+<head>
+
+</head>
+
+
+<body>
+
+    <form method="get">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" placeholder="Search by title..." style="padding: 0.5rem; width: 300px; margin-bottom: 10px;" />
+        <select name="SelectedCategory" style="padding: 0.5rem; margin-left: 10px; margin-bottom: 10px;">
+            <option value="">All Categories</option>
+            @foreach (var category in Enum.GetValues(typeof(Category)))
+            {
+                <option value="@category" selected="@(Model.SelectedCategory?.ToString() == category.ToString() ? "selected" : null)">
+                    @category
+                </option>
+            }
+        </select>
+        <button type="submit" style="padding: 0.5rem; margin-left: 10px;">Search</button>
+    </form>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+        @foreach (var auction in Model.FilteredAuctions)
+        {
+            <div style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px;">
+                <a asp-page="/Auction/Details" asp-route-id="@auction.AuctionID" style="text-decoration: none; color: inherit;">
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(auction.item.ImageData)" alt="Auction Image" style="max-width: 100%; height: auto; border-radius: 4px;" />
+                    <h2>@auction.item.Name</h2>
+                    <p>
+                        <strong>Current bid:</strong>
+                        @if (auction.Bids.Any())
+                        {
+                            @auction.Bids.Last().Amount.ToString("C")
+                        }
+                        else
+                        {
+                            <span>No bids yet</span>
+                        }
+                    </p>
+                </a>
+            </div>
+        }
+    </div>
+
+</body>
+
+
+
+</html>
+
+
+<script>
+
+    //Write some scrip here maybe.
+
+</script>
