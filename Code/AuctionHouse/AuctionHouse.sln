@@ -16,9 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionHouse.DataAccessLayer", "AuctionHouse.DataAccessLayer\AuctionHouse.DataAccessLayer.csproj", "{2F986D10-8FF3-49BF-B24A-FF429C4CF769}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionHouse.WebSite", "AuctionHouse.WebSite\AuctionHouse.WebSite.csproj", "{AE753E83-63C6-4F55-AD1A-6185D04CB819}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1835DCDB-AEBA-407B-B488-7C124DF61DF5} = {1835DCDB-AEBA-407B-B488-7C124DF61DF5}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
