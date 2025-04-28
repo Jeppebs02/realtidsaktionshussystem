@@ -15,7 +15,7 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
         public void OnGet()
         {
             Categories = Enum.GetValues(typeof(Category)).Cast<Category>().ToList();
-            Console.WriteLine("Page loaded");
+            Console.WriteLine("Categories loaded");
         }
 
 
