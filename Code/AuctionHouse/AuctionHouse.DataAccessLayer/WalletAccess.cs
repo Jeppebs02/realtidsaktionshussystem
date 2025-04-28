@@ -1,18 +1,24 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
+using AuctionHouse.ClassLibrary.Stubs;
 
 namespace AuctionHouse.DataAccessLayer
 {
     public class WalletAccess : IWalletAccess
     {
-        private static readonly Dictionary<string, Wallet> _wallets = new()
-           {
-               { "alice", new Wallet(2000, 200) },
-               { "bob", new Wallet(1000, 0) } ,
-           };
+        public Wallet Deposit(string username, decimal amount)
+        {
+            if (amount <= 0) throw new ArgumentException("Amount must be positive");
+
+            if (!WalletLogic.wallets.TryGetValue(username.ToLower(), out var w))
+                w = WalletLogic.wallets[username.ToLower()] = new Wallet(0, 0);
+
+            w.AvailableBalance += amount;
+            return w;
+        }
 
         public Wallet GetWalletForUser(string username)
         {
-            if (_wallets.TryGetValue(username, out var wallet))
+            if (WalletLogic.wallets.TryGetValue(username, out var wallet))
             {
                 return wallet;
             }

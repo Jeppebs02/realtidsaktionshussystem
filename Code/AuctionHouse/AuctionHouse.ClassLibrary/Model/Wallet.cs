@@ -27,11 +27,26 @@ namespace AuctionHouse.ClassLibrary.Model
             {
                 return TotalBalance - ReservedBalance;
             }
+
+            set
+            {
+                TotalBalance = value + ReservedBalance;
+            }
         }
 
         public void AddFunds(decimal amount)
         {
             TotalBalance += amount;
+        }
+
+        public bool reserveFunds(decimal amount)
+        {
+            if (amount <= AvailableBalance)
+            {
+                ReservedBalance += amount;
+                return true;
+            }
+            return false;
         }
 
     }
