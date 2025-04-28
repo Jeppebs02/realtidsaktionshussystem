@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using AuctionHouse.ClassLibrary.Stubs;
 using AuctionHouse.ClassLibrary.Interfaces;
 using Newtonsoft.Json;
+using AuctionHouse.ClassLibrary.Stubs;
 
 namespace AuctionHouse.WebSite.Pages.Auction
 {
@@ -13,16 +14,50 @@ namespace AuctionHouse.WebSite.Pages.Auction
     {
         [BindProperty]
         public String? errorMessage { get; set; } = null;
+
         private IWalletLogic? _walletLogic;//TODO Implement Interface instead
         public Wallet userWallet { get; set; } = null;
         string username;
-        public AuctionHouse.ClassLibrary.Model.Auction specificAuction { get; set; } = null; 
-        public void OnGet()
-        {
-            username = User.Identity?.Name ?? "alice";
-            WalletLogic.wallets.TryGetValue(username, out Wallet userWallet);
-        }
+        public AuctionHouse.ClassLibrary.Model.Auction specificAuction { get; set; } = null;
 
+        [BindProperty(SupportsGet = true)]
+        public int AuctionId { get; set; }
+
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            Console.WriteLine($"Fetching auction with ID: {AuctionId}");
+
+            try
+            {
+                // Wallet logic
+                username = User.Identity?.Name ?? "alice";
+                WalletLogic.wallets.TryGetValue(username, out Wallet userWallet);
+
+                //Get list of stubbed auctions
+                List<AuctionHouse.ClassLibrary.Model.Auction> auctions = AuctionTestData.GetTestAuctions();
+
+                //Select a single auction based on the number entered in the url.
+                specificAuction = auctions[AuctionId];
+
+                if (specificAuction == null)
+                {
+                    Console.WriteLine($"Auction with ID {AuctionId} not found.");
+                    // If no auction is found for the ID, return a 404 Not Found result
+                    return NotFound();
+                }
+
+                // If auction found, the page will be rendered with the Auction data :)
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"exception: {ex}");
+
+                return NotFound(); // Or RedirectToPage("/Error");
+            }
+        }
+    
 
 
         public async Task<IActionResult> OnPostBid(decimal amount)

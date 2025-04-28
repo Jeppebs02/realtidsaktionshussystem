@@ -83,7 +83,7 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
 
                 var JSONData = JsonConvert.SerializeObject(auction);
 
-                Console.WriteLine("Auction Created");
+                Console.WriteLine($"Auction Created with data: {JSONData}");
 
 
                 return Page();

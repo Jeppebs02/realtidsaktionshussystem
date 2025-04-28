@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/auction/{auctionId:int}"
 @model AuctionHouse.WebSite.Pages.Auction.IndexModel
 @{
 }
@@ -17,6 +17,37 @@
 
 <body>
     <h1>Auction</h1>
+    <br />
+
+    <h2>@Model.specificAuction.item.Name</h2>
+    <br />
+    <!-- Live preview -->
+    <img id="preview" alt="Image preview" hidden style="max-width:240px;margin-top:1rem;" />
+
+    <br />
+
+    <p>description: @Model.specificAuction.item.Description</p>
+
+    @if (Model.specificAuction.item.ImageData != null && Model.specificAuction.item.ImageData.Length > 0)
+    {
+        // Convert byte array to Base64 string, since we store the image as base64 in the database
+        var imageBase64 = Convert.ToBase64String(Model.specificAuction.item.ImageData);
+        // Specify MIME type.
+        var imageSrc = $"data:image/jpeg;base64,{imageBase64}";
+
+        <img src="@imageSrc" alt="Image for @Model.specificAuction.item.Name" style="max-width: 400px; margin-top: 1rem;" />
+        // Adjust style maybe
+    }
+    else
+    {
+        <p>No image available for this item.</p>
+    }
+
+
+    <img src="@Model.specificAuction.item.ImageData" alt="Item Image" />
+
+
+
     <br />
 
     <form method="post" asp-page-handler="Bid">
