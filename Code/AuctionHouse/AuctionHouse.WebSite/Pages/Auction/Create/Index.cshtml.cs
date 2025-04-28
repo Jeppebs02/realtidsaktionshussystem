@@ -64,27 +64,59 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
             // Validate the auction dates
             if (!IsValidDate(startTime, endTime))
             {
+
+                Console.WriteLine("Date validation failed");
+                
                 return Page();
             }
+            if(!IsValidBidIncrement(minimumBidIncrement, startPrice))
+            {
+                Console.WriteLine("Bid increment validation failed");
 
-            // Using full namespace because "Auction" is a namespace in this project
-            AuctionHouse.ClassLibrary.Model.Auction auction = new AuctionHouse.ClassLibrary.Model.Auction(startTime, endTime, startPrice, buyOutPrice, minimumBidIncrement, false, item);
+                return Page();
+            }
+            else
+            {
 
-            var JSONData = JsonConvert.SerializeObject(auction);
+                // Using full namespace because "Auction" is a namespace in this project
+                AuctionHouse.ClassLibrary.Model.Auction auction = new AuctionHouse.ClassLibrary.Model.Auction(startTime, endTime, startPrice, buyOutPrice, minimumBidIncrement, false, item);
 
-            Console.WriteLine("Auction Created: " + JSONData);
+                var JSONData = JsonConvert.SerializeObject(auction);
+
+                Console.WriteLine("Auction Created");
 
 
-            return Page();
+                return Page();
+
+
+            }
+
+
+        }
+
+
+        public bool IsValidBidIncrement(decimal minimumBidIncrement, decimal startPrice)
+        {
+            // Check if the bid increment is valid
+            if (startPrice <= 1 || minimumBidIncrement <= 1)
+            {
+                errorMessage = "The minimum bid increment and start price must be greater than 1";
+                return false;
+            }
+            return true;
         }
 
 
         public bool IsValidDate(DateTime startDate, DateTime endDate)
         {
             // Check if the date is in the past
-            TimeSpan timeSpan = startDate - endDate;
+            TimeSpan timeSpan = endDate - startDate;
 
-            if (startDate > endDate && timeSpan.TotalHours < 1)
+            Console.WriteLine($"Start date is: {startDate}");
+            Console.WriteLine($"End date is: {endDate}");
+            Console.WriteLine($"timespan is: {timeSpan.TotalHours}");
+
+            if (timeSpan.TotalHours < 1.0)
             {
                 errorMessage = "The Auction duration must exceed 1 hour";
                 return false;
