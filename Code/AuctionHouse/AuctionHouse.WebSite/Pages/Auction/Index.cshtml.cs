@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using AuctionHouse.ClassLibrary.Model;
+using AuctionHouse.ClassLibrary.Model; //Fix this ask jeppe
 using Microsoft.AspNetCore.Components;
 using System.Runtime.CompilerServices;
 using AuctionHouse.ClassLibrary.Stubs;
@@ -14,9 +14,13 @@ namespace AuctionHouse.WebSite.Pages.Auction
         [BindProperty]
         public String? errorMessage { get; set; } = null;
         private IWalletLogic? _walletLogic;//TODO Implement Interface instead
-
+        public Wallet userWallet { get; set; } = null;
+        string username;
+        public AuctionHouse.ClassLibrary.Model.Auction specificAuction { get; set; } = null; 
         public void OnGet()
         {
+            username = User.Identity?.Name ?? "alice";
+            WalletLogic.wallets.TryGetValue(username, out Wallet userWallet);
         }
 
 
@@ -34,9 +38,10 @@ namespace AuctionHouse.WebSite.Pages.Auction
             }
             else
             {
-                var username = User.Identity?.Name ?? "alice";
+                
                 var auctionId = 1; // This should be replaced with the actual auction ID
-                if (bidlogic.PlaceBid(auctionId, username, amount)!=null) {
+                
+                if (bidlogic.PlaceBid(auctionId, username, amount).Amount > userWallet.AvailableBalance) {
                     errorMessage = "Insufficient funds.";
 
                 }
