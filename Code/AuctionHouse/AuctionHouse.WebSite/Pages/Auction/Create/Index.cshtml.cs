@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using AuctionHouse.ClassLibrary.Enum;
 using AuctionHouse.ClassLibrary.Model;
 using Newtonsoft.Json;
+using AuctionHouse.ClassLibrary.Stubs;
 
 namespace AuctionHouse.WebSite.Pages.CreateAuction
 {
@@ -82,6 +83,9 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                 AuctionHouse.ClassLibrary.Model.Auction auction = new AuctionHouse.ClassLibrary.Model.Auction(startTime, endTime, startPrice, buyOutPrice, minimumBidIncrement, false, item);
 
                 var JSONData = JsonConvert.SerializeObject(auction);
+
+                auction.AuctionID = AuctionTestData.testAuctions.Count + 1; // Giv nyt id
+                AuctionTestData.testAuctions.Add(auction);
 
                 Console.WriteLine($"Auction Created with data: {JSONData}");
 

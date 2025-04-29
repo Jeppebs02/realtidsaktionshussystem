@@ -86,6 +86,9 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 }
 
             }
+            // add auction to dummy list of auctions
+
+            
             var JSONData = JsonConvert.SerializeObject(newBid);
 
             return Page();
