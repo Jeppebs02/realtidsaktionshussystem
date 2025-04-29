@@ -93,6 +93,7 @@
                 //if the difference is negative, then the auction has ended.
                 // (current time cannot be greater than the end time of the auction, that means the auction has ended.)
                 if (difference <= 0) {
+                    // Set the text of the html element to "Auction Ended"
                     countdownElement.textContent = "Auction Ended";
                     countdownElement.classList.add("ended");
                     clearInterval(intervalId); // Stop the timer

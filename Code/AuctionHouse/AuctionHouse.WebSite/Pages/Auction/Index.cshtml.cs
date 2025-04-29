@@ -20,7 +20,8 @@ namespace AuctionHouse.WebSite.Pages.Auction
         public Wallet userWallet { get; set; }
         
         public string username;
-        public AuctionHouse.ClassLibrary.Model.Auction specificAuction { get; set; } = null;
+
+        public AuctionHouse.ClassLibrary.Model.Auction? specificAuction { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public int AuctionId { get; set; }
@@ -39,15 +40,21 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 //Get list of stubbed auctions
                 List<AuctionHouse.ClassLibrary.Model.Auction> auctions = AuctionTestData.GetTestAuctions();
 
+
+                // Error checks
+                if(auctions != null)
+                {
+                    Console.WriteLine("list of auctions is set");
+                }
+
+
                 //Select a single auction based on the number entered in the url.
                 specificAuction = auctions[AuctionId];
-
-                if (specificAuction == null)
-                {
-                    Console.WriteLine($"Auction with ID {AuctionId} not found.");
-                    // If no auction is found for the ID, return a 404 Not Found result
-                    return NotFound();
+                if (specificAuction != null) {
+                    Console.WriteLine($"Specific auction is set:{specificAuction.ToString()}");
+                
                 }
+
 
                 // If auction found, the page will be rendered with the Auction data :)
                 return Page();
