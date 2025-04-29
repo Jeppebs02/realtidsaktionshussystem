@@ -14,11 +14,10 @@ namespace AuctionHouse.ClassLibrary.Stubs
         //Place bid might need some work in terms of subtracting from wallet 
         public Bid PlaceBid(int? auctionId, string userName, decimal amount)
         {
-            WalletLogic walletLogic = new WalletLogic();
             Bid bid = new Bid(amount, DateTime.Now);
-            walletLogic.subtractBidAmountFromTotalBalance(userName, amount);
             return bid;
         }
+
 
 
     }

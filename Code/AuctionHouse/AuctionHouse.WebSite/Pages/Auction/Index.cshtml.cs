@@ -86,13 +86,15 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 
                 var auctionId = specificAuction.AuctionID; // This should be replaced with the actual auction ID
                 
-                if (bidlogic.PlaceBid(auctionId, username, amount).Amount > userWallet.AvailableBalance) {
+                if (newBid.Amount > userWallet.AvailableBalance) {
                     errorMessage = "Insufficient funds.";
 
                 }
                 else 
                 { 
-                errorMessage = $"Bid with {newBid.Amount} is good.";
+                    errorMessage = $"Bid with {newBid.Amount} is good.";
+                    _walletLogic.subtractBidAmountFromTotalBalance(username, newBid.Amount);
+                    specificAuction.AddBid(newBid);
                 }
 
             }
@@ -114,11 +116,11 @@ namespace AuctionHouse.WebSite.Pages.Auction
             Console.WriteLine($"Trying to buy out auction: {specificAuction}");
 
             // Create a new bid with the buyout amount
-            var buyoutBid = new Bid(1,2.4m,DateTime.Now);
+            var buyoutBid = new Bid(specificAuction.BuyOutPrice, DateTime.Now);
 
             Console.WriteLine($"Created bid: {buyoutBid}");
 
-            if (bidlogic.PlaceBid(auctionId, username, specificAuction.BuyOutPrice).Amount > userWallet.AvailableBalance)
+            if (buyoutBid.Amount > userWallet.AvailableBalance)
             {
                 Console.WriteLine($"buyout bid: {buyoutBid} \n (must be greater than) \n {userWallet.AvailableBalance}");
                 errorMessage = "Insufficient funds.";
@@ -127,6 +129,8 @@ namespace AuctionHouse.WebSite.Pages.Auction
             else
             {
                 specificAuction.AuctionStatus = ClassLibrary.Enum.AuctionStatus.ENDED_SOLD;
+                _walletLogic.subtractBidAmountFromTotalBalance(username, specificAuction.BuyOutPrice);
+                specificAuction.AddBid(buyoutBid);
                 errorMessage = $"Bid with {buyoutBid.Amount} is good. You did a buyout";
             }
 

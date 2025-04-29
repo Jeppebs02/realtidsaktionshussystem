@@ -78,7 +78,7 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                 
                 return Page();
             }
-            if(!IsValidBidIncrement(minimumBidIncrement, startPrice))
+            if(!IsValidPricing(minimumBidIncrement, startPrice, buyOutPrice))
             {
                 Console.WriteLine("Bid increment validation failed");
 
@@ -108,7 +108,7 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
         }
 
 
-        public bool IsValidBidIncrement(decimal minimumBidIncrement, decimal startPrice)
+        public bool IsValidPricing(decimal minimumBidIncrement, decimal startPrice, decimal buyOutPrice)
         {
             // Check if the bid increment is valid
             if (startPrice <= 1 || minimumBidIncrement <= 1)
@@ -116,6 +116,12 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                 errorMessage = "The minimum bid increment and start price must be greater than 1";
                 return false;
             }
+            if(buyOutPrice < startPrice)
+            {
+                errorMessage = "The buyout price must be greater than the start price";
+                return false;
+            }
+
             return true;
         }
 

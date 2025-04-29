@@ -53,11 +53,27 @@
     <br />
 
     @if (Model.specificAuction.AuctionStatus == ClassLibrary.Enum.AuctionStatus.ACTIVE){
+
     <!-- Countdown until auction ends -->
     <div>
         <strong>Time remaining:</strong>
         <span id="countdown">Loading...</span> <!-- Placeholder for the timer-->
     </div>
+    <br />
+
+        <!--Show starting price of auction-->
+        <h3>
+            <strong>Start price:</strong>
+            @{
+                // Get the starting price
+                var startingPrice = Model.specificAuction.StartPrice;
+            }
+            @if (startingPrice != null)
+            {
+                // If a starting price exists, display its amount
+                <span>@startingPrice.ToString("C")</span>
+            }
+        </h3>
     }
 
     <!-- Script to make the countdown above work -->
