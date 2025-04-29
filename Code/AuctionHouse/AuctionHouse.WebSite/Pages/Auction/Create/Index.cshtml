@@ -28,16 +28,18 @@
             <br />
             <input type="text" name="itemName" required />
             <br />
+            <br />
         </div>
         <div>
             <label for="itemDescription"> Description of the item: </label>
             <br />
-            <textarea name="itemDescription" id="itemDescription" rows="5" cols="40" required></textarea>
+            <textarea name="itemDescription" id="itemDescription" rows="5" maxlength="255" required></textarea>
+            <br />
             <br />
         </div>
 
         <div>
-            <label for="category">Choose a category:</label>
+            <label for="category">Category:</label>
             <br />
             <select id="category" name="category">
                 <option value="">— Select a category —</option>
@@ -46,6 +48,7 @@
                     <option value="@category">@category.ToString().Replace("_", " ")</option>
                 }
             </select>
+            <br />
             <br />
         </div>
         <div>
@@ -63,9 +66,11 @@
         </div>
         <!-- Create Auction -->
         <div>
+            <br />
             <label for="startTime"> Choose auction start-time: </label>
             <br />
             <input type="datetime-local" id="startTime" name="startTime" required />
+            <br />
             <br />
         </div>
         <div>
@@ -73,17 +78,20 @@
             <br />
             <input type="datetime-local" id="endTime" name="endTime" required />
             <br />
+            <br />
         </div>
         <div>
             <label for="startPrice"> Start price: </label>
             <br />
             <input type="number" step="0.01" name="startPrice" required />
             <br />
+            <br />
         </div>
         <div>
             <label for="buyOutPrice"> Buyout price: </label>
             <br />
             <input type="number" step="0.01" name="buyOutPrice" />
+            <br />
             <br />
         </div>
         <div>

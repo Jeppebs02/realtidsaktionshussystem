@@ -25,7 +25,7 @@ namespace AuctionHouse.ClassLibrary.Model
         public string Name { get; set; }
 
         [Required]
-        [StringLength(500, ErrorMessage = "Description cannot be longer than 500 characters.")]
+        [StringLength(255, ErrorMessage = "Description cannot be longer than 500 characters.")]
         public string Description { get; set; }
 
         public Category Category { get; set; }
