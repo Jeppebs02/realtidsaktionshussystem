@@ -84,8 +84,9 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
 
                 var JSONData = JsonConvert.SerializeObject(auction);
 
-                auction.AuctionID = AuctionTestData.testAuctions.Count + 1; // Giv nyt id
+                auction.AuctionID = AuctionTestData.testAuctions.Count; // Giv nyt id
                 AuctionTestData.testAuctions.Add(auction);
+
 
                 Console.WriteLine($"Auction Created with data: {JSONData}");
 
