@@ -4,11 +4,13 @@ using AuctionHouse.ClassLibrary.Enum;
 using AuctionHouse.ClassLibrary.Model;
 using Newtonsoft.Json;
 using AuctionHouse.ClassLibrary.Stubs;
+using AuctionHouse.DataAccessLayer.Interfaces;
 
 namespace AuctionHouse.WebSite.Pages.CreateAuction
 {
     public class IndexModel : PageModel
     {
+        //IAuctionDao auctionDao = new AuctionDaoStub();
 
         // BindProperty takes attributes from the cshtml page and binds them to the properties in this class
         [BindProperty]
@@ -28,6 +30,12 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
 
         public async Task<IActionResult> OnPostCreateAuctionAsync(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, string itemName, string itemDescription, Category category)
         {
+            // Check if the model state is valid
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine("Model state is not valid");
+                return Page();
+            }
             Item item;
             Console.WriteLine("Item object declared");
             try
