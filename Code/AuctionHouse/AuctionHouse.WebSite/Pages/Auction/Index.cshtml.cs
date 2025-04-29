@@ -7,6 +7,7 @@ using AuctionHouse.ClassLibrary.Stubs;
 using AuctionHouse.ClassLibrary.Interfaces;
 using Newtonsoft.Json;
 using AuctionHouse.ClassLibrary.Stubs;
+using AuctionHouse.ClassLibrary.Enum;
 
 namespace AuctionHouse.WebSite.Pages.Auction
 {

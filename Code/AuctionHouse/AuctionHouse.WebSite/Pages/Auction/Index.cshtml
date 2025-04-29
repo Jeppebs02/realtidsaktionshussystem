@@ -4,15 +4,15 @@
 }
 
 @{
-    ViewData["Title"] = "Auction";
+    ViewData["Title"] = "Auction Details";
 }
 
 
 <html>
 
-    <head>
+<head>
 
-    </head>
+</head>
 
 
 <body>
@@ -53,24 +53,104 @@
 
     <br />
 
-    <!--Countdown until auction ends-->
+    <!-- Countdown until auction ends -->
+    <div>
+        <strong>Time remaining:</strong>
+        <span id="countdown">Loading...</span> <!-- Placeholder for the timer-->
+    </div>
+
+    <!-- Script to make the countdown above work -->
+    <script>
+        // This line makes sure that all the html is loaded before the JS below is executed
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Get the countdown element (the span with id "countdown")
+            const countdownElement = document.getElementById('countdown');
+            // Get the auction end time from the Auction object as a raw string
+            const endDateString = '@Html.Raw(Model.specificAuction.EndTime.ToString("o"))';
+            // Parse the string into a JavaScript Date object. This is different from a C# DateTime object
+            // And that is why we need to make it a JS Date object
+            const endDate = new Date(endDateString);
+
+            // Check if the date is valid. If no countdownElement (the html element), or if the date is invalid (NaN means Not a Number)
+            // then we log an error and stop the execution of the script
+            if (!countdownElement || isNaN(endDate.getTime())) {
+                console.error("Countdown element not found or end date is invalid:", endDateString);
+                 if(countdownElement) countdownElement.textContent = "Error loading timer.";
+                return; // Stop the JS
+            }
+            
+            // We need an intervalId to update the timer and stop it, etc.
+            let intervalId = null; 
+
+            // Function to update the countdown timer
+            function updateCountdown() {
+                // Get the current date and time
+                const now = new Date();
+                // Calculate the difference between the end time from the auction the current date
+                const difference = endDate.getTime() - now.getTime();
+
+                //if the difference is negative, then the auction has ended.
+                // (current time cannot be greater than the end time of the auction, that means the auction has ended.)
+                if (difference <= 0) {
+                    countdownElement.textContent = "Auction Ended";
+                    countdownElement.classList.add("ended");
+                    clearInterval(intervalId); // Stop the timer
+                    // Optional: Disable bid form elements. This should be based on the auction status in the future
+                    //TODO: BIG TODO GUYS MAKE THIS BASED ON AUCTION STATUS!!!!!
+                    const bidForm = document.querySelector('form[asp-page-handler="Bid"]');
+                     if(bidForm) {
+                       bidForm.style.display = 'none';
+                     }
+                } else {
+                    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                    let parts = [];
+                    if (days > 0) parts.push(days + "d");
+                    if (hours > 0 || days > 0) parts.push(hours + "h");
+                    if (minutes > 0 || hours > 0 || days > 0) parts.push(minutes + "m");
+                    parts.push(seconds + "s");
+
+                    countdownElement.textContent = parts.join(" ");
+                    countdownElement.classList.remove("ended");
+                }
+            }
+
+            updateCountdown(); // Initial call
+
+            if (endDate.getTime() > new Date().getTime()) {
+                intervalId = setInterval(updateCountdown, 1000); // Update every second
+            }
+        });
+    </script>
 
 
 
 
     <br />
 
-    <form method="post" asp-page-handler="Bid">
-        <div>
+    <!-- Only show Auction bid button if the Auction is active-->
+    @if (Model.specificAuction.AuctionStatus == ClassLibrary.Enum.AuctionStatus.ACTIVE)
+    {
+        <form method="post" asp-page-handler="Bid">
+            <div>
             <label for="bid">Place your bid here: </label>
             <br />
             <input type="number" name="amount" required />
         </div>
         <button type="submit">Bid</button>
-    </form>
+        </form>
+    }
+    else
+    {
+        <p>Sorry, this auction is closed.</p>
+    }
 
 
-
+    <!-- Show an error if an error is set in the C# code-->
     @if (!string.IsNullOrEmpty(Model.errorMessage))
     {
         <script>
