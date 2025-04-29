@@ -30,5 +30,13 @@ namespace AuctionHouse.ClassLibrary.Model
         public DateTime TimeStamp { get; set; }
         #endregion
 
+        #region Methods
+
+        public override string ToString()
+        {
+            return $"Bid: {Amount}, Time: {TimeStamp}, AuctionId: {AuctionId}";
+        }
+
+        #endregion
     }
 }

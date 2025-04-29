@@ -52,11 +52,13 @@
 
     <br />
 
+    @if (Model.specificAuction.AuctionStatus == ClassLibrary.Enum.AuctionStatus.ACTIVE){
     <!-- Countdown until auction ends -->
     <div>
         <strong>Time remaining:</strong>
         <span id="countdown">Loading...</span> <!-- Placeholder for the timer-->
     </div>
+    }
 
     <!-- Script to make the countdown above work -->
     <script>
@@ -130,13 +132,62 @@
     </script>
 
 
+    <br />
+
+
 
 
     <br />
 
+
+
     <!-- Only show Auction bid button if the Auction is active-->
     @if (Model.specificAuction.AuctionStatus == ClassLibrary.Enum.AuctionStatus.ACTIVE)
     {
+
+        <!-- Show the current highest bid -->
+        <h3>
+            Current highest bid:
+            @{
+                // Get the highest bid
+                var highestBid = Model.specificAuction.GetHighestBid();
+            }
+            @if (highestBid != null)
+            {
+                // If a bid exists, display its amount (formatted as currency)
+                <span>@highestBid.Amount.ToString("C")</span>
+            }
+            else
+            {
+                // If highestBid is null, display the message
+                <span>No bids yet</span>
+            }
+        </h3>
+
+        <!-- Show buyout price-->
+        <h3>
+            Buyout price:
+            @{
+                // Get the buyout price
+                var buyoutPrice = Model.specificAuction.BuyOutPrice;
+            }
+            @if (buyoutPrice != null)
+            {
+                // If a buyout price exists, display its amount
+                <span>@buyoutPrice.ToString("C")</span>
+            }
+            else
+            {
+                // If buyoutPrice is null, display
+                <span>No buyout price set</span>
+            }
+
+        </h3>
+
+
+        <br />
+
+     <div>
         <form method="post" asp-page-handler="Bid">
             <div>
             <label for="bid">Place your bid here: </label>
@@ -145,6 +196,15 @@
         </div>
         <button type="submit">Bid</button>
         </form>
+
+        <br />
+
+        <form method="post" asp-page-handler="BuyOut">
+            <button type="submit">Buyout</button>
+        </form>
+
+
+     </div>
     }
     else
     {

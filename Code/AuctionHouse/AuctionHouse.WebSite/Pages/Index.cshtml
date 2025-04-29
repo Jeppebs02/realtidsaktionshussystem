@@ -41,15 +41,24 @@
                     <img src="data:image/jpeg;base64,@Convert.ToBase64String(auction.item.ImageData)" alt="Auction Image" style="max-width: 100%; height: auto; border-radius: 4px;" />
                     <h2>@auction.item.Name</h2>
                     <p>
-                        <strong>Current bid:</strong>
-                        @if (auction.Bids.Any())
+                        @if (auction.AuctionStatus == AuctionStatus.ACTIVE)
                         {
-                            @auction.Bids.Last().Amount.ToString("C")
+                            <strong>Current bid:</strong>
+                            @if (auction.Bids.Any())
+                            {
+                                @auction.Bids.Last().Amount.ToString("C")
+                            }
+                            else
+                            {
+                                <span>No bids yet</span>
+                            }
                         }
                         else
                         {
-                            <span>No bids yet</span>
+                            <span style="color: red;">Auction ended</span>
                         }
+
+
                     </p>
                 </a>
             </div>

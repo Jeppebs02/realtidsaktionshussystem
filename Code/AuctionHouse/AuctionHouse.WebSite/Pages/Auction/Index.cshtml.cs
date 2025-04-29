@@ -21,6 +21,10 @@ namespace AuctionHouse.WebSite.Pages.Auction
         
         public string username;
 
+        List<AuctionHouse.ClassLibrary.Model.Auction> auctions;
+
+        BidLogic bidlogic;
+
         public AuctionHouse.ClassLibrary.Model.Auction? specificAuction { get; set; }
 
         [BindProperty(SupportsGet = true)]
@@ -33,16 +37,12 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
             try
             {
-                // Wallet logic
-                username = User.Identity?.Name ?? "alice";
-                WalletLogic.wallets.TryGetValue(username, out Wallet userWallet);
-
-                //Get list of stubbed auctions
-                List<AuctionHouse.ClassLibrary.Model.Auction> auctions = AuctionTestData.GetTestAuctions();
+                // Load the page properties
+                loadPageProperties();
 
 
                 // Error checks
-                if(auctions != null)
+                if (auctions != null)
                 {
                     Console.WriteLine("list of auctions is set");
                 }
@@ -71,20 +71,9 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
         public async Task<IActionResult> OnPostBid(decimal amount)
         {
-            // We need to refetch the list of auctions when using the post method
-            List<AuctionHouse.ClassLibrary.Model.Auction> auctions = AuctionTestData.GetTestAuctions();
-            //Then we set the property specificAuction.
-            specificAuction = auctions[AuctionId];
 
-
-            username = User.Identity?.Name ?? "alice";
-            _walletLogic = new WalletLogic();
-            _walletAccess = new WalletAccess();
-
-            userWallet = _walletAccess.GetWalletForUser(username);
-
-
-            BidLogic bidlogic = new();
+            // Load the page properties
+            loadPageProperties();
 
             Bid newBid = new Bid(amount, DateTime.Now);
 
@@ -113,6 +102,58 @@ namespace AuctionHouse.WebSite.Pages.Auction
             var JSONData = JsonConvert.SerializeObject(newBid);
 
             return Page();
+        }
+
+
+        public async Task<IActionResult> OnPostBuyOut()
+        {
+            // Load the page properties
+            loadPageProperties();
+            // Get the auction ID from the specific auction
+            var auctionId = specificAuction.AuctionID;
+            Console.WriteLine($"Trying to buy out auction: {specificAuction}");
+
+            // Create a new bid with the buyout amount
+            var buyoutBid = new Bid(1,2.4m,DateTime.Now);
+
+            Console.WriteLine($"Created bid: {buyoutBid}");
+
+            if (bidlogic.PlaceBid(auctionId, username, specificAuction.BuyOutPrice).Amount > userWallet.AvailableBalance)
+            {
+                Console.WriteLine($"buyout bid: {buyoutBid} \n (must be greater than) \n {userWallet.AvailableBalance}");
+                errorMessage = "Insufficient funds.";
+
+            }
+            else
+            {
+                specificAuction.AuctionStatus = ClassLibrary.Enum.AuctionStatus.ENDED_SOLD;
+                errorMessage = $"Bid with {buyoutBid.Amount} is good. You did a buyout";
+            }
+
+            return Page();
+        }
+
+
+
+        private void loadPageProperties()
+        {
+            // We need to refetch the list of auctions when using the post method
+            auctions = AuctionTestData.GetTestAuctions();
+            //Then we set the property specificAuction.
+            specificAuction = auctions[AuctionId];
+
+            bidlogic = new();
+
+
+            username = User.Identity?.Name ?? "alice";
+            _walletLogic = new WalletLogic();
+            _walletAccess = new WalletAccess();
+
+            userWallet = _walletAccess.GetWalletForUser(username);
+
+
+
+
         }
 
     }

@@ -55,5 +55,32 @@ namespace AuctionHouse.ClassLibrary.Model
         {
             Bids.Add(bid);
         }
+
+        public Bid GetHighestBid()
+        {
+            Bid highestBid = null;
+            if (Bids.Count == 0)
+            {
+                return null;
+            }
+
+            foreach (Bid currentBid in Bids)
+            {
+                if (highestBid == null || currentBid.Amount > highestBid.Amount)
+                {
+                    highestBid = currentBid;
+                }
+            }
+
+            return highestBid;
+        }
+
+        //toString method
+        public override string ToString()
+        {
+            return $"Auction ID: {AuctionID}, Start Time: {StartTime}, End Time: {EndTime}, Start Price: {StartPrice}, Buy Out Price: {BuyOutPrice}, Minimum Bid Increment: {MinimumBidIncrement}, Auction Status: {AuctionStatus}, Item: {item.Name}";
+        }
+
+
     }
 }
