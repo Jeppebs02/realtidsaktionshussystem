@@ -6,8 +6,7 @@ using System.Runtime.CompilerServices;
 using AuctionHouse.ClassLibrary.Stubs;
 using AuctionHouse.ClassLibrary.Interfaces;
 using Newtonsoft.Json;
-using AuctionHouse.ClassLibrary.Stubs;
-using AuctionHouse.ClassLibrary.Enum;
+using AuctionHouse.DataAccessLayer;
 
 namespace AuctionHouse.WebSite.Pages.Auction
 {
@@ -17,8 +16,10 @@ namespace AuctionHouse.WebSite.Pages.Auction
         public String? errorMessage { get; set; } = null;
 
         private IWalletLogic? _walletLogic;//TODO Implement Interface instead
-        public Wallet userWallet { get; set; } = null;
-        string username;
+        private IWalletAccess _walletAccess;
+        public Wallet userWallet { get; set; }
+        
+        public string username;
         public AuctionHouse.ClassLibrary.Model.Auction specificAuction { get; set; } = null;
 
         [BindProperty(SupportsGet = true)]
@@ -63,7 +64,13 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
         public async Task<IActionResult> OnPostBid(decimal amount)
         {
-            _walletLogic = new WalletLogic(); 
+            username = User.Identity?.Name ?? "alice";
+            _walletLogic = new WalletLogic();
+            _walletAccess = new WalletAccess();
+
+            userWallet = _walletAccess.GetWalletForUser(username);
+
+
             BidLogic bidlogic = new();
 
             Bid newBid = new Bid(amount, DateTime.Now);

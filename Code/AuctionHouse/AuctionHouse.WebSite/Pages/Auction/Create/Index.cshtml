@@ -24,18 +24,23 @@
         
         <!-- Create Item -->
         <div>
-            <label for="itemName"> Write the name of the item here: </label>
+            <label for="itemName"> Name of item: </label>
+            <br />
             <input type="text" name="itemName" required />
             <br />
-        </div>
-        <div>
-            <label for="itemDescription"> Write the description of the item here: </label>
-            <input type="text" name="itemDescription" required />
             <br />
         </div>
         <div>
-            <label for="category">Choose a category:</label>
+            <label for="itemDescription"> Description of the item: </label>
+            <br />
+            <textarea name="itemDescription" id="itemDescription" rows="5" maxlength="255" required></textarea>
+            <br />
+            <br />
+        </div>
 
+        <div>
+            <label for="category">Category:</label>
+            <br />
             <select id="category" name="category">
                 <option value="">— Select a category —</option>
                 @foreach (var category in @Model.Categories)
@@ -44,9 +49,11 @@
                 }
             </select>
             <br />
+            <br />
         </div>
         <div>
             <label for="image">Upload a picture (JPEG/PNG/GIF):</label>
+            <br />
             <input type="file"
                    id="image"
                    name="ImageFile"
@@ -54,31 +61,42 @@
                    required />
 
             <!-- Live preview -->
+            <br />
             <img id="preview" alt="Image preview" hidden style="max-width:240px;margin-top:1rem;" />
         </div>
         <!-- Create Auction -->
         <div>
-            <label for="startTime"> Choose the time ur auction should start: </label>
+            <br />
+            <label for="startTime"> Choose auction start-time: </label>
+            <br />
             <input type="datetime-local" id="startTime" name="startTime" required />
             <br />
+            <br />
         </div>
         <div>
-            <label for="endTime"> Choose the time ur auction should end: </label>
+            <label for="endTime"> Choose auction end-time: </label>
+            <br />
             <input type="datetime-local" id="endTime" name="endTime" required />
             <br />
+            <br />
         </div>
         <div>
-            <label for="startPrice"> Start price of ur item: </label>
+            <label for="startPrice"> Start price: </label>
+            <br />
             <input type="number" step="0.01" name="startPrice" required />
             <br />
-        </div>
-        <div>
-            <label for="buyOutPrice"> Choose the buyout price: </label>
-            <input type="number" step="0.01" name="buyOutPrice" />
             <br />
         </div>
         <div>
-            <label for="minimumBidIncrement"> Choose the minimum bid increment my sir: </label>
+            <label for="buyOutPrice"> Buyout price: </label>
+            <br />
+            <input type="number" step="0.01" name="buyOutPrice" />
+            <br />
+            <br />
+        </div>
+        <div>
+            <label for="minimumBidIncrement"> Minimum bid increment: </label>
+            <br />
             <input type="number" step="0.01" name="minimumBidIncrement" required />
             <br />
         </div>
