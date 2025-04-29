@@ -9,7 +9,7 @@ namespace AuctionHouse.ClassLibrary.Interfaces
 {
     public interface IBidLogic
     {
-        Bid PlaceBid(int auctionId, string userName, decimal amount);
+        Bid PlaceBid(int? auctionId, string userName, decimal amount);
 
     }
 }

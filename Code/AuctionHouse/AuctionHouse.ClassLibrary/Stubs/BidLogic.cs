@@ -10,7 +10,7 @@ namespace AuctionHouse.ClassLibrary.Stubs
 {
     public class BidLogic : IBidLogic
     {
-        public Bid PlaceBid(int auctionId, string userName, decimal amount)
+        public Bid PlaceBid(int? auctionId, string userName, decimal amount)
         {
             WalletLogic walletLogic = new WalletLogic();
             Bid bid = new Bid(amount, DateTime.Now);

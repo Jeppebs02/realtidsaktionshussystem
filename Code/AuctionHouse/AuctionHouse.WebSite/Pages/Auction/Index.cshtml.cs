@@ -71,6 +71,12 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
         public async Task<IActionResult> OnPostBid(decimal amount)
         {
+            // We need to refetch the list of auctions when using the post method
+            List<AuctionHouse.ClassLibrary.Model.Auction> auctions = AuctionTestData.GetTestAuctions();
+            //Then we set the property specificAuction.
+            specificAuction = auctions[AuctionId];
+
+
             username = User.Identity?.Name ?? "alice";
             _walletLogic = new WalletLogic();
             _walletAccess = new WalletAccess();
@@ -89,7 +95,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
             else
             {
                 
-                var auctionId = 1; // This should be replaced with the actual auction ID
+                var auctionId = specificAuction.AuctionID; // This should be replaced with the actual auction ID
                 
                 if (bidlogic.PlaceBid(auctionId, username, amount).Amount > userWallet.AvailableBalance) {
                     errorMessage = "Insufficient funds.";

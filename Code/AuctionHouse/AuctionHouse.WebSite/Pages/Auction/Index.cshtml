@@ -7,7 +7,6 @@
     ViewData["Title"] = "Auction Details";
 }
 
-
 <html>
 
 <head>
@@ -98,7 +97,9 @@
                     countdownElement.classList.add("ended");
                     clearInterval(intervalId); // Stop the timer
                     // Optional: Disable bid form elements. This should be based on the auction status in the future
+
                     //TODO: BIG TODO GUYS MAKE THIS BASED ON AUCTION STATUS!!!!!
+
                     const bidForm = document.querySelector('form[asp-page-handler="Bid"]');
                      if(bidForm) {
                        bidForm.style.display = 'none';
