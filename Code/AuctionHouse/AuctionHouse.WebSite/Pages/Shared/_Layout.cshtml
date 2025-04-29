@@ -44,7 +44,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Auction/Active/Index">See Auctions</a>
                         </li>
                     </ul>
-                        <!-- Overfør penge button -->
+                        <!-- Transfer funds button -->
                     <div>
                         <button class="btn btn-outline-primary ms-3"
                                 data-bs-toggle="modal" data-bs-target="#depositModal">
@@ -52,7 +52,7 @@
                         </button>
                     </div>
 
-                    <!-- Bootstrap modal -->
+                    <!-- Deposit modal -->
                     <div class="modal fade" id="depositModal" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog">
                             <form id="depositForm" class="modal-content">
@@ -75,12 +75,45 @@
                         </div>
                     </div>
 
+                    <!-- Login Modal -->
+                    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form id="loginForm" class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="loginModalLabel">User Login</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
 
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" required />
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Log In</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                     <!-- Wallet info to the right -->
                     <div class="navbar-text fw-semibold">
                         💰 Available: <span id="availLbl" class="text-success">@Wallet.AvailableBalance DKK</span> |
                         🔒 Reserved:  <span id="resLbl" class="text-danger">@Wallet.ReservedBalance DKK</span>
+                    </div>
+
+                    <!--Login button-->
+                    <div class="d-flex align-items-center ms-3">
+                        <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            Log In
+                        </button>
                     </div>
                 </div>
             </div>
@@ -133,6 +166,33 @@
                 input.value = '';
             });
         })();
+
+            // Login form script
+                (() => {
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', async e => {
+                e.preventDefault();
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+
+                if (!username || !password) {
+                    alert('Please enter both username and password.');
+                    return;
+                }
+
+                // For now just show an alert
+                alert(`Logging in with\nUsername: ${username}\nPassword: ${password}`);
+
+                // TODO WebAPI logic
+
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+
+                // Clear form
+                loginForm.reset();
+            });
+        })();
+
     </script>
 
 
