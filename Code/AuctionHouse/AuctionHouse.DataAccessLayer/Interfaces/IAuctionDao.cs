@@ -9,6 +9,27 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
 {
     public interface IAuctionDao : IGenericDao<Auction>
     {
-        IEnumerable<Auction> GetWithinDateRange(DateTime startDate, DateTime endDate);
+        Task<IEnumerable<Auction>> GetWithinDateRangeAsync(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// All auctions that a user owns/created (he is selling an item)
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Auction>> GetAllByUserIDAsync(int userId);
+
+        /// <summary>
+        /// All auctions that a given user has made a bid on.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Auction>> GetAllByBidsAsync(int userId);
+
+        /// <summary>
+        /// Gets all auctions that has "ACTIVE" in AuctionStatus
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<Auction>> GetAllActiveAsync();
+
     }
 }

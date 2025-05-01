@@ -12,7 +12,7 @@ namespace AuctionHouse.DataAccessLayer
             if (!WalletLogic.wallets.TryGetValue(username.ToLower(), out var w))
                 w = WalletLogic.wallets[username.ToLower()] = new Wallet(0, 0);
 
-            w.AvailableBalance += amount;
+            w.TotalBalance +=amount;
             return w;
         }
 

@@ -86,7 +86,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 
                 var auctionId = specificAuction.AuctionID; // This should be replaced with the actual auction ID
                 
-                if (newBid.Amount > userWallet.AvailableBalance) {
+                if (newBid.Amount > userWallet.GetAvailableBalance()) {
                     errorMessage = "Insufficient funds.";
 
                 }
@@ -120,9 +120,9 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
             Console.WriteLine($"Created bid: {buyoutBid}");
 
-            if (buyoutBid.Amount > userWallet.AvailableBalance)
+            if (buyoutBid.Amount > userWallet.GetAvailableBalance())
             {
-                Console.WriteLine($"buyout bid: {buyoutBid} \n (must be greater than) \n {userWallet.AvailableBalance}");
+                Console.WriteLine($"buyout bid: {buyoutBid} \n (must be greater than) \n {userWallet.GetAvailableBalance()}");
                 errorMessage = "Insufficient funds.";
 
             }
