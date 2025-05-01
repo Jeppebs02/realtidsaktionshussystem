@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuctionHouse.ClassLibrary\AuctionHouse.ClassLibrary.csproj" />
+    <ProjectReference Include="..\AuctionHouse.DataAccessLayer\AuctionHouse.DataAccessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
