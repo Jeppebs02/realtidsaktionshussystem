@@ -11,9 +11,9 @@ namespace AuctionHouse.ClassLibrary.Model
 {
     public class Auction
     {
-        
+
         #region Constructor
-        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement,bool notify, Item item, int auctionId=-1, byte[] version = null)
+        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, bool notify, Item item, int auctionId = -1, byte[] version = null)
         {
             StartTime=startTime;
             EndTime=endTime;
@@ -53,9 +53,20 @@ namespace AuctionHouse.ClassLibrary.Model
 
         #endregion
 
-        public void AddBid(Bid bid)
+
+        #region Methods
+        public bool AddBid(Bid bid)
         {
-            Bids.Add(bid);
+            try
+            {
+                Bids.Add(bid);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
         public Bid GetHighestBid()
@@ -82,6 +93,9 @@ namespace AuctionHouse.ClassLibrary.Model
         {
             return $"Auction ID: {AuctionID}, Start Time: {StartTime}, End Time: {EndTime}, Start Price: {StartPrice}, Buy Out Price: {BuyOutPrice}, Minimum Bid Increment: {MinimumBidIncrement}, Auction Status: {AuctionStatus}, Item: {item.Name}";
         }
+
+
+        #endregion
 
 
     }

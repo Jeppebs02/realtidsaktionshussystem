@@ -53,6 +53,22 @@ namespace AuctionHouse.ClassLibrary.Model
             return false;
         }
 
+        public bool addTransaction(Transaction transaction) {
+            try
+            {
+                Transactions.Add(transaction);
+                return true;
+
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        
+        
+        }
+
 
         #endregion
 
