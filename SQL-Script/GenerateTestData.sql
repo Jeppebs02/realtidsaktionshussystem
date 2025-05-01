@@ -39,27 +39,27 @@ INSERT INTO dbo.Item (Name, Description, Category, Image, UserId) VALUES
 ('Electric Guitar', 'Limited edition electric guitar.', 'MUSIC_INSTRUMENTS',NULL , 3);
 
 -- 7. Auctions
-INSERT INTO dbo.Auction (StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId)
+INSERT INTO dbo.Auction (StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Notify, ItemId)
 VALUES
-(GETDATE(), DATEADD(DAY, 7, GETDATE()), 500.00, 2000.00, 50.00, 'ACTIVE', 1, 1, 1),
-(GETDATE(), DATEADD(DAY, 5, GETDATE()), 300.00, NULL, 25.00, 'ACTIVE', 1, 0, 2),
-(GETDATE(), DATEADD(DAY, 10, GETDATE()), 800.00, 2500.00, 100.00, 'ACTIVE', 1, 1, 3);
+(GETDATE(), DATEADD(DAY, 7, GETDATE()), 500.00, 2000.00, 50.00, 'ACTIVE', 1, 1),
+(GETDATE(), DATEADD(DAY, 5, GETDATE()), 300.00, NULL, 25.00, 'ACTIVE', 0, 2),
+(GETDATE(), DATEADD(DAY, 10, GETDATE()), 800.00, 2500.00, 100.00, 'ACTIVE', 1, 3);
 
 -- BID & TRANSACTION
 
 -- 8. Bids
-INSERT INTO dbo.Bid (Amount, UserId, AuctionId)
+INSERT INTO dbo.Bid (Amount,[TimeStamp], UserId, AuctionId)
 VALUES
-(550.00, 2, 1),
-(600.00, 3, 1),
-(325.00, 1, 2),
-(900.00, 1, 3);
+(550.00, GETDATE(), 2, 1),
+(600.00, GETDATE(), 3, 1),
+(325.00, GETDATE(), 1, 2),
+(900.00, GETDATE(), 1, 3);
 
 -- 9. Transactions
-INSERT INTO dbo.[Transaction] (Amount, [Type], WalletId)
+INSERT INTO dbo.[Transaction] (Amount, [TimeStamp], [Type], WalletId)
 VALUES
-(500.00, 'DEPOSIT',  1),
-(200.00, 'WITHDRAWAL',  2),
-(300.00, 'AUCTION_PAYMENT',  3),
-(750.00, 'AUCTION_PAYOUT',  1),
-(50.00, 'FEE',  2);
+(500.00, GETDATE(), 'DEPOSIT',  1),
+(200.00, GETDATE(), 'WITHDRAWAL',  2),
+(300.00, GETDATE(), 'AUCTION_PAYMENT',  3),
+(750.00, GETDATE(), 'AUCTION_PAYOUT',  1),
+(50.00, GETDATE(), 'FEE',  2);
