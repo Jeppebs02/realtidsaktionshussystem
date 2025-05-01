@@ -1,6 +1,7 @@
 ﻿using AuctionHouse.ClassLibrary.Enum;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace AuctionHouse.ClassLibrary.Model
     {
         
         #region Constructor
-        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement,bool notify, Item item, int auctionId=-1)
+        public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement,bool notify, Item item, int auctionId=-1, byte[] version = null)
         {
             StartTime=startTime;
             EndTime=endTime;
@@ -20,7 +21,7 @@ namespace AuctionHouse.ClassLibrary.Model
             BuyOutPrice=buyOutPrice;
             MinimumBidIncrement=minimumBidIncrement;
             AuctionStatus=AuctionStatus.ACTIVE;
-            Version=1;
+            Version=version;
             Notify = notify;
             this.item=item;
             Bids = new List<Bid>();
@@ -44,7 +45,8 @@ namespace AuctionHouse.ClassLibrary.Model
         public decimal BuyOutPrice { get; set; }
         public decimal MinimumBidIncrement { get; set; }
         public AuctionStatus AuctionStatus { get; set; }
-        public int Version { get; set; }
+        [Timestamp]
+        public byte[] Version { get; set; }
         public bool Notify { get; set; }
         public Item item { get; set; }
         public List<Bid> Bids { get; set; }
