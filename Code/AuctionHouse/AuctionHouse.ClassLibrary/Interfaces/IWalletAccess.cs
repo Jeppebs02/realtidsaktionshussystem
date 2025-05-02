@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 
-namespace AuctionHouse.DataAccessLayer
+namespace AuctionHouse.ClassLibrary.Interfaces
 {
     public interface IWalletAccess
     {

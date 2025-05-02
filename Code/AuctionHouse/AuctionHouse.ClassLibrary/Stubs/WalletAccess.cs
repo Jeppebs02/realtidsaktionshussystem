@@ -1,7 +1,8 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.ClassLibrary.Stubs;
+using AuctionHouse.ClassLibrary.Interfaces;
 
-namespace AuctionHouse.DataAccessLayer
+namespace AuctionHouse.ClassLibrary.Interfaces
 {
     public class WalletAccess : IWalletAccess
     {

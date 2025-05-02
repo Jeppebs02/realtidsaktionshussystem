@@ -1,4 +1,4 @@
-using AuctionHouse.DataAccessLayer;
+using AuctionHouse.ClassLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
