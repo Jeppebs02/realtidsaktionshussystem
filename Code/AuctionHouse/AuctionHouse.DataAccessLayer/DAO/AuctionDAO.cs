@@ -80,6 +80,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
     }
-    {
-    }
+
 }
+

@@ -22,7 +22,8 @@ namespace AuctionHouse.ClassLibrary.Stubs
 
         public static readonly Dictionary<string, Wallet> wallets = new()
            {
-               { "alice", new Wallet(2000, 200) },
+               { "alice", new Wallet(2000, 200, 1) },
+               { "sven1", new Wallet(10000,300,1)}
                
            };
     }

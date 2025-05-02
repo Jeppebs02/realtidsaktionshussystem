@@ -10,7 +10,7 @@ namespace AuctionHouse.DataAccessLayer
             if (amount <= 0) throw new ArgumentException("Amount must be positive");
 
             if (!WalletLogic.wallets.TryGetValue(username.ToLower(), out var w))
-                w = WalletLogic.wallets[username.ToLower()] = new Wallet(0, 0);
+                w = WalletLogic.wallets[username.ToLower()] = new Wallet(0, 0, 1);
 
             w.TotalBalance +=amount;
             return w;

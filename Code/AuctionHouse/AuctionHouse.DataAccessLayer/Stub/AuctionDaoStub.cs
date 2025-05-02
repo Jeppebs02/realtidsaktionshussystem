@@ -60,5 +60,20 @@ namespace AuctionHouse.DataAccessLayer.Stub
         {
             throw new NotImplementedException();
         }
+
+        Task<bool> IGenericDao<Auction>.DeleteAsync(Auction entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<int> IGenericDao<Auction>.InsertAsync(Auction entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IGenericDao<Auction>.UpdateAsync(Auction entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

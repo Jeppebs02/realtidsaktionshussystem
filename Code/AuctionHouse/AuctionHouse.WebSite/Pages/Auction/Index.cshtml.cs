@@ -18,8 +18,9 @@ namespace AuctionHouse.WebSite.Pages.Auction
         private IWalletLogic? _walletLogic;//TODO Implement Interface instead
         private IWalletAccess _walletAccess;
         public Wallet userWallet { get; set; }
-        
-        public string username;
+
+        [BindProperty]
+        public User loggedInUser { get; set; }
 
         List<AuctionHouse.ClassLibrary.Model.Auction> auctions;
 
@@ -75,7 +76,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
             // Load the page properties
             loadPageProperties();
 
-            Bid newBid = new Bid(amount, DateTime.Now);
+            Bid newBid = new Bid(AuctionId, amount, DateTime.Now, loggedInUser);
 
             if(amount <= 0)
             {
@@ -93,7 +94,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 else 
                 { 
                     errorMessage = $"Bid with {newBid.Amount} is good.";
-                    _walletLogic.subtractBidAmountFromTotalBalance(username, newBid.Amount);
+                    _walletLogic.subtractBidAmountFromTotalBalance(loggedInUser.UserName, newBid.Amount);
                     specificAuction.AddBid(newBid);
                 }
 
@@ -112,11 +113,11 @@ namespace AuctionHouse.WebSite.Pages.Auction
             // Load the page properties
             loadPageProperties();
             // Get the auction ID from the specific auction
-            var auctionId = specificAuction.AuctionID;
+
             Console.WriteLine($"Trying to buy out auction: {specificAuction}");
 
             // Create a new bid with the buyout amount
-            var buyoutBid = new Bid(specificAuction.BuyOutPrice, DateTime.Now);
+            var buyoutBid = new Bid(AuctionId,specificAuction.BuyOutPrice, DateTime.Now, loggedInUser);
 
             Console.WriteLine($"Created bid: {buyoutBid}");
 
@@ -129,7 +130,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
             else
             {
                 specificAuction.AuctionStatus = ClassLibrary.Enum.AuctionStatus.ENDED_SOLD;
-                _walletLogic.subtractBidAmountFromTotalBalance(username, specificAuction.BuyOutPrice);
+                _walletLogic.subtractBidAmountFromTotalBalance(loggedInUser.UserName, specificAuction.BuyOutPrice);
                 specificAuction.AddBid(buyoutBid);
                 errorMessage = $"Bid with {buyoutBid.Amount} is good. You did a buyout";
             }
@@ -143,17 +144,18 @@ namespace AuctionHouse.WebSite.Pages.Auction
         {
             // We need to refetch the list of auctions when using the post method
             auctions = AuctionTestData.GetTestAuctions();
+            loggedInUser = AuctionTestData.stubUser;
             //Then we set the property specificAuction.
             specificAuction = auctions[AuctionId];
 
             bidlogic = new();
 
 
-            username = User.Identity?.Name ?? "alice";
+            loggedInUser.UserName = User.Identity?.Name ?? loggedInUser.UserName;
             _walletLogic = new WalletLogic();
             _walletAccess = new WalletAccess();
 
-            userWallet = _walletAccess.GetWalletForUser(username);
+            userWallet = _walletAccess.GetWalletForUser(loggedInUser.UserName);
 
 
 

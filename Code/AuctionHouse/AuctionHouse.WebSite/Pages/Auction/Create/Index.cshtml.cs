@@ -59,7 +59,10 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                         byte[] imageData = memoryStream.ToArray();
                         // Create the item with the provided data
                         Console.WriteLine("Creating item Object");
-                        item = new Item(itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
+
+                        //TODO: FIX THIS STUBBED SHIT
+                        User stubUser = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", new Wallet(1000, 0, 0));
+                        item = new Item(stubUser, itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
                     }
                 }
 

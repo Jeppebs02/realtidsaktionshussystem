@@ -17,7 +17,7 @@ namespace AuctionHouse.WebSite.Pages.CreateUser
 
         public async Task<IActionResult> OnPostCreateUserAsync(string userName, string password, string firstName, string lastName, string email, string phoneNumber, string address)
         {
-            User newUser = new User(userName, password, firstName, lastName, email, phoneNumber, address, new Wallet(0, 0));
+            User newUser = new User(userName, password, firstName, lastName, email, phoneNumber, address, new Wallet(0, 0,1));
 
             var JSONData = JsonConvert.SerializeObject(newUser);
 
