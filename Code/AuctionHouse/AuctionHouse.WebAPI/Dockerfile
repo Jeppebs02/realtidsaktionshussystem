@@ -12,7 +12,7 @@ EXPOSE 5001
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AuctionHouse.WebAPI/AuctionHouse.WebAPI.csproj", "AuctionHouse.WebAPI/"]
+COPY ./AuctionHouse.WebAPI/AuctionHouse.WebAPI.csproj ./AuctionHouse.WebAPI/
 RUN dotnet restore "./AuctionHouse.WebAPI/AuctionHouse.WebAPI.csproj"
 COPY . .
 WORKDIR "/src/AuctionHouse.WebAPI"

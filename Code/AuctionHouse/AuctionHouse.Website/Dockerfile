@@ -12,16 +12,16 @@ EXPOSE 5003
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AuctionHouse.WebSite/AuctionHouse.WebSite.csproj", "AuctionHouse.WebSite/"]
-RUN dotnet restore "./AuctionHouse.WebSite/AuctionHouse.WebSite.csproj"
+COPY ./AuctionHouse.WebSite/AuctionHouse.Website.csproj ./AuctionHouse.WebSite/
+RUN dotnet restore "./AuctionHouse.WebSite/AuctionHouse.Website.csproj"
 COPY . .
 WORKDIR "/src/AuctionHouse.WebSite"
-RUN dotnet build "./AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./AuctionHouse.Website.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./AuctionHouse.Website.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
