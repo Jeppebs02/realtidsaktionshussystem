@@ -10,12 +10,12 @@ namespace AuctionHouse.ClassLibrary.Model
     public class Bid
     {
         #region Constructor
-        public Bid(int auctionId, decimal amount, DateTime timeStamp, int userId, int? bidId = null)
+        public Bid(int auctionId, decimal amount, DateTime timeStamp, User user, int? bidId = null)
         {
             AuctionId = auctionId;
             Amount = amount;
             TimeStamp = timeStamp;
-            UserId = userId;
+            User = user;
             BidId = bidId;
         }
 
@@ -27,6 +27,9 @@ namespace AuctionHouse.ClassLibrary.Model
         public int AuctionId { get; set; }
         public decimal Amount { get; set; }
         public DateTime TimeStamp { get; set; }
+
+        [Required(ErrorMessage = "User is required")]
+        public User User { get; set; }
         #endregion
 
         #region Methods
