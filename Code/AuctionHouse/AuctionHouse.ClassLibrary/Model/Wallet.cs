@@ -10,16 +10,19 @@ namespace AuctionHouse.ClassLibrary.Model
     public class Wallet
     {
         #region Constructor
-        public Wallet(decimal totalBalance, decimal reservedBalance, byte[] version = null)
+        public Wallet(int walletId, decimal totalBalance, decimal reservedBalance, byte[] version = null, int userId)
         {
+            WalletId = walletId;    
             TotalBalance = totalBalance;
             ReservedBalance = reservedBalance;
             Version = version;
             Transactions = new List<Transaction>();
+            UserId = userId;
         }
         #endregion
 
         #region Properties
+        public int? WalletId { get; set; }
         public decimal TotalBalance { get; set; }
         public decimal ReservedBalance { get; set; }
 
@@ -27,6 +30,8 @@ namespace AuctionHouse.ClassLibrary.Model
         public byte[] Version { get; set; }
 
         public List<Transaction> Transactions { get; set; }
+
+        public int? UserId { get; set; }
         #endregion
 
         #region Methods
