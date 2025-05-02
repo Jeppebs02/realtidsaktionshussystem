@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using AuctionHouse.ClassLibrary.Stubs;
 using AuctionHouse.ClassLibrary.Interfaces;
 using Newtonsoft.Json;
-using AuctionHouse.DataAccessLayer;
 
 namespace AuctionHouse.WebSite.Pages.Auction
 {

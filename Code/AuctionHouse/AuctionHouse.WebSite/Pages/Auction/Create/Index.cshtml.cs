@@ -4,7 +4,7 @@ using AuctionHouse.ClassLibrary.Enum;
 using AuctionHouse.ClassLibrary.Model;
 using Newtonsoft.Json;
 using AuctionHouse.ClassLibrary.Stubs;
-using AuctionHouse.DataAccessLayer.Interfaces;
+using AuctionHouse.ClassLibrary.Interfaces;
 
 namespace AuctionHouse.WebSite.Pages.CreateAuction
 {

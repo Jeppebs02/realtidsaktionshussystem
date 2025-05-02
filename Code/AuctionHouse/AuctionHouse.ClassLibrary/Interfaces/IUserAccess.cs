@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuctionHouse.DataAccessLayer
+namespace AuctionHouse.ClassLibrary.Interfaces
 {
     public interface IUserAccess
     {
