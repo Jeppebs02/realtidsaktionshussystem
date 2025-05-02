@@ -14,7 +14,7 @@ namespace AuctionHouse.ClassLibrary.Stubs
         //Place bid might need some work in terms of subtracting from wallet 
         public Bid PlaceBid(int? auctionId, string userName, decimal amount)
         {
-            Bid bid = new Bid(amount, DateTime.Now);
+            Bid bid = new Bid(auctionId, amount, DateTime.Now);
             return bid;
         }
 
