@@ -54,7 +54,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task InsertAsync_ShouldReturnId_WhenBidIsInserted()
         {
             // Arrange  
-            User user = _userDao.GetByIdAsync<User>(1).Result;
+            User user = new User("carlCool", "123", "carl", "carlsen", "hej@.com", "12345678", "carl street", new Wallet(100, 0, 0));
             Bid bid = new Bid(1, 500, DateTime.Now, user);
             // Act  
             int id = await _bidDao.InsertAsync(bid);
