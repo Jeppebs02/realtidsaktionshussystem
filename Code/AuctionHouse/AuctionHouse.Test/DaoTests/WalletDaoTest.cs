@@ -1,4 +1,5 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
+using AuctionHouse.DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,10 +11,6 @@ namespace AuctionHouse.Test.DaoTests
     {
         private readonly IWalletDao _walletDao;
 
-        public WalletDaoTest()
-        {
-            _walletDao = new MockWalletDao(); // Replace with actual mock or test implementation  
-        }
 
         [Fact]
         public async Task GetByUserId_ShouldReturnWallet_WhenUserIdExists()
@@ -33,7 +30,8 @@ namespace AuctionHouse.Test.DaoTests
         public async Task InsertAsync_ShouldReturnId_WhenWalletIsInserted()
         {
             // Arrange  
-            Wallet wallet = new Wallet(100, 0);
+            // remember user with id 4 must have no wallet in db at the time of this test
+            Wallet wallet = new Wallet(100, 0, 4);
 
             // Act  
             int id = await _walletDao.InsertAsync(wallet);
@@ -46,7 +44,8 @@ namespace AuctionHouse.Test.DaoTests
         public async Task UpdateAsync_ShouldReturnTrue_WhenWalletIsUpdated()
         {
             // Arrange  
-            Wallet wallet = new Wallet(100, 0) { TotalBalance = 200 };
+            Wallet wallet = await _walletDao.GetByUserId(1); // Assuming user with ID 1 exists
+            wallet.TotalBalance += 50; // Update the wallet balance
 
             // Act  
             bool result = await _walletDao.UpdateAsync(wallet);
@@ -59,7 +58,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task DeleteAsync_ShouldReturnTrue_WhenWalletIsDeleted()
         {
             // Arrange  
-            Wallet wallet = new Wallet(100, 0);
+            Wallet wallet = await _walletDao.GetByUserId(2);
 
             // Act  
             bool result = await _walletDao.DeleteAsync(wallet);
@@ -75,7 +74,6 @@ namespace AuctionHouse.Test.DaoTests
             List<Wallet> wallets = await _walletDao.GetAllAsync<Wallet>();
 
             // Assert  
-            Assert.NotNull(wallets);
             Assert.NotEmpty(wallets);
         }
 
@@ -90,18 +88,9 @@ namespace AuctionHouse.Test.DaoTests
 
             // Assert  
             Assert.NotNull(wallet);
-            Assert.Equal(id, wallet.Id); // Assuming Wallet has an Id property  
+            Assert.Equal(id, wallet.WalletId); // Assuming Wallet has an Id property  
         }
     }
 
-    // Mock implementation for testing purposes  
-    public class MockWalletDao : IWalletDao
-    {
-        public Task<int> InsertAsync(Task t) => Task.FromResult(1);
-        public Task<bool> UpdateAsync(Task t) => Task.FromResult(true);
-        public Task<bool> DeleteAsync(Task t) => Task.FromResult(true);
-        public Task<List<T>> GetAllAsync<T>() => Task.FromResult(new List<T>());
-        public Task<T?> GetByIdAsync<T>(int id) => Task.FromResult(default(T));
-        public Task<Wallet> GetByUserId(int userId) => Task.FromResult(new Wallet(100, 0));
-    }
+
 }
