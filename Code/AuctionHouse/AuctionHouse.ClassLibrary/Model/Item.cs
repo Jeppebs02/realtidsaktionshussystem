@@ -22,16 +22,23 @@ namespace AuctionHouse.ClassLibrary.Model
         #endregion
 
         #region Properties
+        public int? ItemId { get; set; }
+
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(50, ErrorMessage = "Name cannot be longer than 50 characters.")]
         public string Name { get; set; }
 
-        [Required]
-        [StringLength(255, ErrorMessage = "Description cannot be longer than 500 characters.")]
+        [Required(ErrorMessage = "´Description is required")]
+        [StringLength(255, ErrorMessage = "Description cannot be longer than 255 characters.")]
         public string Description { get; set; }
 
+        [Required(ErrorMessage = "An Category must be chosen")]
         public Category Category { get; set; }
 
+        [Required(ErrorMessage = "An Image must be uploaded")]
         public byte[] ImageData { get; set; }
 
+        [Required(ErrorMessage = "An Item Status must be initated")]
         public ItemStatus ItemStatus { get; set; }
         #endregion
     }
