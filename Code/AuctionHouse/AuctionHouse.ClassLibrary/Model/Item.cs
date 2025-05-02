@@ -11,8 +11,9 @@ namespace AuctionHouse.ClassLibrary.Model
     public class Item
     {
         #region Constructor
-        public Item(string name, string description, Category category, byte[] imageData, ItemStatus itemStatus)
+        public Item(User user, string name, string description, Category category, byte[] imageData, ItemStatus itemStatus)
         {
+            User = user;
             Name = name;
             Description = description;
             Category = category;
@@ -40,6 +41,9 @@ namespace AuctionHouse.ClassLibrary.Model
 
         [Required(ErrorMessage = "An Item Status must be initated")]
         public ItemStatus ItemStatus { get; set; }
+
+        [Required(ErrorMessage = "An User must be chosen")]
+        public User User { get; set; }
         #endregion
     }
 }
