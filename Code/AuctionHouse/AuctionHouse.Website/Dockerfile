@@ -2,9 +2,9 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 5002
-EXPOSE 5003
+# EXPOSE 5003 # Only if you configure and use HTTPS within the container
 
-# Use the SDK image for building
+# Use the SDK image for building and publishing
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -12,37 +12,30 @@ WORKDIR /src
 # --- Step 1: Copy ONLY the .csproj files needed for restore ---
 # Copy the main project file
 COPY ["AuctionHouse.WebSite/AuctionHouse.WebSite.csproj", "AuctionHouse.WebSite/"]
-# Copy project files for ALL dependencies (adjust paths as needed)
+# Copy project file for its direct dependency
 COPY ["AuctionHouse.ClassLibrary/AuctionHouse.ClassLibrary.csproj", "AuctionHouse.ClassLibrary/"]
-COPY ["AuctionHouse.DataAccessLayer/AuctionHouse.DataAccessLayer.csproj", "AuctionHouse.DataAccessLayer/"]
-# IMPORTANT: Do NOT copy the AuctionHouse.WebAPI.csproj here if WebSite doesn't directly reference WebAPI code.
-# If WebSite *does* reference WebAPI (unlikely for a front-end), you would copy it too.
 
 # --- Step 2: Restore dependencies ---
-# Restore only the main project; it will restore its dependencies transitively
+# Restore the main project; it restores ClassLibrary transitively
 RUN dotnet restore "AuctionHouse.WebSite/AuctionHouse.WebSite.csproj"
 
-# --- Step 3: Copy the source code for the project and its dependencies ---
+# --- Step 3: Copy ALL necessary source code ---
 # Copy the main project's code
 COPY ["AuctionHouse.WebSite/", "AuctionHouse.WebSite/"]
-# Copy the code for its dependencies
+# Copy the code for its direct dependency
 COPY ["AuctionHouse.ClassLibrary/", "AuctionHouse.ClassLibrary/"]
-COPY ["AuctionHouse.DataAccessLayer/", "AuctionHouse.DataAccessLayer/"]
-# Again, do NOT copy the WebAPI source code unless WebSite directly depends on it.
 
-# --- Step 4: Build ---
-# Set the working directory to the project being built
+# --- Step 4: Build and Publish ---
+# Set WORKDIR to the project to be published
 WORKDIR "/src/AuctionHouse.WebSite"
-RUN dotnet build "AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
+# Run publish - it handles the build implicitly and puts ALL necessary output
+# (including ClassLibrary.dll) correctly into /app/publish
+RUN dotnet publish "AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false --no-restore
 
-# --- Step 5: Publish ---
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-# Publish from the project directory
-RUN dotnet publish "AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false --no-build
-
-# --- Step 6: Final runtime image ---
+# --- Step 5: Final runtime image ---
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+# Copy the successfully published output from the 'build' stage
+COPY --from=build /app/publish .
+# Ensure this DLL name matches your project's output Assembly Name
 ENTRYPOINT ["dotnet", "AuctionHouse.WebSite.dll"]
