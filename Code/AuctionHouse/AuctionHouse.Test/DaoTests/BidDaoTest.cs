@@ -11,8 +11,9 @@ namespace AuctionHouse.Test.DaoTests
     public class BidDaoTest
     {
         private readonly IBidDao _bidDao;
+        private readonly IUserDao _userDao;
 
-        
+
 
         [Fact]
         public async Task GetAllAsync_ShouldReturnListOfBids()
@@ -53,7 +54,8 @@ namespace AuctionHouse.Test.DaoTests
         public async Task InsertAsync_ShouldReturnId_WhenBidIsInserted()
         {
             // Arrange  
-            Bid bid = new Bid(1, 500, DateTime.Now, 1);
+            User user = _userDao.GetByIdAsync<User>(1).Result;
+            Bid bid = new Bid(1, 500, DateTime.Now, user);
             // Act  
             int id = await _bidDao.InsertAsync(bid);
             // Assert  
