@@ -1,6 +1,7 @@
 ﻿using AuctionHouse.ClassLibrary.Enum;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +25,17 @@ namespace AuctionHouse.ClassLibrary.Model
         #endregion 
 
         #region Properties
+        public int? TransActionId { get; set; }
 
+        [Required(ErrorMessage = "TransactionType is required")]
         public TransactionType Type { get; set; }
+
+        [Required(ErrorMessage = "Amount is required")]
         public decimal Amount { get; set; }
+
+        [Required(ErrorMessage = "TimeStamp is required")]
         public DateTime TimeStamp { get; set; }
+
         public string? Description { get; set; }
 
         #endregion
