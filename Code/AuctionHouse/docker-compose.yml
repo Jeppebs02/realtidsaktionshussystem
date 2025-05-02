@@ -9,6 +9,7 @@ services:
       - "5000:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - DatabaseConnectionString = Server=mssql.jeppebs.xyz;Database=AuctionHouse;User Id=sa;Password=Lillepip10!;
     working_dir: /app
     restart: unless-stopped
 
