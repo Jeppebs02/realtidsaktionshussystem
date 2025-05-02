@@ -1,29 +1,47 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
+# Use the ASP.NET runtime image for the final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 5002
 EXPOSE 5003
 
-
-# This stage is used to build the service project
+# Use the SDK image for building
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ./AuctionHouse.WebSite/AuctionHouse.Website.csproj ./AuctionHouse.WebSite/
-RUN dotnet restore "./AuctionHouse.WebSite/AuctionHouse.Website.csproj"
-COPY . .
-WORKDIR "/src/AuctionHouse.WebSite"
-RUN dotnet build "./AuctionHouse.Website.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# --- Step 1: Copy ONLY the .csproj files needed for restore ---
+# Copy the main project file
+COPY ["AuctionHouse.WebSite/AuctionHouse.WebSite.csproj", "AuctionHouse.WebSite/"]
+# Copy project files for ALL dependencies (adjust paths as needed)
+COPY ["AuctionHouse.ClassLibrary/AuctionHouse.ClassLibrary.csproj", "AuctionHouse.ClassLibrary/"]
+COPY ["AuctionHouse.DataAccessLayer/AuctionHouse.DataAccessLayer.csproj", "AuctionHouse.DataAccessLayer/"]
+# IMPORTANT: Do NOT copy the AuctionHouse.WebAPI.csproj here if WebSite doesn't directly reference WebAPI code.
+# If WebSite *does* reference WebAPI (unlikely for a front-end), you would copy it too.
+
+# --- Step 2: Restore dependencies ---
+# Restore only the main project; it will restore its dependencies transitively
+RUN dotnet restore "AuctionHouse.WebSite/AuctionHouse.WebSite.csproj"
+
+# --- Step 3: Copy the source code for the project and its dependencies ---
+# Copy the main project's code
+COPY ["AuctionHouse.WebSite/", "AuctionHouse.WebSite/"]
+# Copy the code for its dependencies
+COPY ["AuctionHouse.ClassLibrary/", "AuctionHouse.ClassLibrary/"]
+COPY ["AuctionHouse.DataAccessLayer/", "AuctionHouse.DataAccessLayer/"]
+# Again, do NOT copy the WebAPI source code unless WebSite directly depends on it.
+
+# --- Step 4: Build ---
+# Set the working directory to the project being built
+WORKDIR "/src/AuctionHouse.WebSite"
+RUN dotnet build "AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
+
+# --- Step 5: Publish ---
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AuctionHouse.Website.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Publish from the project directory
+RUN dotnet publish "AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false --no-build
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+# --- Step 6: Final runtime image ---
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
