@@ -10,7 +10,7 @@ namespace AuctionHouse.ClassLibrary.Enum
     {
         WITHDRAWAL,
         DEPOSIT,
-        ACTION_PAYMENT,
+        AUCTION_PAYMENT,
         AUCTION_PAYOUT,
         FEE
     }

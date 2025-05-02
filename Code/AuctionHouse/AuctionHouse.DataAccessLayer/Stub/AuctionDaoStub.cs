@@ -16,7 +16,22 @@ namespace AuctionHouse.DataAccessLayer.Stub
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<Auction>> GetAllActiveAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<T>> GetAllAsync<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Auction>> GetAllByBidsAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Auction>> GetAllByUserIDAsync(int userId)
         {
             throw new NotImplementedException();
         }
@@ -27,6 +42,11 @@ namespace AuctionHouse.DataAccessLayer.Stub
         }
 
         public IEnumerable<Auction> GetWithinDateRange(DateTime startDate, DateTime endDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Auction>> GetWithinDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }

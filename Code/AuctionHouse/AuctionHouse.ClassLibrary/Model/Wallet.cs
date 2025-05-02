@@ -10,9 +10,9 @@ namespace AuctionHouse.ClassLibrary.Model
     public class Wallet
     {
         #region Constructor
-        public Wallet(int walletId, decimal totalBalance, decimal reservedBalance, byte[] version = null, int userId)
+        public Wallet(int walletId, decimal totalBalance, decimal reservedBalance, int userId, byte[]? version = null)
         {
-            WalletId = walletId;    
+            WalletId = walletId;
             TotalBalance = totalBalance;
             ReservedBalance = reservedBalance;
             Version = version;
