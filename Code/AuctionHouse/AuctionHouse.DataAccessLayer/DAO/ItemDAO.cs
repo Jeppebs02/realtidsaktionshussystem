@@ -17,6 +17,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public ItemDAO(IDbConnection dbConnection)
         {
+            // This is DI'ed into the constructor.
             _dbConnection = dbConnection;
         }
 

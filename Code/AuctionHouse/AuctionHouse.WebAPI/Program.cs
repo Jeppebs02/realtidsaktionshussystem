@@ -16,6 +16,12 @@ builder.Services.AddSwaggerGen();
 
 //This will DI (Dependency Injection) the IDbConnection into the controllers.
 //Whenever a controller asks for IDbConnection, it will get an instance of SqlConnection.
+// sp stands for service provider, which is a built-in DI container in .NET Core.
+// You can read about DI here https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection
+// Or ask chatgpt to explain it to you.
+
+// But essentially, builder.Services is a collection (IServiceCollection) of services that you can register.
+// A service can be anything, its not a specific type.
 builder.Services.AddScoped<IDbConnection>(sp =>
 {
     // Get the connection string from the environment variable we made in docker-compose.yml :)
@@ -25,8 +31,10 @@ builder.Services.AddScoped<IDbConnection>(sp =>
     return new SqlConnection(connectionString ?? throw new InvalidOperationException("Missing DB connection string"));
 });
 
-//This will DI (Dependency Injection) the DAO classes into the controllers.
-//Whenever a controller asks for IItemDao, it will get an instance of ItemDAO.
+//This will DI (Dependency Inject) the DAO classes into the controllers.
+//Whenever a controller (or anyone else) asks for IItemDao, it will get an instance of ItemDAO.
+// Scoped means that a new instance of the service is created for each (http request in our case) request.
+// Remember you could also request it some other way, like in a console app.
 builder.Services.AddScoped<IItemDao, ItemDAO>();
 
 var app = builder.Build();

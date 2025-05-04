@@ -16,6 +16,7 @@ namespace AuctionHouse.WebAPI.Controllers
 
         public ItemController(IItemDao itemDao)
         {
+            // This is where we inject the IItemDao into the controller
             _itemDao = itemDao;
         }
 
