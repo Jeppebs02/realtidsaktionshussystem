@@ -9,7 +9,9 @@ namespace AuctionHouse.ClassLibrary.Model
 {
     public class Wallet
     {
-        #region Constructor
+        #region Constructors
+        // Blank constructor required by Dapper
+        public Wallet() { }
         public Wallet(decimal totalBalance, decimal reservedBalance, int userId, byte[]? version = null, int? walletId = null)
         {
             WalletId = walletId;

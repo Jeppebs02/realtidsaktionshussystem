@@ -12,7 +12,9 @@ namespace AuctionHouse.ClassLibrary.Model
     public class Auction
     {
 
-        #region Constructor
+        #region Constructors
+        // Blank constructor required by Dapper
+        public Auction() { }
         public Auction(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, bool notify, Item item, int auctionId = -1, byte[] version = null)
         {
             StartTime=startTime;
