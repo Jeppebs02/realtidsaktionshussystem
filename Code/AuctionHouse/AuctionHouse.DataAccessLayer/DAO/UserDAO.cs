@@ -25,7 +25,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
     
         public async Task<bool> DeleteAsync(User entity)
         {
-           const string sql = "DELETE FROM [User] WHERE userId = @userId";
+           const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @userId";
            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { userId = entity.userId });
 
 
@@ -69,6 +69,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 phoneNumber = entity.PhoneNumber,
                 address = entity.Address
             });
+
+            Wallet wallet = new Wallet(0, 0, userId);
+            WalletDAO walletDAO = new WalletDAO(_dbConnection);
+            await walletDAO.InsertAsync(wallet);
             return  Task.FromResult(userId).Result;
         }
 
