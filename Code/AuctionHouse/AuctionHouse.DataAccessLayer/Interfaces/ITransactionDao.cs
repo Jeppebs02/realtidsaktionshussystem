@@ -18,6 +18,9 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
         Task<IEnumerable<Transaction>> GetAllByWalletId(int walletId);
 
 
+        Task<bool> DeleteByWalletId(int walletId);
+
+
 
     }
 }
