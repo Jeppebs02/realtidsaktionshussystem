@@ -1,6 +1,7 @@
 ﻿using AuctionHouse.DataAccessLayer.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using AuctionHouse.ClassLibrary.Model;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,20 +35,20 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // GET api/<ItemController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<Item> Get(int id)
         {
-            return "value";
+            return await _itemDao.GetByIdAsync<Item>(id);
         }
 
         // POST api/<ItemController>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]Item item)
         {
         }
 
         // PUT api/<ItemController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]Item item)
         {
         }
 
