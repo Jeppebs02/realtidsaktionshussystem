@@ -28,7 +28,7 @@ namespace AuctionHouse.Test.DaoTests
 
             
             _output.WriteLine($"Test Constructor: Retrieved Connection String: '{connectionString ?? "NULL"}'");
-
+                
             if (string.IsNullOrEmpty(connectionString))
             {
                 _output.WriteLine("Test Constructor: FATAL - Connection string is null or empty."); // Log before throwing
