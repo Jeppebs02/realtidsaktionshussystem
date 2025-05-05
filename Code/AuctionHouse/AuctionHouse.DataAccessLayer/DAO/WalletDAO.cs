@@ -21,53 +21,54 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         //STOLE THIS FROM JEPPE, WHO STOLE IT FROM DAPPER
 
-        public Task<bool> DeleteAsync(Wallet entity)
+        public async Task<bool> DeleteAsync(Wallet entity)
         {
             const string sql = "DELETE FROM Wallet WHERE WalletId = @WalletId";
 
             TransactionDAO transactionDao = new TransactionDAO(_dbConnection);
 
             // Delete all transactions associated with the wallet
-            transactionDao.DeleteByWalletId((int)entity.WalletId);
+            await transactionDao.DeleteByWalletId((int)entity.WalletId);
 
-            int rowsAffected = _dbConnection.Execute(sql, new { entity.WalletId });
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { entity.WalletId });
 
-            return Task.FromResult(rowsAffected > 0);
+            return rowsAffected > 0;
         }
 
-        public Task<List<T>> GetAllAsync<T>()
+        public async Task<List<T>> GetAllAsync<T>()
         {
             const string sql = "SELECT * FROM Wallet";
 
-            var wallets = _dbConnection.Query<T>(sql).ToList();
+            // Await the result of QueryAsync and then convert it to a list
+            var wallets = (await _dbConnection.QueryAsync<T>(sql)).ToList();
 
-            return Task.FromResult(wallets);
+            return wallets;
         }
 
-        public Task<T?> GetByIdAsync<T>(int id)
+        public async Task<T?> GetByIdAsync<T>(int id)
         {
             const string sql = "SELECT * FROM Wallet WHERE WalletId = @WalletId";
 
-            var wallet = _dbConnection.QuerySingleOrDefault<T>(sql, new { WalletId = id });
+            var wallet = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { WalletId = id });
 
-            return Task.FromResult(wallet);
+            return wallet;
         }
 
-        public Task<Wallet> GetByUserId(int userId)
+        public async Task<Wallet> GetByUserId(int userId)
         {
             const string sql = "SELECT * FROM Wallet WHERE UserId = @UserId";
 
-            var wallet = _dbConnection.QuerySingleOrDefault<Wallet>(sql, new { UserId = userId });
+            var wallet = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
 
-            return Task.FromResult(wallet);
+            return wallet;
         }
 
-        public Task<int> InsertAsync(Wallet entity)
+        public async Task<int> InsertAsync(Wallet entity)
         {
             const string sql = "INSERT INTO Wallet (TotalBalance, ReservedBalance, UserId) " +
                 "VALUES (@TotalBalance, @ReservedBalance, @UserId); SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            var walletId = _dbConnection.QuerySingle<int>(sql, new
+            var walletId = await _dbConnection.QuerySingleAsync<int>(sql, new
             {
                 entity.TotalBalance,
                 entity.ReservedBalance,
@@ -76,22 +77,22 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             entity.WalletId = walletId;
 
-            return Task.FromResult(walletId);
+            return walletId;
         }
 
-        public Task<bool> UpdateAsync(Wallet entity)
+        public async Task<bool> UpdateAsync(Wallet entity)
         {
             const string sql = "UPDATE Wallet SET TotalBalance = @TotalBalance, ReservedBalance = @ReservedBalance " +
                 "WHERE WalletId = @WalletId";
 
-            int rowsAffected = _dbConnection.Execute(sql, new
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new
             {
                 entity.TotalBalance,
                 entity.ReservedBalance,
                 entity.WalletId
             });
 
-            return Task.FromResult(rowsAffected > 0);
+            return rowsAffected > 0;
         }
     }
 }
