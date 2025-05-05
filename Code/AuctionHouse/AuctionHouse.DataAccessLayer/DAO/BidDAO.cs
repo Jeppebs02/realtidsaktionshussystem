@@ -20,7 +20,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             _dbConnection = dbConnection;
         }
 
-        public Task<bool> DeleteAsync(Bid entity)
+        public async Task<bool> DeleteAsync(Bid entity)
         {
             throw new NotImplementedException();
         }
@@ -74,9 +74,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return 0;
         }
 
-        public Task<bool> UpdateAsync(Bid entity)
+        public async Task<bool> UpdateAsync(Bid entity)
         {
-            throw new NotImplementedException();
+            const string sql = "UPDATE Bid SET AuctionId = @AuctionId, Amount = @Amount, TimeStamp = @TimeStamp WHERE BidId = @BidId;";
+            var result = await _dbConnection.ExecuteAsync(sql, new { entity.AuctionId, entity.Amount, entity.TimeStamp, entity.BidId });
+            return result > 0;
         }
     }
 }
