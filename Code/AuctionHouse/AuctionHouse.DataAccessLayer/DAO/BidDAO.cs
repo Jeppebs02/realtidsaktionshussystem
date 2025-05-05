@@ -1,6 +1,5 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
-using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,40 +9,24 @@ using System.Threading.Tasks;
 
 namespace AuctionHouse.DataAccessLayer.DAO
 {
-    public class TransactionDAO : ITransactionDao
+    public class BidDAO : IBidDao
     {
-
 
         private readonly IDbConnection _dbConnection;
 
-        public TransactionDAO(IDbConnection dbConnection)
+        public BidDAO(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
 
-        public Task<bool> DeleteAsync(Transaction entity)
+        public Task<bool> DeleteAsync(Bid entity)
         {
             throw new NotImplementedException();
-        }
-
-        public async Task<bool> DeleteByWalletId(int walletId)
-        {
-            const string sql = "DELETE FROM [Transaction] WHERE WalletId = @WalletId";
-
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { WalletId = walletId });
-
-            return rowsAffected > 0;
-
         }
 
         public Task<List<T>> GetAllAsync<T>()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Transaction>> GetAllByWalletId(int walletId)
-        {
-            throw new NotImplementedException();
+            
         }
 
         public Task<T?> GetByIdAsync<T>(int id)
@@ -51,12 +34,17 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
 
-        public Task<int> InsertAsync(Transaction entity)
+        public Task<Bid> GetLatestByAuctionId(int auctionId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateAsync(Transaction entity)
+        public Task<int> InsertAsync(Bid entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateAsync(Bid entity)
         {
             throw new NotImplementedException();
         }

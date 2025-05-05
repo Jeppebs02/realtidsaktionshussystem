@@ -9,7 +9,7 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
     public interface IGenericDao<T>
     {
         Task<int> InsertAsync(T entity);
-        Task<bool>UpdateAsync(T entity);
+        Task<bool> UpdateAsync(T entity);
         Task<bool> DeleteAsync(T entity);
         Task<List<T>> GetAllAsync<T>();
         Task<T?> GetByIdAsync<T>(int id);
