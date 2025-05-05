@@ -27,35 +27,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<T>> GetAllAsync<T>()
         {
-            const string sql = @"SELECT 
-                                b.BidId,
-                                b.AuctionId,
-                                b.Amount,
-                                b.TimeStamp,
-                                b.UserId AS Bid_UserId,
-                                u.UserId AS User_UserId,
-                                u.UserName,
-                                u.FirstName,
-                                u.LastName,
-                                u.Email,
-                                u.PhoneNumber,
-                                u.Address
-                            FROM dbo.Bid b
-                            JOIN dbo.[User] u ON b.UserId = u.UserId;
-                            ";
-
-            // Await the result of QueryAsync and then convert it to a list
-
-            var bids = (await _dbConnection.QueryAsync<T, User, T>
-                (sql, (bid, user) =>
-                {
-                    // Assuming T is Bid
-                    if (bid is Bid b)
-                    {
-                        b.User = user;
-                    }
-                    return bid;
-                }, splitOn: "Bid_UserId")).ToList();
+            
+        }
 
             return bids;
         }
