@@ -36,6 +36,7 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 // Scoped means that a new instance of the service is created for each (http request in our case) request.
 // Remember you could also request it some other way, like in a console app.
 builder.Services.AddScoped<IItemDao, ItemDAO>();
+builder.Services.AddScoped<IUserDao, UserDAO>();
 // TODO: Add the other DAOs here
 
 var app = builder.Build();
