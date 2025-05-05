@@ -37,12 +37,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<T>> GetAllAsync<T>()
         {
-            const string sql = "SELECT * FROM Wallet";
+            const string sql = @"SELECT
+                            WalletId,
+                            TotalBalance,
+                            ReservedBalance,
+                            Version,
+                            UserId
+                            FROM dbo.Wallet;";
 
             // Await the result of QueryAsync and then convert it to a list
-            var wallets = (await _dbConnection.QueryAsync<T>(sql)).ToList();
+            var wallets = await _dbConnection.QueryAsync<T>(sql);
 
-            return wallets;
+            return wallets.ToList();
         }
 
         public async Task<T?> GetByIdAsync<T>(int id)

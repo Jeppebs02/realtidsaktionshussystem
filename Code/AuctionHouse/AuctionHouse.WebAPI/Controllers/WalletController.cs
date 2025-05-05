@@ -26,6 +26,13 @@ namespace AuctionHouse.WebAPI.Controllers
             return await _walletDao.GetAllAsync<Wallet>();
         }
 
+        // GET api/<WalletController>/test
+        [HttpGet("test")]
+        public string test()
+        {
+            return "Endpoint working";
+        }
+
         // GET api/<WalletController>/5
         [HttpGet("{id}")]
         public async Task<Wallet> Get(int id)
