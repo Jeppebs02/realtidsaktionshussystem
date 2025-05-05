@@ -19,34 +19,37 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IEnumerable<User>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _userDao.GetAllAsync<User>();
         }
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<User> Get(int id)
         {
-            return "value";
+            return await _userDao.GetByIdAsync<User>(id);
         }
 
         // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<int> Post([FromBody] User user)
         {
+            return await _userDao.InsertAsync(user);
         }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<bool> Put(int id, [FromBody] User user)
         {
+            return await _userDao.UpdateAsync(user);
         }
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<bool> Delete(User user)
         {
+            return await _userDao.DeleteAsync(user);
         }
     }
 }

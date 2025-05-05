@@ -42,20 +42,23 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // POST api/<ItemController>
         [HttpPost]
-        public void Post([FromBody]Item item)
+        public async Task<int> Post([FromBody]Item item)
         {
+            return await _itemDao.InsertAsync(item);
         }
 
         // PUT api/<ItemController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Item item)
+        public async Task<bool> Put(int id, [FromBody]Item item)
         {
+            return await _itemDao.UpdateAsync(item);
         }
 
         // DELETE api/<ItemController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<bool> Delete([FromBody]Item item)
         {
+            return await _itemDao.DeleteAsync(item);
         }
     }
 }
