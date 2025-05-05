@@ -12,6 +12,11 @@ namespace AuctionHouse.Test.DaoTests
     {
         private readonly IUserDao _userDao;
 
+        public UserDaoTest(IUserDao userDao)
+        {
+            _userDao = userDao;
+        }
+
         [Fact]
         public async Task GetById_ShouldReturnUser_WhenUserIdExists()
         {

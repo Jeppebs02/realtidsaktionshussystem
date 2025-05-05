@@ -23,40 +23,74 @@ namespace AuctionHouse.DataAccessLayer.DAO
         }
         
     
-        Task<bool> IGenericDao<User>.DeleteAsync(User entity)
+        public async Task<bool> DeleteAsync(User entity)
         {
            const string sql = "DELETE FROM [User] WHERE userId = @userId";
-           int rowsAffected = _dbConnection.Execute(sql, new { userId = entity.userId });
+           int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { userId = entity.userId });
 
 
-            return Task.FromResult(rowsAffected > 0);
+            return rowsAffected > 0;
         }
 
-        Task<List<T>> IGenericDao<User>.GetAllAsync<T>()
+        public async Task<List<T>> GetAllAsync<T>()
         {
             const string sql = "SELECT * FROM [User]";
 
-            var users = _dbConnection.Query<User>(sql);
+            var users = await _dbConnection.QueryAsync<User>(sql);
 
-            return Task.FromResult(users.ToList() as List<T>);
+            return users.ToList() as List<T>;
 
         }
 
-        Task<T?> IGenericDao<User>.GetByIdAsync<T>(int id) where T : default
+         public async Task<T?> GetByIdAsync<T>(int id)
         {
             const string sql = "SELECT * FROM [User] WHERE userId = @userId";
 
-            throw new NotImplementedException();
+            var user = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { userId = id });
+
+            return user;
         }
 
-        Task<int> IGenericDao<User>.InsertAsync(User entity)
+         public async Task<int> InsertAsync(User entity)
         {
-            throw new NotImplementedException();
+            const string sql = "INSERT INTO [User] (UserId, CantBuy, CantSell, UserName, PasswordHash, RegistrationDate, FirstName, LastName, Email, PhoneNumber, Address)" +
+                "VALUES (@userId, @cantBuy, @cantSell, @userName, @passwordHash, @registrationDate, @firstName, @lastName, @email, @phoneNumber, @address); SELECT CAST(SCOPE_IDENTITY() as int);";
+
+            var userId  = await _dbConnection.QuerySingleOrDefaultAsync<int>(sql, new
+            {
+                userId = entity.userId,
+                cantBuy = entity.CantBuy,
+                cantSell = entity.CantSell,
+                userName = entity.UserName,
+                passwordHash = entity.Password,
+                registrationDate = entity.RegistrationDate,
+                firstName = entity.FirstName,
+                lastName = entity.LastName,
+                email = entity.Email,
+                phoneNumber = entity.PhoneNumber,
+                address = entity.Address
+            });
+            return  Task.FromResult(userId).Result;
         }
 
-        Task<bool> IGenericDao<User>.UpdateAsync(User entity)
+         public async Task<bool> UpdateAsync(User entity)
         {
-            throw new NotImplementedException();
+            const string sql = "UPDATE [User] SET CantBuy = @cantBuy, CantSell = @cantSell, UserName = @userName, PasswordHash = @passwordHash, RegistrationDate = @registrationDate, FirstName = @firstName, LastName = @lastName, Email = @email, PhoneNumber = @phoneNumber, Address = @address WHERE userId = @userId";
+            int rowsaffected = await _dbConnection.ExecuteAsync(sql, new
+            {
+                cantBuy = entity.CantBuy,
+                cantSell = entity.CantSell,
+                userName = entity.UserName,
+                passwordHash = entity.Password,
+                registrationDate = entity.RegistrationDate,
+                firstName = entity.FirstName,
+                lastName = entity.LastName,
+                email = entity.Email,
+                phoneNumber = entity.PhoneNumber,
+                address = entity.Address
+            });
+
+            return Task.FromResult(rowsaffected > 0).Result;
         }
     }
 
