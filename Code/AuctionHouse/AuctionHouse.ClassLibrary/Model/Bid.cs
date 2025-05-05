@@ -9,7 +9,9 @@ namespace AuctionHouse.ClassLibrary.Model
 {
     public class Bid
     {
-        #region Constructor
+        #region Constructors
+        // Blank constructor required by Dapper
+        public Bid() { }
         public Bid(int auctionId, decimal amount, DateTime timeStamp, User user, int? bidId = null)
         {
             AuctionId = auctionId;

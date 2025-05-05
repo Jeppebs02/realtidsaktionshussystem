@@ -10,7 +10,10 @@ namespace AuctionHouse.ClassLibrary.Model
 {
     public class Item
     {
-        #region Constructor
+        #region Constructors
+
+        // Blank constructor requied by Dapper
+        public Item() { }
         public Item(User user, string name, string description, Category category, byte[] imageData, ItemStatus itemStatus)
         {
             User = user;

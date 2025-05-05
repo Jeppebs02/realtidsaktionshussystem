@@ -12,7 +12,9 @@ namespace AuctionHouse.ClassLibrary.Model
     {
 
 
-     #region Constructors
+        #region Constructors
+        // Blank constructor required by Dapper
+        public Transaction() { }
 
         public Transaction (TransactionType type, decimal amount, DateTime timeStamp, string? description)
         {
