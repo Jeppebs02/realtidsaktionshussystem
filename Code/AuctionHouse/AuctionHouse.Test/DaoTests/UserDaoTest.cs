@@ -1,7 +1,10 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
+using AuctionHouse.DataAccessLayer.DAO;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +14,15 @@ namespace AuctionHouse.Test.DaoTests
     public class UserDaoTest
     {
         private readonly IUserDao _userDao;
+        private readonly IDbConnection _connection;
 
-        public UserDaoTest(IUserDao userDao)
+        public UserDaoTest()
         {
-            _userDao = userDao;
+            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
+
+            _connection = new SqlConnection(connectionString);
+            _userDao = new UserDAO(_connection);
+
         }
 
         [Fact]
@@ -34,6 +42,7 @@ namespace AuctionHouse.Test.DaoTests
         {
             // Arrange  
             User user = await _userDao.GetByIdAsync<User>(1);   // Assuming user with ID 1 exists
+            Console.WriteLine(user.Password);
             user.FirstName = "Zac"; // Update the user's name
 
             // Act  

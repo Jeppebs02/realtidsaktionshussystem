@@ -18,8 +18,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public UserDAO(IDbConnection dbConnection)
         {
-            // This is DI'ed into the constructor.
-            _dbConnection = dbConnection;
+           
+            _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
         }
         
     
@@ -53,12 +53,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
          public async Task<int> InsertAsync(User entity)
         {
-            const string sql = "INSERT INTO [User] (UserId, CantBuy, CantSell, UserName, PasswordHash, RegistrationDate, FirstName, LastName, Email, PhoneNumber, Address)" +
-                "VALUES (@userId, @cantBuy, @cantSell, @userName, @passwordHash, @registrationDate, @firstName, @lastName, @email, @phoneNumber, @address); SELECT CAST(SCOPE_IDENTITY() as int);";
+            const string sql = "INSERT INTO [User] (CantBuy, CantSell, UserName, PasswordHash, RegistrationDate, FirstName, LastName, Email, PhoneNumber, Address)" +
+                "VALUES (@cantBuy, @cantSell, @userName, @passwordHash, @registrationDate, @firstName, @lastName, @email, @phoneNumber, @address); SELECT CAST(SCOPE_IDENTITY() as int);";
 
             var userId  = await _dbConnection.QuerySingleOrDefaultAsync<int>(sql, new
             {
-                userId = entity.userId,
                 cantBuy = entity.CantBuy,
                 cantSell = entity.CantSell,
                 userName = entity.UserName,
@@ -75,13 +74,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
          public async Task<bool> UpdateAsync(User entity)
         {
-            const string sql = "UPDATE [User] SET CantBuy = @cantBuy, CantSell = @cantSell, UserName = @userName, PasswordHash = @passwordHash, RegistrationDate = @registrationDate, FirstName = @firstName, LastName = @lastName, Email = @email, PhoneNumber = @phoneNumber, Address = @address WHERE userId = @userId";
+            const string sql = "UPDATE [User] SET CantBuy = @cantBuy, CantSell = @cantSell, UserName = @userName, RegistrationDate = @registrationDate, FirstName = @firstName, LastName = @lastName, Email = @email, PhoneNumber = @phoneNumber, Address = @address WHERE userId = @userId";
             int rowsaffected = await _dbConnection.ExecuteAsync(sql, new
             {
+                userId = entity.userId,
                 cantBuy = entity.CantBuy,
                 cantSell = entity.CantSell,
                 userName = entity.UserName,
-                passwordHash = entity.Password,
                 registrationDate = entity.RegistrationDate,
                 firstName = entity.FirstName,
                 lastName = entity.LastName,
