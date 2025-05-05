@@ -1,5 +1,6 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,24 +25,79 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
 
-        public Task<List<T>> GetAllAsync<T>()
+        public async Task<List<T>> GetAllAsync<T>()
         {
-            
+            const string sql = @"SELECT 
+                                b.BidId,
+                                b.AuctionId,
+                                b.Amount,
+                                b.TimeStamp,
+                                b.UserId AS Bid_UserId,
+                                u.UserId AS User_UserId,
+                                u.UserName,
+                                u.FirstName,
+                                u.LastName,
+                                u.Email,
+                                u.PhoneNumber,
+                                u.Address
+                            FROM dbo.Bid b
+                            JOIN dbo.[User] u ON b.UserId = u.UserId;
+                            ";
+
+            // Await the result of QueryAsync and then convert it to a list
+
+            var bids = (await _dbConnection.QueryAsync<T, User, T>
+                (sql, (bid, user) =>
+                {
+                    // Assuming T is Bid
+                    if (bid is Bid b)
+                    {
+                        b.User = user;
+                    }
+                    return bid;
+                }, splitOn: "Bid_UserId")).ToList();
+
+            return bids;
         }
 
-        public Task<T?> GetByIdAsync<T>(int id)
+        public async Task<T?> GetByIdAsync<T>(int id)
         {
-            throw new NotImplementedException();
+            const string sql = @"SELECT
+                                b.BidId,
+                                b.AuctionId,
+                                b.Amount,
+                                b.TimeStamp,
+                                b.UserId        AS Bid_UserId,
+                                u.UserId        AS User_UserId,
+                                u.UserName,
+                                u.FirstName,
+                                u.LastName,
+                                u.Email,
+                                u.PhoneNumber,
+                                u.[Address]     
+                            FROM dbo.Bid       b
+                            JOIN dbo.[User]  u
+                                ON b.UserId = u.UserId
+                            WHERE b.BidId = @BidId;";
+
+            var bid = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { BidId = id });
+
+            return bid;
         }
 
-        public Task<Bid> GetLatestByAuctionId(int auctionId)
+        public async Task<Bid> GetLatestByAuctionId(int auctionId)
         {
-            throw new NotImplementedException();
+            const string sql = "SELECT * FROM Bid WHERE AuctionId = @AuctionId ORDER BY Amount DESC LIMIT 1";
+
+            var bid = await _dbConnection.QuerySingleOrDefaultAsync<Bid>(sql, new { AuctionId = auctionId });
+
+            return bid;
         }
 
-        public Task<int> InsertAsync(Bid entity)
+        public async Task<int> InsertAsync(Bid entity)
         {
-            throw new NotImplementedException();
+            const string sql = "INSERT INTO Bid (AuctionId, Amount, TimeStamp, UserId) VALUES (@AuctionId, @Amount, @TimeStamp, @UserId);" +
+                "SELECT CAST(SCOPE_IDENTITY() as int);";
         }
 
         public Task<bool> UpdateAsync(Bid entity)

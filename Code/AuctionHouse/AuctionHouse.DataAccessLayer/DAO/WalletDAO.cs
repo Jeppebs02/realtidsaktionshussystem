@@ -68,6 +68,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "INSERT INTO Wallet (TotalBalance, ReservedBalance, UserId) " +
                 "VALUES (@TotalBalance, @ReservedBalance, @UserId); SELECT CAST(SCOPE_IDENTITY() as int);";
 
+            
+
             var walletId = await _dbConnection.QuerySingleAsync<int>(sql, new
             {
                 entity.TotalBalance,

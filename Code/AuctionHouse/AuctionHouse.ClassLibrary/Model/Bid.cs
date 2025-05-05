@@ -25,7 +25,6 @@ namespace AuctionHouse.ClassLibrary.Model
 
         #region Properties
         public int? BidId { get; set; }
-        public int UserId { get; set; }
         public int AuctionId { get; set; }
         public decimal Amount { get; set; }
         public DateTime TimeStamp { get; set; }

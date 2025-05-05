@@ -56,11 +56,15 @@ namespace AuctionHouse.Test.DaoTests
             Assert.Equal(userId, wallet.UserId); // Assuming Wallet has a UserId property  
         }
 
+
+        //TODO DELETE CUZ USER TEST SHOULD TEST THIS!
+
         [Fact]
         public async Task InsertAsync_ShouldReturnId_WhenWalletIsInserted()
         {
             // Arrange  
             // remember user with id 4 must have no wallet in db at the time of this test
+            
             Wallet wallet = new Wallet(100, 0, 4);
 
             // Act  
