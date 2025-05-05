@@ -1,15 +1,45 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
+using AuctionHouse.DataAccessLayer.DAO;
 using AuctionHouse.DataAccessLayer.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace AuctionHouse.Test.DaoTests
 {
     public class WalletDaoTest
     {
         private readonly IWalletDao _walletDao;
+        private readonly IDbConnection _connection;
+        private readonly ITestOutputHelper _output;
+
+        public WalletDaoTest(ITestOutputHelper output)
+        {
+            _output = output;
+
+            _output.WriteLine("Test Constructor: Attempting to read environment variable...");
+            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
+            _output.WriteLine($"Test Constructor: Retrieved Connection String: '{connectionString ?? "NULL"}'");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                _output.WriteLine("Test Constructor: FATAL - Connection string is null or empty."); // Log before throwing
+                // Consider throwing a more specific exception or using Assert.True within a test setup method if applicable
+                throw new InvalidOperationException("FATAL: DatabaseConnectionString environment variable is not set or is empty. Check test configuration.");
+            }
+
+            _output.WriteLine("Test Constructor: Creating SqlConnection...");
+            _connection = new SqlConnection(connectionString);
+            _output.WriteLine("Test Constructor: Creating ItemDAO...");
+            _walletDao = new WalletDAO(_connection);
+            _output.WriteLine("Test Constructor: Setup complete.");
+        }
 
 
         [Fact]
