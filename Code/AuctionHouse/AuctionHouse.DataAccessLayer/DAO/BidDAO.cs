@@ -27,11 +27,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<T>> GetAllAsync<T>()
         {
-            
+            return null;
         }
 
-            return bids;
-        }
+         
 
         public async Task<T?> GetByIdAsync<T>(int id)
         {
@@ -71,6 +70,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = "INSERT INTO Bid (AuctionId, Amount, TimeStamp, UserId) VALUES (@AuctionId, @Amount, @TimeStamp, @UserId);" +
                 "SELECT CAST(SCOPE_IDENTITY() as int);";
+
+            return 0;
         }
 
         public Task<bool> UpdateAsync(Bid entity)
