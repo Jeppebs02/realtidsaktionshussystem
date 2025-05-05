@@ -26,7 +26,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public Task<List<T>> GetAllAsync<T>()
         {
-            
+            throw new NotImplementedException();
         }
 
         public Task<T?> GetByIdAsync<T>(int id)
