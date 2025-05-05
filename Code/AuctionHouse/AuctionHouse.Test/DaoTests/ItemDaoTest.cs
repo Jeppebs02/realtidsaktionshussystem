@@ -58,6 +58,42 @@ namespace AuctionHouse.Test.DaoTests
             Assert.NotEmpty(items);
         }
 
+        [Fact]
+        public async Task GetByIdAsync_ShouldReturnItem_WhenItemExists()
+        {
+            // Arrange  
+            int itemId = 1;
+            // Act  
+            Item? item = await _itemDao.GetByIdAsync<Item>(itemId);
+            // Assert   
+            Assert.NotNull(item);
+            Assert.Equal(itemId, item?.ItemId);
+        }
+
+        [Fact]
+        public async Task GetAllByUserId_ShouldReturnItems_WhenUserHasItems()
+        {
+            // Arrange  
+            int userId = 1;
+            // Act  
+            IEnumerable<Item> items = await _itemDao.GetAllByUserId(userId);
+            // Assert   
+            Assert.NotNull(items);
+            Assert.NotEmpty(items);
+        }
+
+        [Fact]
+        public async Task InsertAsync_ShouldReturnId_WhenItemIsInserted()
+        {
+            // Arrange  
+            User user = new User("carlCool", "123", "carl", "carlsen", "hej@.com", "12345678", "carl street", new Wallet(100, 0, 0));
+            Item item = new Item(user,"TestItem", "TestDescription", ClassLibrary.Enum.Category.COLLECTIBLES, whatever, ClassLibrary.Enum.ItemStatus.AVAILABLE);
+            // Act  
+            int id = await _itemDao.InsertAsync(item);
+            // Assert  
+            Assert.True(id > 0);
+        }
+
 
     }
 }
