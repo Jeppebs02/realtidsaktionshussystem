@@ -155,17 +155,90 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         Task<T?> IGenericDao<Item>.GetByIdAsync<T>(int id) where T : default
         {
-            throw new NotImplementedException();
+
+            const string sql = @"SELECT
+                                -- Item Columns (aliased with 'i')
+                                i.ItemId,
+                                i.Name,
+                                i.Description,
+                                i.Category,
+                                i.Image,
+                                i.UserId AS ItemUserId,       -- Alias i.UserId to ItemUserId
+
+                                -- User Columns (aliased with 'u')
+                                u.UserId AS User_UserId,      -- Alias u.UserId to User_UserId (or just UserId if preferred)
+                                u.CantBuy,
+                                u.CantSell,
+                                u.UserName,
+                                u.PasswordHash,
+                                u.RegistrationDate,
+                                u.FirstName,
+                                u.LastName,
+                                u.Email,
+                                u.PhoneNumber,
+                                u.Address
+                            FROM
+                                dbo.Item AS i
+                            INNER JOIN
+                                dbo.[User] AS u ON i.UserId = u.UserId -- Join condition remains the same
+                            WHERE
+                                i.ItemId = @Id;";
+
+
+            var items = _dbConnection.Query<Item, User, Item>(
+            // Here we specify that we want to use the sql string we created above.
+            sql: sql,
+            // Here we specify that we want to use the MapItemWithUser method to map the Item and User objects together.
+
+            // The first parameter is the Item object, and the second parameter is the User object.
+            map: MapItemWithUser,
+
+            param: new { Id = id },
+
+
+            // This tells dapper what column to split on, and use the rest of the columns to create
+            // the User object.
+
+            // So for each row, the first columns will be used to create the Item object, and the rest of the columns will be used to create the User object.
+            // this is why its important that the Order in <Item, User, Item> is the same as the order in the sql string
+            splitOn: "User_UserId"
+            );
+
+            return Task.FromResult(items.Cast<T>().ToList());
+
         }
 
         Task<int> IGenericDao<Item>.InsertAsync(Item entity)
         {
-            throw new NotImplementedException();
+            const string sql = "INSERT INTO Item(ItemId, Name, Description, Category, Image, UserId) VALUES(@ItemId, @Name, @Description, @Category, @Image, @UserId)";
+
+            int rowsAffected = _dbConnection.Execute(sql, new
+            {
+                entity.ItemId,
+                entity.Name,
+                entity.Description,
+                entity.Category,
+                Image = entity.ImageData,
+                UserId = entity.User.userId
+            });
+
+            return Task.FromResult(rowsAffected);
         }
 
         Task<bool> IGenericDao<Item>.UpdateAsync(Item entity)
         {
-            throw new NotImplementedException();
+            const string sql = "UPDATE Item SET Name = @Name, Description = @Description, Category = @Category, Image = @Image WHERE ItemId = @ItemId";
+
+            int rowsAffected = _dbConnection.Execute(sql, new
+            {
+                entity.ItemId,
+                entity.Name,
+                entity.Description,
+                entity.Category,
+                Image = entity.ImageData
+            });
+
+            return Task.FromResult(rowsAffected > 0);
         }
     }
 }
