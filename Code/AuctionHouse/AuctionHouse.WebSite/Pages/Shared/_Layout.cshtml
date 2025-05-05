@@ -2,7 +2,7 @@
 @inject IWalletAccess WalletAcces
 
 @{
-	var userName = User.Identity?.Name ?? "alice";
+	var userName = AuctionHouse.ClassLibrary.Stubs.AuctionTestData.stubUser.UserName;
     var Wallet = WalletAcces.GetWalletForUser(userName);
 }
 
