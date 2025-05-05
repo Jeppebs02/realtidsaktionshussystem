@@ -37,6 +37,7 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 // Remember you could also request it some other way, like in a console app.
 builder.Services.AddScoped<IItemDao, ItemDAO>();
 builder.Services.AddScoped<IUserDao, UserDAO>();
+builder.Services.AddScoped<IBidDao, BidDAO>();
 // TODO: Add the other DAOs here
 
 var app = builder.Build();
