@@ -15,6 +15,7 @@ namespace AuctionHouse.Test.DaoTests
     {
         private readonly IUserDao _userDao;
         private readonly IDbConnection _connection;
+        private readonly IWalletDao _walletDao;
 
         public UserDaoTest()
         {
@@ -22,6 +23,7 @@ namespace AuctionHouse.Test.DaoTests
 
             _connection = new SqlConnection(connectionString);
             _userDao = new UserDAO(_connection);
+            _walletDao = new WalletDAO(_connection);
 
         }
 
@@ -69,13 +71,13 @@ namespace AuctionHouse.Test.DaoTests
         public async Task InsertAsync_ShouldReturnId_WhenUserIsInserted()
         {
             // Arrange
-            User user = new User("carlCool", "123", "carl", "carlsen", "hej@.com", "12345678", "carl street", new Wallet(100, 0, 0));
+            User user = new User("carlCool", "123", "carl", "carlsen", "hej@.com", "12345678", "carl street", null);
 
             // Act
-            int id = await _userDao.InsertAsync(user);
-
+            int UserId = await _userDao.InsertAsync(user);
+            Wallet wallet = await _walletDao.GetByUserId(UserId);
             // Assert
-            Assert.True(id > 0);
+            Assert.Equal(UserId, wallet.UserId);
         }
 
         [Fact]
