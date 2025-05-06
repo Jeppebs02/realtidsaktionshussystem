@@ -13,10 +13,13 @@ namespace AuctionHouse.Test.DaoTests
 {
     public class UserDaoTest
     {
+        #region Fields
         private readonly IUserDao _userDao;
         private readonly IDbConnection _connection;
         private readonly IWalletDao _walletDao;
+        #endregion
 
+        #region Constructor
         public UserDaoTest()
         {
             string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
@@ -26,10 +29,23 @@ namespace AuctionHouse.Test.DaoTests
             TransactionDAO transactionDAO = new TransactionDAO(_connection);
             _walletDao = new WalletDAO(_connection, transactionDAO);
             _userDao = new UserDAO(_connection, _walletDao);
-            
 
+            //Clean tables
+            CleanAndBuild.CleanDB();
+            //Generate test data
+            CleanAndBuild.GenerateFreshTestDB();
         }
+        #endregion
 
+        #region Build up and tear down methods
+        // Clean up after each test
+        public void Dispose()
+        {
+            CleanAndBuild.CleanDB();
+        }
+        #endregion
+
+        #region Test
         [Fact]
         public async Task GetById_ShouldReturnUser_WhenUserIdExists()
         {
@@ -93,6 +109,6 @@ namespace AuctionHouse.Test.DaoTests
             Assert.NotNull(users);
             Assert.True(users.Count > 0);
         }
-
+        #endregion
     }
 }
