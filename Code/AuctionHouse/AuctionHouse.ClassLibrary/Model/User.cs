@@ -32,7 +32,7 @@ namespace AuctionHouse.ClassLibrary.Model
         #endregion
 
         #region Properties
-        public int? userId { get; set; }
+        public int? UserId { get; set; }
 
         public bool CantBuy { get; set; }
 

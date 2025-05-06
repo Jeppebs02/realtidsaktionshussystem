@@ -36,7 +36,7 @@ namespace AuctionHouse.Test.DaoTests
             User user = await _userDao.GetByIdAsync<User>(userId);
             // Assert  
             Assert.NotNull(user);
-            Assert.Equal(userId, user.userId); // Assuming User has a userId property  
+            Assert.Equal(userId, user.UserId); // Assuming User has a userId property  
         }
 
         [Fact]

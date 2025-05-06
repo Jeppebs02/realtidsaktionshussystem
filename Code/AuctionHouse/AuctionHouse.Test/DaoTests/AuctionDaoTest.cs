@@ -47,7 +47,7 @@ namespace AuctionHouse.Test.DaoTests
 
             foreach (var auction in allAuctions)
             {
-                if (auction.item.User.userId == userId)
+                if (auction.item.User.UserId == userId)
                 {
                     auctions2.Append(auction);
                 }
@@ -74,7 +74,7 @@ namespace AuctionHouse.Test.DaoTests
 
             foreach (var auction in allAuctions)
             {
-                if (auction.Bids.Any(b => b.User.userId == userId))
+                if (auction.Bids.Any(b => b.User.UserId == userId))
                 {
                     auctions2.Append(auction);
                 }
@@ -129,7 +129,7 @@ namespace AuctionHouse.Test.DaoTests
             // Arrange  
             Wallet wallet = new Wallet(1000, 0,0);
             User user = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", wallet);
-            user.userId = 1;
+            user.UserId = 1;
             Item item = new Item(user, "testItem", "testDescription", Category.ELECTRONICS, new byte[0], ItemStatus.AVAILABLE);
             Auction auction = new Auction(DateTime.Now, DateTime.Now.AddDays(1), 100, 200, 10, false, item);
             // Act  

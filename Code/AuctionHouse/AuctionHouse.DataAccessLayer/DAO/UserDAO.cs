@@ -26,7 +26,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<bool> DeleteAsync(User entity)
         {
            const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @userId";
-           int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { userId = entity.userId });
+           int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { userId = entity.UserId });
 
 
             return rowsAffected > 0;
@@ -44,7 +44,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             //Get all wallets for the users
             foreach (var user in users)
             {
-                var wallet = await walletDAO.GetByUserId(user.userId.Value);
+                var wallet = await walletDAO.GetByUserId(user.UserId.Value);
                 user.Wallet = wallet;
             }
             return users.ToList() as List<T>;
@@ -55,6 +55,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "SELECT * FROM [User] WHERE userId = @userId";
 
             var user = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { userId = id });
+
+
+            WalletDAO walletDAO = new WalletDAO(_dbConnection);
+            var wallet = await walletDAO.GetByUserId(user.UserId);
+            user.Wallet = wallet;
 
             return user;
         }
@@ -89,7 +94,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "UPDATE [User] SET CantBuy = @cantBuy, CantSell = @cantSell, UserName = @userName, RegistrationDate = @registrationDate, FirstName = @firstName, LastName = @lastName, Email = @email, PhoneNumber = @phoneNumber, Address = @address WHERE userId = @userId";
             int rowsaffected = await _dbConnection.ExecuteAsync(sql, new
             {
-                userId = entity.userId,
+                userId = entity.UserId,
                 cantBuy = entity.CantBuy,
                 cantSell = entity.CantSell,
                 userName = entity.UserName,

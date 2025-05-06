@@ -149,7 +149,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 entity.Description,
                 entity.Category,
                 ImageData = entity.ImageData, // Assuming ImageData is a byte array
-                UserId = entity.User.userId // Assuming User is not null and has UserId
+                UserId = entity.User.UserId // Assuming User is not null and has UserId
             };
             // Execute the query and return the inserted ItemId
             return await _dbConnection.ExecuteScalarAsync<int>(sql, parameters);
