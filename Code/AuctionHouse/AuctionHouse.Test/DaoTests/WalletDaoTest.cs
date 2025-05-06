@@ -15,10 +15,13 @@ namespace AuctionHouse.Test.DaoTests
 {
     public class WalletDaoTest
     {
+        #region Fields
         private readonly IWalletDao _walletDao;
         private readonly IDbConnection _connection;
         private readonly ITestOutputHelper _output;
+        #endregion
 
+        #region Constructor
         public WalletDaoTest(ITestOutputHelper output)
         {
             _output = output;
@@ -40,9 +43,23 @@ namespace AuctionHouse.Test.DaoTests
             TransactionDAO transactionDAO = new TransactionDAO(_connection);
             _walletDao = new WalletDAO(_connection, transactionDAO);
             _output.WriteLine("Test Constructor: Setup complete.");
+
+            //Clean tables
+            CleanAndBuild.CleanDB();
+            //Generate test data
+            CleanAndBuild.GenerateFreshTestDB();
         }
+        #endregion
 
+        #region Build up and tear down methods
+        // Clean up after each test
+        public void Dispose()
+        {
+            CleanAndBuild.CleanDB();
+        }
+        #endregion
 
+        #region Test
         [Fact]
         public async Task GetByUserId_ShouldReturnWallet_WhenUserIdExists()
         {
@@ -125,7 +142,6 @@ namespace AuctionHouse.Test.DaoTests
             Assert.NotNull(wallet);
             Assert.Equal(id, wallet.WalletId); // Assuming Wallet has an Id property  
         }
+        #endregion
     }
-
-
 }
