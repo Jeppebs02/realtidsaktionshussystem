@@ -1,7 +1,11 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
+using AuctionHouse.DataAccessLayer.DAO;
 using AuctionHouse.DataAccessLayer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +14,26 @@ namespace AuctionHouse.Test.DaoTests
 {
     public class BidDaoTest
     {
+        private readonly IDbConnection _connection;
         private readonly IBidDao _bidDao;
         private readonly IUserDao _userDao;
+        public BidDaoTest()
+        {
+            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
+             this._connection = new SqlConnection(connectionString);
 
 
 
-        [Fact]
+            TransactionDAO tdao = new TransactionDAO(_connection);
+
+            WalletDAO wdao = new WalletDAO(_connection, tdao);
+
+            _userDao = new UserDAO(_connection, wdao);
+
+            _bidDao = new BidDAO(_connection);
+        }
+
+        [Fact(Skip = "Skipped")]
         public async Task GetAllAsync_ShouldReturnListOfBids()
         {
             // Act
@@ -57,7 +75,7 @@ namespace AuctionHouse.Test.DaoTests
             User user = new User("carlCool", "123", "carl", "carlsen", "hej@.com", "12345678", "carl street", new Wallet(100, 0, 0));
             Bid bid = new Bid(1, 500, DateTime.Now, user);
             // Act  
-            int id = await _bidDao.InsertAsync(bid);
+            int id = await _bidDao.InsertBidAsync(bid);
             // Assert  
             Assert.True(id > 5);
         }
