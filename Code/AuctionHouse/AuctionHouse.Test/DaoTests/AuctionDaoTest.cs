@@ -196,6 +196,9 @@ namespace AuctionHouse.Test.DaoTests
             // Assert  
             Assert.True(result);
         }
+
+
+        //TODO: Create a test for AuctionDAO.UpdateAuctionStatusOptimisticallyAsync()
         #endregion
     }
 }
