@@ -10,18 +10,23 @@ using AuctionHouse.DataAccessLayer.Interfaces;
 using System.Data.SqlClient;
 using Xunit.Abstractions;
 using AuctionHouse.DataAccessLayer.DAO;
-using System.IO.Pipes;
+using System.Data.SqlClient;
+
 
 namespace AuctionHouse.Test.DaoTests
 {
     public class ItemDaoTest
     {
+        #region Fields
         private readonly IDbConnection _connection;
         private readonly IItemDao _itemDao;
         private readonly ITestOutputHelper _output;
         private readonly IUserDao udao;
 
+        private CleanAndBuild cleanAndBuild;
+        #endregion
 
+        #region Constructor
         public ItemDaoTest(ITestOutputHelper output)
         {
             _output = output;
@@ -52,10 +57,24 @@ namespace AuctionHouse.Test.DaoTests
             udao = new UserDAO(_connection, wdao);
         }
 
+            
+            //Create CleanAndBuild class
+            cleanAndBuild = new CleanAndBuild();
 
+            cleanAndBuild.CleanDB();
+            cleanAndBuild.GenerateFreshTestDB();
+        }
+        #endregion
 
+        #region Build up and tear down methods
+        // Clean up after each test
+        public void Dispose()
+        {
+            cleanAndBuild.CleanDB();
+        }
+        #endregion
 
-
+        #region Test
         [Fact]
         public async Task GetAllAsync_ShouldReturnListOfItems()
         {
@@ -105,7 +124,7 @@ namespace AuctionHouse.Test.DaoTests
             // Assert  
             Assert.True(id > 0);
         }
-
+        #endregion
 
     }
 }

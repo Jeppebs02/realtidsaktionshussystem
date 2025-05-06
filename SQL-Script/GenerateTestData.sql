@@ -1,5 +1,4 @@
 USE AuctionHouse;
-GO
 
 -- ENUM DATA
 
