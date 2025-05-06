@@ -55,8 +55,6 @@ namespace AuctionHouse.Test.DaoTests
             WalletDAO wdao = new WalletDAO(_connection, tdao);
 
             udao = new UserDAO(_connection, wdao);
-        }
-
             
             //Create CleanAndBuild class
             cleanAndBuild = new CleanAndBuild();
