@@ -17,11 +17,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         private readonly IDbConnection _dbConnection;
         private readonly IBidDao _bidDao;
+        private readonly IUserDao _userDao;
 
-        public AuctionDAO(IDbConnection dbConnection, IBidDao biddao)
+        public AuctionDAO(IDbConnection dbConnection, IBidDao biddao, IUserDao userdao)
         {
             _dbConnection = dbConnection;
             _bidDao = biddao;
+            _userDao = userdao;
         }
 
         public Task<bool> DeleteAsync(Auction entity)
@@ -83,32 +85,55 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return auctions.ToList();
         }
 
-        public async Task<IEnumerable<Auction>> GetAllByBidsAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<IEnumerable<Auction>> GetAllByUserIDAsync(int userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<T?> GetByIdAsync<T>(int id)
+        public async Task<T?> GetByIdAsync<T>(int id)
+        {
+            const string sql = @"SELECT
+                            AuctionId,
+                            AuctionName,
+                            Description,
+                            StartPrice,
+                            StartDate,
+                            EndDate,
+                            AmountOfBids,
+                            AuctionStatus,
+                            UserId
+                        FROM dbo.Auction
+                        WHERE AuctionId = @AuctionId";
+            var auctionT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { AuctionId = id });
+            if(auctionT is Auction concreteAuction)
+            {
+                if (concreteAuction.Bids==null) { 
+                    concreteAuction.Bids = new List<Bid>(); 
+                }
+
+                var bids = await _bidDao.GetAllByAuctionIdAsync(concreteAuction.AuctionID.Value);
+                foreach(Bid bid in bids)
+                {
+                    concreteAuction.Bids.Add(bid);
+                }
+
+
+            }
+            return auctionT;
+
+        }
+
+        public async Task<IEnumerable<Auction>> GetWithinDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Auction>> GetWithinDateRangeAsync(DateTime startDate, DateTime endDate)
+        public async Task<int> InsertAsync(Auction entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> InsertAsync(Auction entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> UpdateAsync(Auction entity)
+        public async Task<bool> UpdateAsync(Auction entity)
         {
             throw new NotImplementedException();
         }
@@ -129,6 +154,19 @@ namespace AuctionHouse.DataAccessLayer.DAO
         }
 
         public async Task<bool> UpdateAuctionStatusAsync(int auctionId, AuctionStatus newStatus)
+        {
+            const string sql = @"UPDATE Auction
+                                 SET AuctionStatus = @AuctionStatus
+                                 WHERE AuctionId = @AuctionId";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("AuctionId", auctionId);
+            parameters.Add("AuctionStatus", newStatus);
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters);
+            return rowsAffected > 0;
+        }
+
+        public async Task<IEnumerable<Auction>> GetAllByBidsAsync(int userId)
         {
             throw new NotImplementedException();
         }
