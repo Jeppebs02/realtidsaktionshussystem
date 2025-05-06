@@ -1,5 +1,7 @@
 using AuctionHouse.DataAccessLayer.DAO;
 using AuctionHouse.DataAccessLayer.Interfaces;
+using AuctionHouse.WebAPI.BusinessLogic;
+using AuctionHouse.WebAPI.IBusinessLogic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -41,6 +43,7 @@ builder.Services.AddScoped<IBidDao, BidDAO>();
 builder.Services.AddScoped<IWalletDao, WalletDAO>();
 builder.Services.AddScoped<ITransactionDao, TransactionDAO>();
 builder.Services.AddScoped<IAuctionDao, AuctionDAO>();
+builder.Services.AddScoped<IBidLogic, BidLogic>();
 // TODO: Add the other DAOs here
 
 var app = builder.Build();
