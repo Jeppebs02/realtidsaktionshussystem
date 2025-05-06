@@ -37,7 +37,7 @@ namespace AuctionHouse.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<Wallet> Get(int id)
         {
-            return await _walletDao.GetByIdAsync<Wallet>(id);
+            return await _walletDao.GetByUserId(id);
         }
 
         // POST api/<WalletController>

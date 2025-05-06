@@ -66,7 +66,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "SELECT * FROM Wallet WHERE UserId = @UserId";
 
             var wallet = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
-            var transactions = _transactionDao.GetAllByWalletId(wallet.WalletId.Value).Result.ToList();
+            var transactions = await _transactionDao.GetAllByWalletId(wallet.WalletId.Value);
 
             foreach (var transaction in transactions)
             {
