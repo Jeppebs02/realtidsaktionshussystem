@@ -22,8 +22,6 @@ namespace AuctionHouse.Test.DaoTests
         private readonly IItemDao _itemDao;
         private readonly ITestOutputHelper _output;
         private readonly IUserDao udao;
-
-        private CleanAndBuild cleanAndBuild;
         #endregion
 
         #region Constructor
@@ -55,12 +53,11 @@ namespace AuctionHouse.Test.DaoTests
             WalletDAO wdao = new WalletDAO(_connection, tdao);
 
             udao = new UserDAO(_connection, wdao);
-            
-            //Create CleanAndBuild class
-            cleanAndBuild = new CleanAndBuild();
 
-            cleanAndBuild.CleanDB();
-            cleanAndBuild.GenerateFreshTestDB();
+            //Clean tables
+            CleanAndBuild.CleanDB();
+            //Generate test data
+            CleanAndBuild.GenerateFreshTestDB();
         }
         #endregion
 
@@ -68,7 +65,7 @@ namespace AuctionHouse.Test.DaoTests
         // Clean up after each test
         public void Dispose()
         {
-            cleanAndBuild.CleanDB();
+            CleanAndBuild.CleanDB();
         }
         #endregion
 

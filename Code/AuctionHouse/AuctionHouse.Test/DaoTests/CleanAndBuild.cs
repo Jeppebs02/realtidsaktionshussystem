@@ -10,66 +10,56 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace AuctionHouse.Test.DaoTests
 {
-    public class CleanAndBuild
+    public static class CleanAndBuild
     {
         #region Fields
-        //Connection
-        private readonly IDbConnection _connection;
-
         //Teardown path
-        private readonly string _truncateScriptPath = "TruncateTables.sql";
+        private static readonly string _truncateScriptPath = "TruncateTables.sql";
         //Generate testdata path
-        private readonly string _generateTestDataScriptPath = "GenerateTestData.sql";
+        private static readonly string _generateTestDataScriptPath = "GenerateTestData.sql";
         //Both are added as links by rightclicking the AuctionHouse.Test Project
         //adding them as links, then chaning their properties to Build "Content" and Copy to
         //output directory to "Copy if newer"
         #endregion
 
-        #region Constructor
-        public CleanAndBuild() 
-        {
-            //Connection string
-            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
-
-            //check if connectionstring is empty
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException("FATAL: DatabaseConnectionString environment variable is not set or is empty. Check test configuration.");
-            }
-
-            _connection = new SqlConnection(connectionString);
-        }
-        #endregion
-
         #region Methods
         //Execute SQL Script method from filepath
-        private void ExecuteSqlScript(string filePath)
+        private static void ExecuteSqlScript(string filePath)
         {
-            //reads all text from the passed file path
+            //Get connection string from Docker-compose
+            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
+
+            //Check if the connection string
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("FATAL: DatabaseConnectionString environment variable is not set or empty.");
+            }
+
+            //Read SQL script from file path
             string sql = File.ReadAllText(filePath);
 
-            //creates command with connection, and runs
-            //command with the SQL copied from the passed filepath
-            using var command = _connection.CreateCommand();
+            //Create a new SQL connection
+            using var connection = new SqlConnection(connectionString);
+
+            //Open the connection to the database
+            connection.Open();
+
+            //Create command with connection and assign the SQL script to it
+            using var command = connection.CreateCommand();
             command.CommandText = sql;
 
-            //Open connection if it isnt open
-            if (_connection.State != ConnectionState.Open)
-            {
-                _connection.Open();
-            }
-            //Execute command
+            //Execute the SQL script in the database
             command.ExecuteNonQuery();
         }
 
-        //Clean Tables
-        public void CleanDB()
+        //Clean Tables method
+        public static void CleanDB()
         {
             ExecuteSqlScript(_truncateScriptPath);
         }
 
-        //Generate testdata
-        public void GenerateFreshTestDB()
+        //Generate testdata method
+        public static void GenerateFreshTestDB()
         {
             ExecuteSqlScript(_generateTestDataScriptPath);
         }
