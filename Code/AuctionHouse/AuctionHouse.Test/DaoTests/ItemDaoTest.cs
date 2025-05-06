@@ -56,7 +56,14 @@ namespace AuctionHouse.Test.DaoTests
             _itemDao = new ItemDAO(_connection);
             _output.WriteLine("Test Constructor: Setup complete.");
 
+            //For debugging filepath. first where are we. Second write out path for Truncate. Third wirte out path for Generate test data
+            _output.WriteLine("Working Directory: " + Environment.CurrentDirectory);
+            _output.WriteLine("Expected Truncate Script Path: " + Path.GetFullPath(_truncateScriptPath));
+            _output.WriteLine("Expected Generate Script Path: " + Path.GetFullPath(_generateTestDataScriptPath));
+
+            //Clean Tables (Ekstra to ensure that theres no leftovers or random entries)
             ExecuteSqlScript(_truncateScriptPath);
+            //Generate testdata
             ExecuteSqlScript(_generateTestDataScriptPath);
         }
         #endregion
@@ -65,12 +72,12 @@ namespace AuctionHouse.Test.DaoTests
         //Execute SQL Script method from filepath
         private void ExecuteSqlScript(string filePath)
         {
-            //reads filepath
+            //reads all text from the passed file path
             string sql = File.ReadAllText(filePath);
 
-            //creates command with connection
+            //creates command with connection, and runs
+            //command with the SQL copied from the passed filepath
             using var command = _connection.CreateCommand();
-            //sets the command to the script
             command.CommandText = sql;
 
             //Open connection if it isnt open
