@@ -39,6 +39,7 @@ builder.Services.AddScoped<IItemDao, ItemDAO>();
 builder.Services.AddScoped<IUserDao, UserDAO>();
 builder.Services.AddScoped<IBidDao, BidDAO>();
 builder.Services.AddScoped<IWalletDao, WalletDAO>();
+builder.Services.AddScoped<ITransactionDao, TransactionDAO>();
 // TODO: Add the other DAOs here
 
 var app = builder.Build();
