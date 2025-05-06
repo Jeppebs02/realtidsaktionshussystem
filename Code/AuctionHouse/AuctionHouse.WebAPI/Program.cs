@@ -37,13 +37,19 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 //Whenever a controller (or anyone else) asks for IItemDao, it will get an instance of ItemDAO.
 // Scoped means that a new instance of the service is created for each (http request in our case) request.
 // Remember you could also request it some other way, like in a console app.
+
+//Register DAO
 builder.Services.AddScoped<IItemDao, ItemDAO>();
 builder.Services.AddScoped<IUserDao, UserDAO>();
 builder.Services.AddScoped<IBidDao, BidDAO>();
 builder.Services.AddScoped<IWalletDao, WalletDAO>();
 builder.Services.AddScoped<ITransactionDao, TransactionDAO>();
 builder.Services.AddScoped<IAuctionDao, AuctionDAO>();
+
+//Register logics (Except Item)
 builder.Services.AddScoped<IBidLogic, BidLogic>();
+
+
 // TODO: Add the other DAOs here
 
 var app = builder.Build();

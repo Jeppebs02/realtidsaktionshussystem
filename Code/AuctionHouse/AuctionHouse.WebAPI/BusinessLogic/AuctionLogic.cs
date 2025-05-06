@@ -3,29 +3,29 @@ using AuctionHouse.WebAPI.IBusinessLogic;
 
 namespace AuctionHouse.WebAPI.BusinessLogic
 {
-    public class UserLogic : IUserLogic
+    public class AuctionLogic : IAuctionLogic
     {
-        public Task<bool> CreateUserAsync(User user)
+        public Task<bool> CreateAuctionAsync(Auction auction)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteUserAsync(User user)
+        public Task<IEnumerable<Auction>> GetAllActiveAuctionsAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<User>> GetAllUsersAsync()
+        public Task<List<T>> GetAllAuctionsAsync<T>()
         {
             throw new NotImplementedException();
         }
 
-        public Task<User> GetUserByIdAsync(int userId)
+        public Task<bool> UpdateAuctionOptimistically(Auction auction)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateUserAsync(User user)
+        public Task<bool> UpdateAuctionStatusOptimistically(Auction auction)
         {
             throw new NotImplementedException();
         }
