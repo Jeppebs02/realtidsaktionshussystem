@@ -15,9 +15,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
         private readonly IDbConnection _dbConnection;
         private readonly ITransactionDao _transactionDao;
 
-        public WalletDAO(IDbConnection dbConnection)
+        public WalletDAO(IDbConnection dbConnection, ITransactionDao transactionDAO)
         {
             _dbConnection = dbConnection;
+            _transactionDao = transactionDAO;
         }
 
         //STOLE THIS FROM JEPPE, WHO STOLE IT FROM DAPPER

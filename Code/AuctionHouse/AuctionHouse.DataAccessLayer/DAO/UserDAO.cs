@@ -15,14 +15,16 @@ namespace AuctionHouse.DataAccessLayer.DAO
     public class UserDAO : IUserDao
 {
         private readonly IDbConnection _dbConnection;
+        private readonly IWalletDao walletDAO;
 
-        public UserDAO(IDbConnection dbConnection)
+        public UserDAO(IDbConnection dbConnection, IWalletDao walletDAO)
         {
-           
+
             _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
+            this.walletDAO = walletDAO;
         }
-        
-    
+
+
         public async Task<bool> DeleteAsync(User entity)
         {
            const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @UserId";
@@ -40,7 +42,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             if (typeof(T) == typeof(User))
             {
-                WalletDAO walletDAO = new WalletDAO(_dbConnection);
+
                 foreach (var user in users)
                 {
                     var wallet = await walletDAO.GetByUserId(user.UserId.Value);
@@ -59,7 +61,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             if (user is T typedUser)
             {
-                WalletDAO walletDAO = new WalletDAO(_dbConnection);
                 var wallet = await walletDAO.GetByUserId(user.UserId.Value);
                 user.Wallet = wallet;
 
@@ -89,7 +90,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
             });
 
             Wallet wallet = new Wallet(0, 0, UserId);
-            WalletDAO walletDAO = new WalletDAO(_dbConnection);
             await walletDAO.InsertAsync(wallet);
             return  Task.FromResult(UserId).Result;
         }
