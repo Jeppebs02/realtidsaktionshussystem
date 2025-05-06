@@ -119,6 +119,9 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAsync(Wallet entity)
         {
+            // TODO
+            // This should take a expected version and check against the version in db (like in ReserveFundsOptmisticallyAsync)
+            // It should also NOT BE ABLE to change reserved balance, only total balance, so maybe change the name
             const string sql = "UPDATE Wallet SET TotalBalance = @TotalBalance, ReservedBalance = @ReservedBalance " +
                 "WHERE WalletId = @WalletId";
 

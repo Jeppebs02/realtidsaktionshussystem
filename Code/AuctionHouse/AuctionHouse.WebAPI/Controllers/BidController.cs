@@ -1,5 +1,6 @@
 ﻿using AuctionHouse.ClassLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using AuctionHouse.ClassLibrary.Model;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,7 +28,7 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // POST api/<BidController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] Bid bid)
         {
         }
 
