@@ -25,8 +25,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
     
         public async Task<bool> DeleteAsync(User entity)
         {
-           const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @userId";
-           int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { userId = entity.UserId });
+           const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @UserId";
+           int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { UserId = entity.UserId });
 
 
             return rowsAffected > 0;
@@ -53,9 +53,9 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<T?> GetByIdAsync<T>(int id)
         {
-            const string sql = "SELECT * FROM [User] WHERE userId = @userId";
+            const string sql = "SELECT * FROM [User] WHERE userId = @UserId";
 
-            var user = await _dbConnection.QuerySingleOrDefaultAsync<User>(sql, new { userId = id });
+            var user = await _dbConnection.QuerySingleOrDefaultAsync<User>(sql, new { UserId = id });
 
             if (user is T typedUser)
             {
@@ -74,7 +74,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "INSERT INTO [User] (CantBuy, CantSell, UserName, PasswordHash, RegistrationDate, FirstName, LastName, Email, PhoneNumber, Address)" +
                 "VALUES (@cantBuy, @cantSell, @userName, @passwordHash, @registrationDate, @firstName, @lastName, @email, @phoneNumber, @address); SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            var userId  = await _dbConnection.QuerySingleOrDefaultAsync<int>(sql, new
+            var UserId  = await _dbConnection.QuerySingleOrDefaultAsync<int>(sql, new
             {
                 cantBuy = entity.CantBuy,
                 cantSell = entity.CantSell,
@@ -88,22 +88,21 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 address = entity.Address
             });
 
-            Wallet wallet = new Wallet(0, 0, userId);
+            Wallet wallet = new Wallet(0, 0, UserId);
             WalletDAO walletDAO = new WalletDAO(_dbConnection);
             await walletDAO.InsertAsync(wallet);
-            return  Task.FromResult(userId).Result;
+            return  Task.FromResult(UserId).Result;
         }
 
          public async Task<bool> UpdateAsync(User entity)
         {
-            const string sql = "UPDATE [User] SET CantBuy = @cantBuy, CantSell = @cantSell, UserName = @userName, RegistrationDate = @registrationDate, FirstName = @firstName, LastName = @lastName, Email = @email, PhoneNumber = @phoneNumber, Address = @address WHERE userId = @userId";
+            const string sql = "UPDATE [User] SET CantBuy = @cantBuy, CantSell = @cantSell, UserName = @userName, FirstName = @firstName, LastName = @lastName, Email = @email, PhoneNumber = @phoneNumber, [Address] = @address WHERE UserId = @UserId";
             int rowsaffected = await _dbConnection.ExecuteAsync(sql, new
             {
-                userId = entity.UserId,
+                UserId = entity.UserId,
                 cantBuy = entity.CantBuy,
                 cantSell = entity.CantSell,
                 userName = entity.UserName,
-                registrationDate = entity.RegistrationDate,
                 firstName = entity.FirstName,
                 lastName = entity.LastName,
                 email = entity.Email,

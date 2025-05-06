@@ -10,8 +10,7 @@ namespace AuctionHouse.DataAccessLayer.Stub
 {
     internal class AuctionDaoStub : IAuctionDao
     {
-        private List<Auction> _auctions = new();
-        public Task<bool> DeleteAsync(Task t)
+        public Task<bool> DeleteAsync(Auction entity)
         {
             throw new NotImplementedException();
         }
@@ -41,37 +40,17 @@ namespace AuctionHouse.DataAccessLayer.Stub
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Auction> GetWithinDateRange(DateTime startDate, DateTime endDate)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<IEnumerable<Auction>> GetWithinDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> InsertAsync(Task t)
+        public Task<int> InsertAsync(Auction entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateAsync(Task t)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IGenericDao<Auction>.DeleteAsync(Auction entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<int> IGenericDao<Auction>.InsertAsync(Auction entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IGenericDao<Auction>.UpdateAsync(Auction entity)
+        public Task<bool> UpdateAsync(Auction entity)
         {
             throw new NotImplementedException();
         }
