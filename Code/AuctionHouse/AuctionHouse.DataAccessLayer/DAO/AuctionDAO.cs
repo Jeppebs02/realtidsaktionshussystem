@@ -48,6 +48,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             foreach(var auction in auctions)
             {
+                if(auction.Bids == null)
+                {
+                    auction.Bids = new List<Bid>();
+                }
                 auction.Bids = await _bidDao.GetAllByAuctionIdAsync(auction.AuctionID.Value);
             }
 
