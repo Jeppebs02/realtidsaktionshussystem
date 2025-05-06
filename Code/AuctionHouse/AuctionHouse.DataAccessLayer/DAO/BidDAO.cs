@@ -27,7 +27,26 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<T>> GetAllAsync<T>()
         {
-            return null;
+            const string sql = @"SELECT
+                                b.BidId,
+                                b.AuctionId,
+                                b.Amount,
+                                b.TimeStamp,
+                                b.UserId        AS Bid_UserId,
+                                u.UserId        AS User_UserId,
+                                u.UserName,
+                                u.FirstName,
+                                u.LastName,
+                                u.Email,
+                                u.PhoneNumber,
+                                u.[Address]     
+                            FROM dbo.Bid       b
+                            JOIN dbo.[User]  u
+                                ON b.UserId = u.UserId";
+
+            var bids = await _dbConnection.QueryAsync<T>(sql);
+
+            return bids.ToList();
         }
 
          
@@ -70,6 +89,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = "INSERT INTO Bid (AuctionId, Amount, TimeStamp, UserId) VALUES (@AuctionId, @Amount, @TimeStamp, @UserId);" +
                 "SELECT CAST(SCOPE_IDENTITY() as int);";
+
+            //TODO
 
             return 0;
         }
