@@ -66,15 +66,17 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = @"SELECT
                             AuctionId,
-                            AuctionName,
-                            Description,
+                            StartTime,
+                            EndTime,
                             StartPrice,
-                            StartDate,
-                            EndDate,
-                            AmountOfBids,
+                            BuyOutPrice,
+                            MinimumBidIncrement,
                             AuctionStatus,
-                            UserId
-                        FROM dbo.Auction";
+                            Version,
+                            Notify,
+                            ItemId,
+                            AmountOfBids
+                        FROM dbo.Auction;";
             var auctions = await _dbConnection.QueryAsync<T>(sql);
             foreach (var auctionT in auctions)
             {
@@ -95,16 +97,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = @"SELECT
                             AuctionId,
-                            AuctionName,
-                            Description,
+                            StartTime,
+                            EndTime,
                             StartPrice,
-                            StartDate,
-                            EndDate,
-                            AmountOfBids,
+                            BuyOutPrice,
+                            MinimumBidIncrement,
                             AuctionStatus,
-                            UserId
+                            Version,
+                            Notify,
+                            ItemId,
+                            AmountOfBids
                         FROM dbo.Auction
-                        WHERE AuctionId = @AuctionId";
+            WHERE AuctionId = @AuctionId;";
             var auctionT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { AuctionId = id });
             if(auctionT is Auction concreteAuction)
             {
@@ -146,7 +150,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             parameters.Add("StartPrice", entity.StartPrice);
             parameters.Add("BuyOutPrice", entity.BuyOutPrice);
             parameters.Add("MinimumBidIncrement", entity.MinimumBidIncrement);
-            parameters.Add("AuctionStatus", entity.AuctionStatus);
+            parameters.Add("AuctionStatus", entity.AuctionStatus.ToString());
 
             parameters.Add("ItemId", entity.item.ItemId);
 
@@ -156,13 +160,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAsync(Auction entity)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Dont use, use UpdateAuctionOptimistically instead");
         }
 
         public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
         {
             const string sql = @"UPDATE Auction
-                                 SET AmountOfBids = AmountOfBids + @AmountOfBids,
+                                 SET AmountOfBids = AmountOfBids + @AmountOfBids
                                  WHERE AuctionId = @AuctionId
                                  AND Version = @ExpectedVersion";
             var parameters = new DynamicParameters();

@@ -135,14 +135,15 @@ namespace AuctionHouse.Test.DaoTests
             Assert.Equal(auctionId, auction.AuctionID);
         }
 
-        [Fact(Skip = "Not needed rn")]
-        public async Task AddAsync_ShouldAddAuction()
+        [Fact]
+        public async Task InsertAsync_ShouldInsertAuction()
         {
             // Arrange  
             Wallet wallet = new Wallet(1000, 0,0);
             User user = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", wallet);
             user.UserId = 1;
             Item item = new Item(user, "testItem", "testDescription", Category.ELECTRONICS, new byte[0], ItemStatus.AVAILABLE);
+            item.ItemId = 1;
             Auction auction = new Auction(DateTime.Now, DateTime.Now.AddDays(1), 100, 200, 10, false, item);
             // Act  
             int newAuctionId = await _auctionDao.InsertAsync(auction);
@@ -150,17 +151,21 @@ namespace AuctionHouse.Test.DaoTests
             Assert.True(newAuctionId>0);
         }
 
-        [Fact(Skip = "Not needed rn")]
-        public async Task UpdateAsync_ShouldUpdateAuction()
+        [Fact]
+        public async Task UpdateOptimisticallyAsync_ShouldChangeVersion()
         {
             // Arrange  
             int auctionId = 1;
             Auction auction = await _auctionDao.GetByIdAsync<Auction>(auctionId);
-            auction.StartPrice = 150;
+            var originalVersion = auction.Version;
+
             // Act  
-            bool result = await _auctionDao.UpdateAsync(auction);
+            bool result = await _auctionDao.UpdateAuctionOptimistically(auctionId, auction.Version);
+
+            Auction newAuction = await _auctionDao.GetByIdAsync<Auction>(auctionId);
+            var newVersion = newAuction.Version;
             // Assert  
-            Assert.True(result);
+            Assert.NotEqual(originalVersion,newVersion);
         }
 
         [Fact(Skip = "Not needed rn")]

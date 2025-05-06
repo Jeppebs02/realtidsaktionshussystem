@@ -147,7 +147,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             {
                 entity.Name,
                 entity.Description,
-                entity.Category,
+                Category=entity.Category.ToString(),
                 ImageData = entity.ImageData, // Assuming ImageData is a byte array
                 UserId = entity.User.UserId // Assuming User is not null and has UserId
             };
