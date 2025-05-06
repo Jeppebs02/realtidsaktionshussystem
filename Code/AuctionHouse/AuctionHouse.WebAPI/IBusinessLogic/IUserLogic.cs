@@ -5,9 +5,8 @@ namespace AuctionHouse.WebAPI.IBusinessLogic
     {
         Task<bool> CreateUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
-        Task<bool> DeleteUserAsync(int userId);
+        Task<bool> DeleteUserAsync(User user);
         Task<User> GetUserByIdAsync(int userId);
         Task<List<User>> GetAllUsersAsync();
-        Task<bool> UserExistsAsync(string username);
     }
 }
