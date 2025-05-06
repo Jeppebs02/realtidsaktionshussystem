@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+using AuctionHouse.DataAccessLayer.DAO;
 
 namespace AuctionHouse.Test.DaoTests
 {
@@ -13,6 +16,15 @@ namespace AuctionHouse.Test.DaoTests
     {
 
         private readonly IAuctionDao _auctionDao;
+        private readonly IBidDao _bidDao;
+        private readonly IDbConnection _dbConnection;
+
+        public AuctionDaoTest()
+        {
+            _dbConnection = new SqlConnection("DatabaseConnectionString");
+            _bidDao = new BidDAO(_dbConnection);
+            _auctionDao = new AuctionDAO(_dbConnection,_bidDao);
+        }
 
         [Fact(Skip = "Not needed rn")]
         public async Task GetWithinDateRangeAsync_ShouldReturnAuctions_WhenDateRangeIsValid()
@@ -162,6 +174,9 @@ namespace AuctionHouse.Test.DaoTests
             // Assert  
             Assert.True(result);
         }
+
+
+        
 
 
     }
