@@ -30,7 +30,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return null;
         }
 
-         
+
 
         public async Task<T?> GetByIdAsync<T>(int id)
         {
@@ -78,7 +78,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Bid> GetLatestByAuctionId(int auctionId)
         {
-            
+
             const string sql = @"SELECT TOP 1
                             b.BidId, b.Amount, b.TimeStamp, b.UserId AS BidUserId, b.AuctionId,
                             u.UserId AS User_UserId,
@@ -100,7 +100,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                     return bid;
                 },
                 param: new { AuctionId = auctionId },
-                
+
                 splitOn: "User_UserId"
             );
 
@@ -115,7 +115,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                                 VALUES (@AuctionId, @Amount, @TimeStamp, @UserId);
                                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
-           
+
             var parameters = new
             {
                 entity.AuctionId,
@@ -134,6 +134,38 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "UPDATE Bid SET AuctionId = @AuctionId, Amount = @Amount, TimeStamp = @TimeStamp WHERE BidId = @BidId;";
             var result = await _dbConnection.ExecuteAsync(sql, new { entity.AuctionId, entity.Amount, entity.TimeStamp, entity.BidId });
             return result > 0;
+        }
+
+        public async Task<List<Bid>> GetAllByAuctionIdAsync(int auctionId)
+        {
+            const string sql = @"SELECT
+                            b.BidId, b.Amount, b.TimeStamp, b.UserId AS BidUserId, b.AuctionId,
+                            u.UserId AS User_UserId,
+                            u.CantBuy, u.CantSell, u.UserName, u.PasswordHash,
+                            u.RegistrationDate, u.FirstName, u.LastName, u.Email,
+                            u.PhoneNumber, u.[Address], u.IsDeleted
+                        FROM dbo.Bid b
+                        JOIN dbo.[User] u ON b.UserId = u.UserId
+                        WHERE b.AuctionId = @AuctionId
+                        ORDER BY b.TimeStamp DESC;";
+
+            var bids = await _dbConnection.QueryAsync<Bid, User, Bid>(
+            sql,
+            map: (bid, user) =>
+            {
+                // add the user to the bid, this is similar to the static map function in ItemDAO.
+                //This is just with a lambda :)
+                bid.User = user;
+                return bid;
+            },
+            param: new { AuctionId = auctionId },
+
+            splitOn: "User_UserId"
+                );
+
+            return bids.ToList();
+
+
         }
 
         Task<int> IGenericDao<Bid>.InsertAsync(Bid entity)

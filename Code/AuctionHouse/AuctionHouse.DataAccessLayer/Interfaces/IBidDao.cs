@@ -20,6 +20,8 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
 
         Task<int> InsertBidAsync(Bid entity, IDbTransaction transaction = null);
 
+        Task<List<Bid>> GetAllByAuctionIdAsync(int auctionId);
+
 
     }
 }
