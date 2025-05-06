@@ -13,6 +13,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
     public class WalletDAO : IWalletDao
     {
         private readonly IDbConnection _dbConnection;
+        private readonly ITransactionDao _transactionDao;
 
         public WalletDAO(IDbConnection dbConnection)
         {
@@ -65,6 +66,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "SELECT * FROM Wallet WHERE UserId = @UserId";
 
             var wallet = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
+            var transactions = _transactionDao.GetAllByWalletId(wallet.WalletId.Value).Result.ToList();
+
+            foreach (var transaction in transactions)
+            {
+                wallet.Transactions.Add(transaction);
+            }
 
             return wallet;
         }
