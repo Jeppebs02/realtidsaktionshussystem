@@ -77,7 +77,7 @@ namespace AuctionHouse.Test.DaoTests
 
         //TODO DELETE CUZ USER TEST SHOULD TEST THIS!
 
-        [Fact]
+        [Fact(Skip = "Not needed rn")]
         public async Task InsertAsync_ShouldReturnId_WhenWalletIsInserted()
         {
             // Arrange  
