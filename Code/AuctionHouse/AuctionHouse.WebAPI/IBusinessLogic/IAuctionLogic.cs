@@ -7,6 +7,9 @@ namespace AuctionHouse.WebAPI.IBusinessLogic
         Task<IEnumerable<Auction>> GetAllActiveAuctionsAsync();
 
         Task<bool> CreateAuctionAsync(Auction auction);
-        Task<bool> UpdateAuctionAsync(Auction auction);
+
+        Task<bool> UpdateAuctionOptimistically(Auction auction);
+
+        Task<bool> UpdateAuctionStatusOptimistically(Auction auction);
     }
 }
