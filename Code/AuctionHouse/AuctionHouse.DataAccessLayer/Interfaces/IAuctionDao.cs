@@ -33,7 +33,7 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
         /// <returns></returns>
         Task<IEnumerable<Auction>> GetAllActiveAsync();
 
-        Task<bool> updateAuctionOptimistically(int auctionId, AuctionStatus newStatus, byte[] expectedVersion, IDbTransaction transaction = null);
+        Task<bool> UpdateAuctionOptimistically(int auctionId, AuctionStatus newStatus, byte[] expectedVersion, IDbTransaction transaction = null);
 
     }
 }
