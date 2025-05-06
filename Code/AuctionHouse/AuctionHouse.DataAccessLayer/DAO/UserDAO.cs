@@ -34,15 +34,20 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<T>> GetAllAsync<T>()
         {
-            //Get all users with wallet and transactions
+            //Get all users
             //Only get the users that are not deleted
-            const string sql = @""
-
+            const string sql = @"SELECT * FROM [User] WHERE isDeleted = 0";
 
             var users = await _dbConnection.QueryAsync<User>(sql);
 
+            WalletDAO walletDAO = new WalletDAO(_dbConnection);
+            //Get all wallets for the users
+            foreach (var user in users)
+            {
+                var wallet = await walletDAO.GetByUserId(user.userId.Value);
+                user.Wallet = wallet;
+            }
             return users.ToList() as List<T>;
-
         }
 
          public async Task<T?> GetByIdAsync<T>(int id)
