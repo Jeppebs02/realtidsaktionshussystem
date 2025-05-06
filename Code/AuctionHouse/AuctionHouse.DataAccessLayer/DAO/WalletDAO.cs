@@ -67,9 +67,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 {
                     concreteWallet.Transactions = new List<Transaction>();
                 }
+                var transactions = await _transactionDao.GetAllByWalletId(concreteWallet.WalletId.Value);
+                foreach ( Transaction transaction in transactions)
+                {
+                    concreteWallet.Transactions.Add(transaction);
+
+                }
             }
-
-
 
             return walletT;
         }
