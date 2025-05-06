@@ -64,7 +64,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                     {
                         // Runtime cast: Treat itemT AS an Item to access .User
                         // This relies on the assumption T is actually an Item or derived.
-                        if (itemT is Item concreteItem) // Use pattern matching for safer cast
+                        if (itemT is Item concreteItem)
                         {
                             concreteItem.User = user; // Assign the mapped User object
                         }

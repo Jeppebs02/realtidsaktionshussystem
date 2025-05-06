@@ -54,12 +54,31 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         }
 
-        public Task<List<T>> GetAllAsync<T>()
+        public async Task<List<T>> GetAllAsync<T>()
         {
-            throw new NotImplementedException();
+            const string sql = @"SELECT
+                            AuctionId,
+                            AuctionName,
+                            Description,
+                            StartPrice,
+                            StartDate,
+                            EndDate,
+                            AmountOfBids,
+                            AuctionStatus,
+                            UserId
+                        FROM dbo.Auction";
+            var auctions = await _dbConnection.QueryAsync<T>(sql);
+            foreach (var auctionT in auctions)
+            {
+                if(auctionT is Auction concreteAuction)
+                {
+                    concreteAuction.Bids = await _bidDao.GetAllByAuctionIdAsync(concreteAuction.AuctionID.Value);
+                }
+            }
+            return auctions.ToList();
         }
 
-        public Task<IEnumerable<Auction>> GetAllByBidsAsync(int userId)
+        public async Task<IEnumerable<Auction>> GetAllByBidsAsync(int userId)
         {
             throw new NotImplementedException();
         }
