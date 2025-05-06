@@ -34,34 +34,39 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<T>> GetAllAsync<T>()
         {
-            //Get all users
-            //Only get the users that are not deleted
             const string sql = @"SELECT * FROM [User] WHERE isDeleted = 0";
 
             var users = await _dbConnection.QueryAsync<User>(sql);
 
-            WalletDAO walletDAO = new WalletDAO(_dbConnection);
-            //Get all wallets for the users
-            foreach (var user in users)
+            if (typeof(T) == typeof(User))
             {
-                var wallet = await walletDAO.GetByUserId(user.UserId.Value);
-                user.Wallet = wallet;
+                WalletDAO walletDAO = new WalletDAO(_dbConnection);
+                foreach (var user in users)
+                {
+                    var wallet = await walletDAO.GetByUserId(user.UserId.Value);
+                    user.Wallet = wallet;
+                }
             }
-            return users.ToList() as List<T>;
+
+            return users.Cast<T>().ToList();
         }
 
-         public async Task<T?> GetByIdAsync<T>(int id)
+        public async Task<T?> GetByIdAsync<T>(int id)
         {
             const string sql = "SELECT * FROM [User] WHERE userId = @userId";
 
-            var user = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { userId = id });
+            var user = await _dbConnection.QuerySingleOrDefaultAsync<User>(sql, new { userId = id });
 
+            if (user is T typedUser)
+            {
+                WalletDAO walletDAO = new WalletDAO(_dbConnection);
+                var wallet = await walletDAO.GetByUserId(user.UserId.Value);
+                user.Wallet = wallet;
 
-            WalletDAO walletDAO = new WalletDAO(_dbConnection);
-            var wallet = await walletDAO.GetByUserId(user.UserId);
-            user.Wallet = wallet;
+                return typedUser;
+            }
 
-            return user;
+            return default;
         }
 
          public async Task<int> InsertAsync(User entity)
