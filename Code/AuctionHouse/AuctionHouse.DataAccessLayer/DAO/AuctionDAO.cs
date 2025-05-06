@@ -34,16 +34,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = @"SELECT
                             AuctionId,
-                            AuctionName,
-                            Description,
+                            StartTime,
+                            EndTime,
                             StartPrice,
-                            StartDate,
-                            EndDate,
-                            AmountOfBids,
+                            BuyOutPrice,
+                            MinimumBidIncrement,
                             AuctionStatus,
-                            UserId
+                            Version,
+                            Notify,
+                            ItemId,
+                            AmountOfBids
                         FROM dbo.Auction
-                        WHERE AuctionStatus = ACTIVE";
+                        WHERE AuctionStatus = 'ACTIVE'";
 
             var auctions = await _dbConnection.QueryAsync<Auction>(sql);
 
@@ -129,7 +131,27 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<int> InsertAsync(Auction entity)
         {
-            throw new NotImplementedException();
+            // dbo.Auction includes these columns: AuctionId (PK AI) StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId, AmountOfBids
+
+            const string sql= @"
+                            INSERT INTO dbo.Auction
+                            (StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, ItemId)
+                            OUTPUT INSERTED.AuctionId
+                            VALUES
+                            (@StartTime, @EndTime, @StartPrice, @BuyOutPrice, @MinimumBidIncrement, @AuctionStatus, @ItemId)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("StartTime", entity.StartTime);
+            parameters.Add("EndTime", entity.EndTime);
+            parameters.Add("StartPrice", entity.StartPrice);
+            parameters.Add("BuyOutPrice", entity.BuyOutPrice);
+            parameters.Add("MinimumBidIncrement", entity.MinimumBidIncrement);
+            parameters.Add("AuctionStatus", entity.AuctionStatus);
+
+            parameters.Add("ItemId", entity.item.ItemId);
+
+            var auctionId = await _dbConnection.ExecuteScalarAsync<int>(sql, parameters);
+            return auctionId;
         }
 
         public async Task<bool> UpdateAsync(Auction entity)

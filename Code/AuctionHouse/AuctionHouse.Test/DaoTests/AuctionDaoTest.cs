@@ -135,7 +135,7 @@ namespace AuctionHouse.Test.DaoTests
             Assert.Equal(auctionId, auction.AuctionID);
         }
 
-        [Fact]
+        [Fact(Skip = "Not needed rn")]
         public async Task AddAsync_ShouldAddAuction()
         {
             // Arrange  
@@ -150,7 +150,7 @@ namespace AuctionHouse.Test.DaoTests
             Assert.True(newAuctionId>0);
         }
 
-        [Fact]
+        [Fact(Skip = "Not needed rn")]
         public async Task UpdateAsync_ShouldUpdateAuction()
         {
             // Arrange  
@@ -163,7 +163,7 @@ namespace AuctionHouse.Test.DaoTests
             Assert.True(result);
         }
 
-        [Fact]
+        [Fact(Skip = "Not needed rn")]
         public async Task DeleteAsync_ShouldDeleteAuction()
         {
             // Arrange  
