@@ -10,16 +10,29 @@ using AuctionHouse.DataAccessLayer.Interfaces;
 using System.Data.SqlClient;
 using Xunit.Abstractions;
 using AuctionHouse.DataAccessLayer.DAO;
+using System.Data.SqlClient;
 
 namespace AuctionHouse.Test.DaoTests
 {
     public class ItemDaoTest
     {
+        #region Fields
         private readonly IDbConnection _connection;
         private readonly IItemDao _itemDao;
         private readonly ITestOutputHelper _output;
 
+        //Teardown path
+        //@ means where we are. From there ".." means out of the folder, we do that
+        //twice and then go into the SQL-Script folder
+        private readonly string _truncateScriptPath = "TruncateTables.sql";
+        //Generate testdata path
+        private readonly string _generateTestDataScriptPath = "GenerateTestData.sql";
+        //Both are added as links by rightclicking the AuctionHouse.Test Project
+        //adding them as links, then chaning their properties to Build "Content" and Copy to
+        //output directory to "Copy if newer"
+        #endregion
 
+        #region Constructor
         public ItemDaoTest(ITestOutputHelper output)
         {
             _output = output;
@@ -42,12 +55,41 @@ namespace AuctionHouse.Test.DaoTests
             _output.WriteLine("Test Constructor: Creating ItemDAO...");
             _itemDao = new ItemDAO(_connection);
             _output.WriteLine("Test Constructor: Setup complete.");
+
+            ExecuteSqlScript(_truncateScriptPath);
+            ExecuteSqlScript(_generateTestDataScriptPath);
+        }
+        #endregion
+
+        #region Build up and tear down methods
+        //Execute SQL Script method from filepath
+        private void ExecuteSqlScript(string filePath)
+        {
+            //reads filepath
+            string sql = File.ReadAllText(filePath);
+
+            //creates command with connection
+            using var command = _connection.CreateCommand();
+            //sets the command to the script
+            command.CommandText = sql;
+
+            //Open connection if it isnt open
+            if (_connection.State != ConnectionState.Open)
+            {
+                _connection.Open();
+            }
+            //Execute command
+            command.ExecuteNonQuery();
         }
 
+        // Clean up after each test
+        public void Dispose()
+        {
+            ExecuteSqlScript(_truncateScriptPath); 
+        }
+        #endregion
 
-
-
-
+        #region Test
         [Fact]
         public async Task GetAllAsync_ShouldReturnListOfItems()
         {
@@ -97,7 +139,7 @@ namespace AuctionHouse.Test.DaoTests
             // Assert  
             Assert.True(id > 0);
         }
-
+        #endregion
 
     }
 }
