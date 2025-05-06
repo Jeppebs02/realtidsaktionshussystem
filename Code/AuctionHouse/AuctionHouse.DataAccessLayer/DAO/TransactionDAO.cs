@@ -41,9 +41,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Transaction>> GetAllByWalletId(int walletId)
+        public async Task<IEnumerable<Transaction>> GetAllByWalletId(int walletId)
         {
-            throw new NotImplementedException();
+            const string sql = "SELECT * FROM [Transaction] WHERE WalletId = @WalletId";
+
+            var transactions = await _dbConnection.QueryAsync<Transaction>(sql, new { WalletId = walletId });
+
+            return transactions;
         }
 
         public Task<T?> GetByIdAsync<T>(int id)
