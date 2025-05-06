@@ -21,7 +21,7 @@ namespace AuctionHouse.Test.DaoTests
 
         public AuctionDaoTest()
         {
-            _dbConnection = new SqlConnection("DatabaseConnectionString");
+            _dbConnection = new SqlConnection(Environment.GetEnvironmentVariable("DatabaseConnectionString"));
             _bidDao = new BidDAO(_dbConnection);
             _auctionDao = new AuctionDAO(_dbConnection,_bidDao);
         }
