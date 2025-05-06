@@ -57,9 +57,21 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = "SELECT * FROM Wallet WHERE WalletId = @WalletId";
 
-            var wallet = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { WalletId = id });
+            var walletT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { WalletId = id });
 
-            return wallet;
+
+            if (walletT is Wallet concreteWallet)
+            {
+
+                if (concreteWallet.Transactions == null)
+                {
+                    concreteWallet.Transactions = new List<Transaction>();
+                }
+            }
+
+
+
+            return walletT;
         }
 
         public async Task<Wallet> GetByUserId(int userId)
@@ -67,6 +79,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
             const string sql = "SELECT * FROM Wallet WHERE UserId = @UserId";
 
             var wallet = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
+            if (wallet.Transactions == null)
+            {
+                wallet.Transactions = new List<Transaction>();
+            }
+
             var transactions = await _transactionDao.GetAllByWalletId(wallet.WalletId.Value);
 
             foreach (var transaction in transactions)
