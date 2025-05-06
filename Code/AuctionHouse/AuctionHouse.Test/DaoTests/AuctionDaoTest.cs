@@ -14,18 +14,35 @@ namespace AuctionHouse.Test.DaoTests
 {
     public class AuctionDaoTest
     {
-
+        #region Fields
         private readonly IAuctionDao _auctionDao;
         private readonly IBidDao _bidDao;
         private readonly IDbConnection _dbConnection;
+        #endregion
 
+        #region Constructor
         public AuctionDaoTest()
         {
             _dbConnection = new SqlConnection(Environment.GetEnvironmentVariable("DatabaseConnectionString"));
             _bidDao = new BidDAO(_dbConnection);
             _auctionDao = new AuctionDAO(_dbConnection,_bidDao);
-        }
 
+            //Clean tables
+            CleanAndBuild.CleanDB();
+            //Generate test data
+            CleanAndBuild.GenerateFreshTestDB();
+        }
+        #endregion
+
+        #region Build up and tear down methods
+        // Clean up after each test
+        public void Dispose()
+        {
+            CleanAndBuild.CleanDB();
+        }
+        #endregion
+
+        #region Test
         [Fact(Skip = "Not needed rn")]
         public async Task GetWithinDateRangeAsync_ShouldReturnAuctions_WhenDateRangeIsValid()
         {
@@ -179,10 +196,6 @@ namespace AuctionHouse.Test.DaoTests
             // Assert  
             Assert.True(result);
         }
-
-
-        
-
-
+        #endregion
     }
 }
