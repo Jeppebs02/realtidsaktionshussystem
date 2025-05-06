@@ -13,6 +13,7 @@
   <ItemGroup>
     <Folder Include="Interfaces_temp\" />
     <Folder Include="SqlServer\" />
+    <Folder Include="Stub\" />
   </ItemGroup>
 
   <ItemGroup>
