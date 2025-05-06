@@ -14,9 +14,13 @@ namespace AuctionHouse.Test.DaoTests
 {
     public class BidDaoTest
     {
+        #region Fields
         private readonly IDbConnection _connection;
         private readonly IBidDao _bidDao;
         private readonly IUserDao _userDao;
+        #endregion
+
+        #region Constructor
         public BidDaoTest()
         {
             string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
@@ -31,8 +35,23 @@ namespace AuctionHouse.Test.DaoTests
             _userDao = new UserDAO(_connection, wdao);
 
             _bidDao = new BidDAO(_connection);
-        }
 
+            //Clean tables
+            CleanAndBuild.CleanDB();
+            //Generate test data
+            CleanAndBuild.GenerateFreshTestDB();
+        }
+        #endregion
+
+        #region Build up and tear down methods
+        // Clean up after each test
+        public void Dispose()
+        {
+            CleanAndBuild.CleanDB();
+        }
+        #endregion
+
+        #region Test
         [Fact(Skip = "Skipped")]
         public async Task GetAllAsync_ShouldReturnListOfBids()
         {
@@ -79,5 +98,6 @@ namespace AuctionHouse.Test.DaoTests
             // Assert  
             Assert.True(id >= 5);
         }
+        #endregion
     }
 }
