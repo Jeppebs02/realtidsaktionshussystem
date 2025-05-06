@@ -71,7 +71,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task InsertAsync_ShouldReturnId_WhenUserIsInserted()
         {
             // Arrange
-            User user = new User("carlCool", "123", "carl", "carlsen", "hej@.com", "12345678", "carl street", null);
+            User user = new User("carlCool", "$2a$12$QG55SQJOa36iv/Efl6RDiuXTBNUYLKorvZ.M/xVuHZbKLhCZrDaSm", "carl", "carlsen", "hej@.com", "12345678", "carl street", null);
 
             // Act
             int UserId = await _userDao.InsertAsync(user);

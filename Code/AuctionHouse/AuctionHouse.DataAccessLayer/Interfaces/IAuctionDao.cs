@@ -1,6 +1,8 @@
-﻿using AuctionHouse.ClassLibrary.Model;
+﻿using AuctionHouse.ClassLibrary.Enum;
+using AuctionHouse.ClassLibrary.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +32,8 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<IEnumerable<Auction>> GetAllActiveAsync();
+
+        Task<bool> UpdateAuctionOptimistically(int auctionId, AuctionStatus newStatus, byte[] expectedVersion, IDbTransaction transaction = null);
 
     }
 }

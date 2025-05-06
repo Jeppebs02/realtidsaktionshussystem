@@ -1,6 +1,7 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
         /// <returns></returns>
         Task<Wallet> GetByUserId(int userId);
 
-
+        Task<bool> ReserveFundsOptimisticallyAsync(int walletId, decimal amountToReserve, byte[] expectedVersion, IDbTransaction transaction = null);
 
     }
 }
