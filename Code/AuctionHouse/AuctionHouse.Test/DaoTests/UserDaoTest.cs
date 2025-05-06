@@ -22,8 +22,11 @@ namespace AuctionHouse.Test.DaoTests
             string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
 
             _connection = new SqlConnection(connectionString);
-            _userDao = new UserDAO(_connection);
-            _walletDao = new WalletDAO(_connection);
+
+            TransactionDAO transactionDAO = new TransactionDAO(_connection);
+            _walletDao = new WalletDAO(_connection, transactionDAO);
+            _userDao = new UserDAO(_connection, _walletDao);
+            
 
         }
 
