@@ -15,11 +15,13 @@ namespace AuctionHouse.Test.DaoTests
 {
     public class TransactionDaoTest
     {
+        #region Fields
         private readonly IDbConnection _connection;
         private readonly ITransactionDao _transactionDao;
         private readonly ITestOutputHelper _output;
+        #endregion
 
-
+        #region Constructor
         public TransactionDaoTest(ITestOutputHelper output)
         {
             _output = output;
@@ -42,8 +44,23 @@ namespace AuctionHouse.Test.DaoTests
             _output.WriteLine("Test Constructor: Creating ItemDAO...");
             _transactionDao = new TransactionDAO(_connection);
             _output.WriteLine("Test Constructor: Setup complete.");
-        }
 
+            //Clean tables
+            CleanAndBuild.CleanDB();
+            //Generate test data
+            CleanAndBuild.GenerateFreshTestDB();
+        }
+        #endregion
+
+        #region Build up and tear down methods
+        // Clean up after each test
+        public void Dispose()
+        {
+            CleanAndBuild.CleanDB();
+        }
+        #endregion
+
+        #region Test
         public Task<bool> DeleteAsync(Transaction entity)
         {
             throw new NotImplementedException();
@@ -87,5 +104,6 @@ namespace AuctionHouse.Test.DaoTests
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }
