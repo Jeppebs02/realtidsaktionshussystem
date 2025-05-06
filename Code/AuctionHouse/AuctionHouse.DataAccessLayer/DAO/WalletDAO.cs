@@ -102,5 +102,22 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             return rowsAffected > 0;
         }
+
+
+        public async Task<bool> ReserveFundsOptimisticallyAsync(int walletId, decimal amountToReserve, byte[] expectedVersion, IDbTransaction transaction = null)
+        {
+            const string sql = @"
+                UPDATE Wallet
+                SET ReservedBalance = ReservedBalance + @AmountToReserve
+                WHERE WalletId = @WalletId AND Version = @ExpectedVersion;";
+            var parameters = new
+            {
+                AmountToReserve = amountToReserve,
+                WalletId = walletId,
+                ExpectedVersion = expectedVersion
+            };
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction);
+            return rowsAffected > 0;
+        }
     }
 }
