@@ -44,7 +44,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
                         WHERE AuctionStatus = ACTIVE";
 
             var auctions = await _dbConnection.QueryAsync<Auction>(sql);
-            var bids = await _bidDao.GetByIdAsync<Bid>(0); // Assuming you have a method to get bids by auction ID
+
+            foreach(var auction in auctions)
+            {
+                auction.Bids = await _bidDao.GetAllByAuctionIdAsync(auction.AuctionID.Value);
+            }
+
+            return auctions;
+
         }
 
         public Task<List<T>> GetAllAsync<T>()
@@ -93,7 +100,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             parameters.Add("AmountOfBids", newBids);
             parameters.Add("ExpectedVersion", expectedVersion);
 
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction);
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction: transaction);
             return rowsAffected > 0;
         }
 
