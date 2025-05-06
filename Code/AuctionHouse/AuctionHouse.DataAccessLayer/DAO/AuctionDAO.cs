@@ -34,16 +34,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = @"SELECT
                             AuctionId,
-                            AuctionName,
-                            Description,
+                            StartTime,
+                            EndTime,
                             StartPrice,
-                            StartDate,
-                            EndDate,
-                            AmountOfBids,
+                            BuyOutPrice,
+                            MinimumBidIncrement,
                             AuctionStatus,
-                            UserId
+                            Version,
+                            Notify,
+                            ItemId,
+                            AmountOfBids
                         FROM dbo.Auction
-                        WHERE AuctionStatus = ACTIVE";
+                        WHERE AuctionStatus = 'ACTIVE'";
 
             var auctions = await _dbConnection.QueryAsync<Auction>(sql);
 
