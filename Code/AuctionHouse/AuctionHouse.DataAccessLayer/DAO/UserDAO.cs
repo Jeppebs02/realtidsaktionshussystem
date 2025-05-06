@@ -34,7 +34,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<T>> GetAllAsync<T>()
         {
-            const string sql = "SELECT * FROM [User]";
+            //Get all users with wallet and transactions
+            const string sql = "SELECT u.*, w.*, t.* FROM [User] u " +
+                "LEFT JOIN Wallet w ON u.userId = w.UserId " +
+                "LEFT JOIN [Transaction] t ON w.WalletId = t.WalletId";
+
 
             var users = await _dbConnection.QueryAsync<User>(sql);
 
