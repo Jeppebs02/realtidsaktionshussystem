@@ -178,16 +178,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return rowsAffected > 0;
         }
 
-        public async Task<bool> UpdateAuctionStatusAsync(int auctionId, AuctionStatus newStatus)
+        public async Task<bool> UpdateAuctionStatusOptimisticallyAsync(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null)
         {
             const string sql = @"UPDATE Auction
                                  SET AuctionStatus = @AuctionStatus
-                                 WHERE AuctionId = @AuctionId";
+                                 WHERE AuctionId = @AuctionId
+                                 AND Version = @ExpectedVersion";
 
             var parameters = new DynamicParameters();
             parameters.Add("AuctionId", auctionId);
             parameters.Add("AuctionStatus", newStatus);
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters);
+            parameters.Add("ExpectedVersion", expectedVersion);
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction: transaction);
             return rowsAffected > 0;
         }
 
