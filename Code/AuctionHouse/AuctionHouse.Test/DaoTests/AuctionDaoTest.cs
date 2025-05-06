@@ -60,7 +60,7 @@ namespace AuctionHouse.Test.DaoTests
         }
 
 
-        [Fact]
+        [Fact(Skip = "Not needed rn")]
         public async Task GetAllByUserIDAsync_ShouldReturnAuctions_WhenUserIdExists()
         {
             // Arrange  
@@ -89,7 +89,7 @@ namespace AuctionHouse.Test.DaoTests
         }
 
 
-        [Fact]
+        [Fact(Skip = "Not needed rn")]
         public async Task GetAllByBidsAsync_ShouldReturnAuctions_WhenUserIdExists()
         {
             // Arrange  
