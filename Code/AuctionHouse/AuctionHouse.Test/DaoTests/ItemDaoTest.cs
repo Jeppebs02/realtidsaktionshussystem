@@ -12,6 +12,7 @@ using Xunit.Abstractions;
 using AuctionHouse.DataAccessLayer.DAO;
 using System.Data.SqlClient;
 
+
 namespace AuctionHouse.Test.DaoTests
 {
     public class ItemDaoTest
@@ -21,15 +22,7 @@ namespace AuctionHouse.Test.DaoTests
         private readonly IItemDao _itemDao;
         private readonly ITestOutputHelper _output;
 
-        //Teardown path
-        //@ means where we are. From there ".." means out of the folder, we do that
-        //twice and then go into the SQL-Script folder
-        private readonly string _truncateScriptPath = "TruncateTables.sql";
-        //Generate testdata path
-        private readonly string _generateTestDataScriptPath = "GenerateTestData.sql";
-        //Both are added as links by rightclicking the AuctionHouse.Test Project
-        //adding them as links, then chaning their properties to Build "Content" and Copy to
-        //output directory to "Copy if newer"
+        private CleanAndBuild cleanAndBuild;
         #endregion
 
         #region Constructor
@@ -55,44 +48,20 @@ namespace AuctionHouse.Test.DaoTests
             _output.WriteLine("Test Constructor: Creating ItemDAO...");
             _itemDao = new ItemDAO(_connection);
             _output.WriteLine("Test Constructor: Setup complete.");
+            
+            //Create CleanAndBuild class
+            cleanAndBuild = new CleanAndBuild();
 
-            //For debugging filepath. first where are we. Second write out path for Truncate. Third wirte out path for Generate test data
-            _output.WriteLine("Working Directory: " + Environment.CurrentDirectory);
-            _output.WriteLine("Expected Truncate Script Path: " + Path.GetFullPath(_truncateScriptPath));
-            _output.WriteLine("Expected Generate Script Path: " + Path.GetFullPath(_generateTestDataScriptPath));
-
-            //Clean Tables (Ekstra to ensure that theres no leftovers or random entries)
-            ExecuteSqlScript(_truncateScriptPath);
-            //Generate testdata
-            ExecuteSqlScript(_generateTestDataScriptPath);
+            cleanAndBuild.CleanDB();
+            cleanAndBuild.GenerateFreshTestDB();
         }
         #endregion
 
         #region Build up and tear down methods
-        //Execute SQL Script method from filepath
-        private void ExecuteSqlScript(string filePath)
-        {
-            //reads all text from the passed file path
-            string sql = File.ReadAllText(filePath);
-
-            //creates command with connection, and runs
-            //command with the SQL copied from the passed filepath
-            using var command = _connection.CreateCommand();
-            command.CommandText = sql;
-
-            //Open connection if it isnt open
-            if (_connection.State != ConnectionState.Open)
-            {
-                _connection.Open();
-            }
-            //Execute command
-            command.ExecuteNonQuery();
-        }
-
         // Clean up after each test
         public void Dispose()
         {
-            ExecuteSqlScript(_truncateScriptPath); 
+            cleanAndBuild.CleanDB();
         }
         #endregion
 
