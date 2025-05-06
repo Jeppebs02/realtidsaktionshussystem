@@ -19,11 +19,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
         private readonly IBidDao _bidDao;
         private readonly IUserDao _userDao;
 
-        public AuctionDAO(IDbConnection dbConnection, IBidDao biddao, IUserDao userdao)
+        public AuctionDAO(IDbConnection dbConnection, IBidDao biddao)
         {
             _dbConnection = dbConnection;
             _bidDao = biddao;
-            _userDao = userdao;
         }
 
         public Task<bool> DeleteAsync(Auction entity)
