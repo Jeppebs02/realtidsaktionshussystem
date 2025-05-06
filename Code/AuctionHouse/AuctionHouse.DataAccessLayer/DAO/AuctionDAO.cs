@@ -16,6 +16,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
     {
 
         private readonly IDbConnection _dbConnection;
+        private readonly IBidDao _bidDao;
 
         public AuctionDAO(IDbConnection dbConnection)
         {
@@ -27,9 +28,23 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Auction>> GetAllActiveAsync()
+        public async Task<IEnumerable<Auction>> GetAllActiveAsync()
         {
-            throw new NotImplementedException();
+            const string sql = @"SELECT
+                            AuctionId,
+                            AuctionName,
+                            Description,
+                            StartPrice,
+                            StartDate,
+                            EndDate,
+                            AmountOfBids,
+                            AuctionStatus,
+                            UserId
+                        FROM dbo.Auction
+                        WHERE AuctionStatus = ACTIVE";
+
+            var auctions = await _dbConnection.QueryAsync<Auction>(sql);
+            var bids = await _bidDao.GetByIdAsync<Bid>(0); // Assuming you have a method to get bids by auction ID
         }
 
         public Task<List<T>> GetAllAsync<T>()
@@ -67,19 +82,24 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
 
-        public async Task<bool> UpdateAuctionOptimistically(int auctionId, AuctionStatus newStatus, byte[] expectedVersion, IDbTransaction transaction = null)
+        public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
         {
             const string sql = @"UPDATE Auction
-                                 SET AuctionStatus = @AuctionStatus,
+                                 SET AmountOfBids = AmountOfBids + @AmountOfBids,
                                  WHERE AuctionId = @AuctionId
                                  AND Version = @ExpectedVersion";
             var parameters = new DynamicParameters();
             parameters.Add("AuctionId", auctionId);
-            parameters.Add("AuctionStatus", newStatus);
+            parameters.Add("AmountOfBids", newBids);
             parameters.Add("ExpectedVersion", expectedVersion);
-            parameters.Add("Version", expectedVersion);
+
             int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction);
             return rowsAffected > 0;
+        }
+
+        public async Task<bool> UpdateAuctionStatusAsync(int auctionId, AuctionStatus newStatus)
+        {
+            throw new NotImplementedException();
         }
     }
 

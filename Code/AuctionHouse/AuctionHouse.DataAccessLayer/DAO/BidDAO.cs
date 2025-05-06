@@ -121,7 +121,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 entity.AuctionId,
                 entity.Amount,
                 entity.TimeStamp,
-                UserId = entity.User?.userId
+                UserId = entity.User?.UserId
             };
             if (parameters.UserId == null) throw new ArgumentException("Bid must have a User with a userId.");
 
