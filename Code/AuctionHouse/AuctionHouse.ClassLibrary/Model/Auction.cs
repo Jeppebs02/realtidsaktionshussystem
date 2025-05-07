@@ -27,7 +27,6 @@ namespace AuctionHouse.ClassLibrary.Model
             Version=version;
             Notify = notify;
             this.item=item;
-            Bids = new List<Bid>();
             if (auctionId != -1)
             {
                 AuctionID = auctionId;
@@ -54,7 +53,7 @@ namespace AuctionHouse.ClassLibrary.Model
         public Item item { get; set; }
         [JsonIgnore]
         public int? itemId { get;set; }
-        public List<Bid> Bids { get; set; }
+        public List<Bid> Bids { get; set; } = new List<Bid>();
 
         #endregion
 
