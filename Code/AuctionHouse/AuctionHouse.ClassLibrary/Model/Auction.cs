@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 
@@ -51,6 +52,8 @@ namespace AuctionHouse.ClassLibrary.Model
         public byte[] Version { get; set; }
         public bool Notify { get; set; }
         public Item item { get; set; }
+        [JsonIgnore]
+        public int? itemId { get;set; }
         public List<Bid> Bids { get; set; }
 
         #endregion

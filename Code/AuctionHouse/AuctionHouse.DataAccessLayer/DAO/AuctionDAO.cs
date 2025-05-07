@@ -18,11 +18,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
         private readonly IDbConnection _dbConnection;
         private readonly IBidDao _bidDao;
         private readonly IUserDao _userDao;
+        private readonly IItemDao _itemDao;
 
-        public AuctionDAO(IDbConnection dbConnection, IBidDao biddao)
+        public AuctionDAO(IDbConnection dbConnection, IBidDao biddao, IItemDao itemDao)
         {
             _dbConnection = dbConnection;
             _bidDao = biddao;
+            _itemDao = itemDao;
         }
 
         public Task<bool> DeleteAsync(Auction entity)
@@ -122,6 +124,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
                     concreteAuction.Bids.Add(bid);
                 }
 
+                var item = await _itemDao.GetByIdAsync<Item>(concreteAuction.itemId.Value);
+                concreteAuction.item = item;
 
             }
             return auctionT;
