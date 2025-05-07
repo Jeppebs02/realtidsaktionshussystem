@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AuctionHouse.ClassLibrary.Enum;
 
@@ -27,6 +28,8 @@ namespace AuctionHouse.ClassLibrary.Model
 
         #region Properties
         public int? ItemId { get; set; }
+        [JsonIgnore]
+        public int? UserId { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         [StringLength(50, ErrorMessage = "Name cannot be longer than 50 characters.")]
