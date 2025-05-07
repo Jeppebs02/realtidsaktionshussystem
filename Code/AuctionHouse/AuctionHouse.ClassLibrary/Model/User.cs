@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AuctionHouse.ClassLibrary.Model
@@ -44,7 +45,8 @@ namespace AuctionHouse.ClassLibrary.Model
 
         [Required(ErrorMessage = "Password is required")]
         [StringLength(50, ErrorMessage = "Password cant be more than 255 Characters")]
-        public string Password { get; set; }
+        [JsonIgnore]
+        public string? Password { get; set; } = null;
 
         [Required(ErrorMessage = "Registration date is required")]
         public DateTime RegistrationDate { get; set; }
