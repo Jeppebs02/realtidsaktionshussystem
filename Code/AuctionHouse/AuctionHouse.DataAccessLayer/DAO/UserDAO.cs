@@ -68,11 +68,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM [User]
                             WHERE UserId = @UserId;";
 
-            var user = await _dbConnection.QuerySingleOrDefaultAsync(sql, new { UserId = id });
+            var user = await _dbConnection.QuerySingleOrDefaultAsync<User>(sql, new { UserId = id });
 
 
-                Console.WriteLine($"UserId from UserDAO: {user.UserId}");
-                var wallet = await walletDAO.GetByUserId(user.UserId.Value);
+                Console.WriteLine($"UserId from UserDAO: {user!.UserId}");
+            // This fixed it
+                var wallet = await walletDAO.GetByUserId(user.UserId!.Value);
                 if(user.Wallet == null)
                 {
                 user.Wallet = wallet;

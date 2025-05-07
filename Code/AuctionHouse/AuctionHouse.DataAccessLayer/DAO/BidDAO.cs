@@ -133,7 +133,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             {
                 if (bid.User == null)
                 {
-                    bid.User = await _userDao.GetByIdAsync(bid.UserId.Value);
+                    bid.User = await _userDao.GetByIdAsync(bid.UserId!.Value);
                 }
             }
 
