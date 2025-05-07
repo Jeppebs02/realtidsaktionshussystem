@@ -14,10 +14,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
     {
 
         private readonly IDbConnection _dbConnection;
+        private readonly IUserDao _userDao;
 
-        public BidDAO(IDbConnection dbConnection)
+        public BidDAO(IDbConnection dbConnection, IUserDao userdao)
         {
             _dbConnection = dbConnection;
+            _userDao = userdao;
         }
 
         public async Task<bool> DeleteAsync(Bid entity)
@@ -35,44 +37,26 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<T?> GetByIdAsync<T>(int id)
         {
             const string sql = @"SELECT
-                                b.BidId,
-                                b.AuctionId,
-                                b.Amount,
-                                b.TimeStamp,
-                                b.UserId        AS Bid_UserId,
-                                u.UserId        AS User_UserId,
-                                u.UserName,
-                                u.FirstName,
-                                u.LastName,
-                                u.Email,
-                                u.PhoneNumber,
-                                u.[Address]     
-                            FROM dbo.Bid       b
-                            JOIN dbo.[User]  u
-                                ON b.UserId = u.UserId
-                            WHERE b.BidId = @BidId;";
+                                BidId,
+                                AuctionId,
+                                Amount,
+                                TimeStamp,
+                                UserId    
+                            FROM dbo.Bid
+                            WHERE BidId = @BidId;";
 
-            var bids = await _dbConnection.QueryAsync<T, User, T>(
-                sql,
-                map: (bidT, user) =>
+            var bidT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { BidId = id });
+            Console.WriteLine("In BidDAO.GetByIdAsync");
+            if(bidT is Bid concreteBid)
+            {
+                Console.WriteLine("Casted bidT as concrete bid");
+                if(concreteBid.User == null || true)
                 {
-                    if (bidT != null)
-                    {
-                        //Runtime cast
-                        if (bidT is Bid concreteBid)
-                        {
-                            concreteBid.User = user;
-                        }
+                    concreteBid.User =await _userDao.GetByIdAsync<User>(concreteBid.UserId.Value);
+                }
+            }
 
-                    }
-                    return bidT;
-                },
-                param: new { BidId = id },
-
-                splitOn: "User_UserId"
-            );
-
-            return bids.FirstOrDefault();
+            return bidT;
 
         }
 
@@ -139,31 +123,23 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<List<Bid>> GetAllByAuctionIdAsync(int auctionId)
         {
             const string sql = @"SELECT
-                            b.BidId, b.Amount, b.TimeStamp, b.UserId AS BidUserId, b.AuctionId,
-                            u.UserId AS User_UserId,
-                            u.CantBuy, u.CantSell, u.UserName, u.PasswordHash,
-                            u.RegistrationDate, u.FirstName, u.LastName, u.Email,
-                            u.PhoneNumber, u.[Address], u.IsDeleted
-                        FROM dbo.Bid b
-                        JOIN dbo.[User] u ON b.UserId = u.UserId
-                        WHERE b.AuctionId = @AuctionId
-                        ORDER BY b.TimeStamp DESC;";
+                            BidId, Amount, TimeStamp, UserId, AuctionId
+                        FROM dbo.Bid
+                        WHERE AuctionId = @AuctionId
+                        ORDER BY TimeStamp DESC;";
 
-            var bids = await _dbConnection.QueryAsync<Bid, User, Bid>(
-            sql,
-            map: (bid, user) =>
+            var bidT = await _dbConnection.QueryAsync<Bid>(sql, new { AuctionId = auctionId });
+            Console.WriteLine("In BidDAO");
+            foreach(var bid in bidT)
             {
-                // add the user to the bid, this is similar to the static map function in ItemDAO.
-                //This is just with a lambda :)
-                bid.User = user;
-                return bid;
-            },
-            param: new { AuctionId = auctionId },
+                if (bid.User == null)
+                {
+                    bid.User = await _userDao.GetByIdAsync<User>(bid.UserId.Value);
+                }
+            }
 
-            splitOn: "User_UserId"
-                );
 
-            return bids.ToList();
+            return bidT.ToList();
 
 
         }

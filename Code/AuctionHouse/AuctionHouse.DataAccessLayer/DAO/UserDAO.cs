@@ -55,12 +55,27 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<T?> GetByIdAsync<T>(int id)
         {
-            const string sql = "SELECT * FROM [User] WHERE userId = @UserId";
+            const string sql = @"SELECT 
+                                UserId,
+                                CantBuy,
+                                CantSell,
+                                UserName,
+                                PasswordHash,
+                                RegistrationDate,
+                                FirstName,
+                                LastName,
+                                Email,
+                                PhoneNumber,
+                                Address,
+                                IsDeleted
+                            FROM [User]
+                            WHERE UserId = @UserId;";
 
             var userT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { UserId = id });
 
             if (userT is User concreteUser)
             {
+                Console.WriteLine($"UserId from UserDAO: {concreteUser.UserId}");
                 var wallet = await walletDAO.GetByUserId(concreteUser.UserId.Value);
                 if(concreteUser.Wallet== null)
                 {

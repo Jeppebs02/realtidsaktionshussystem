@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace AuctionHouse.ClassLibrary.Model
 {
@@ -28,6 +29,9 @@ namespace AuctionHouse.ClassLibrary.Model
         public int AuctionId { get; set; }
         public decimal Amount { get; set; }
         public DateTime TimeStamp { get; set; }
+
+        [JsonIgnore]
+        public int? UserId { get; set; }
 
         [Required(ErrorMessage = "User is required")]
         public User User { get; set; }

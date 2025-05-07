@@ -80,9 +80,24 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Wallet> GetByUserId(int userId)
         {
-            const string sql = "SELECT * FROM Wallet WHERE UserId = @UserId";
+            const string sql = @"SELECT 
+                                WalletId,
+                                TotalBalance,
+                                ReservedBalance,
+                                UserId,
+                                Version
+                            FROM Wallet
+                            WHERE UserId = @UserId;";
+
+            Console.WriteLine("in walletDAO");
 
             var wallet = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
+
+
+            if (wallet == null)
+            {
+                Console.WriteLine("Wallet is null from walletdao");
+            }
             if (wallet.Transactions == null)
             {
                 wallet.Transactions = new List<Transaction>();
