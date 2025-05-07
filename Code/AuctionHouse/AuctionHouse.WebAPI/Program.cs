@@ -46,6 +46,7 @@ builder.Services.AddScoped<IBidDao, BidDAO>();
 builder.Services.AddScoped<IWalletDao, WalletDAO>();
 builder.Services.AddScoped<ITransactionDao, TransactionDAO>();
 builder.Services.AddScoped<IAuctionDao, AuctionDAO>();
+builder.Services.AddScoped<IBidDao, BidDAO>();
 
 //Register logics
 builder.Services.AddScoped<APIInterface.IBidLogic, BidLogic>();

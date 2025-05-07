@@ -9,44 +9,46 @@ namespace AuctionHouse.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BidController : ControllerBase
+    public class AuctionController : ControllerBase
     {
-        
-        private readonly IBidDao _bidDao;
 
-        public BidController(IBidDao bidDao)
+        private readonly IAuctionDao _auctionDao;
+
+        public AuctionController(IAuctionDao auctionDao)
         {
             // This is where we inject the IItemDao into the controller
-            _bidDao = bidDao;
+            _auctionDao = auctionDao;
         }
 
-        // GET: api/<BidController>
+
+
+        // GET: api/<AuctionController>
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<BidController>/5
+        // GET api/<AuctionController>/5
         [HttpGet("{id}")]
-        public async Task<Bid> Get(int id)
+        public async Task<Auction> Get(int id)
         {
-            return await _bidDao.GetByIdAsync<Bid>(id);
+            return await _auctionDao.GetByIdAsync<Auction>(id);
         }
 
-        // POST api/<BidController>
+        // POST api/<AuctionController>
         [HttpPost]
-        public void Post([FromBody] Bid bid)
+        public void Post([FromBody]string value)
         {
         }
 
-        // PUT api/<BidController>/5
+        // PUT api/<AuctionController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE api/<BidController>/5
+        // DELETE api/<AuctionController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
