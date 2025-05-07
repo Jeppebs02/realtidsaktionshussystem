@@ -57,17 +57,17 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = "SELECT * FROM [User] WHERE userId = @UserId";
 
-            var user = await _dbConnection.QuerySingleOrDefaultAsync<User>(sql, new { UserId = id });
+            var userT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { UserId = id });
 
-            if (user is T typedUser)
+            if (userT is User concreteUser)
             {
-                var wallet = await walletDAO.GetByUserId(user.UserId.Value);
-                user.Wallet = wallet;
+                var wallet = await walletDAO.GetByUserId(concreteUser.UserId.Value);
+                concreteUser.Wallet = wallet;
 
-                return typedUser;
+                
             }
 
-            return default;
+            return userT;
         }
 
          public async Task<int> InsertAsync(User entity)

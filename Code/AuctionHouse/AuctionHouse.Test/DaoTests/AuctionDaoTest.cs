@@ -18,6 +18,7 @@ namespace AuctionHouse.Test.DaoTests
         private readonly IAuctionDao _auctionDao;
         private readonly IBidDao _bidDao;
         private readonly IDbConnection _dbConnection;
+        private readonly IItemDao _itemDao;
         #endregion
 
         #region Constructor
@@ -25,7 +26,8 @@ namespace AuctionHouse.Test.DaoTests
         {
             _dbConnection = new SqlConnection(Environment.GetEnvironmentVariable("DatabaseConnectionString"));
             _bidDao = new BidDAO(_dbConnection);
-            _auctionDao = new AuctionDAO(_dbConnection,_bidDao);
+            _itemDao = new ItemDAO(_dbConnection);
+            _auctionDao = new AuctionDAO(_dbConnection,_bidDao, _itemDao);
 
             //Clean tables
             CleanAndBuild.CleanDB();
