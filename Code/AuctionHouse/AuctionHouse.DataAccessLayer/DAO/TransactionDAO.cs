@@ -36,7 +36,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         }
 
-        public Task<List<T>> GetAllAsync<T>()
+        public Task<List<Transaction>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
@@ -50,7 +50,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return transactions;
         }
 
-        public Task<T?> GetByIdAsync<T>(int id)
+        public Task<Transaction> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }

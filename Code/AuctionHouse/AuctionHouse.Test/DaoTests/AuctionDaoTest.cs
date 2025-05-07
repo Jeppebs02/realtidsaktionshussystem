@@ -77,7 +77,7 @@ namespace AuctionHouse.Test.DaoTests
             // Act  
             IEnumerable<Auction> auctions = await _auctionDao.GetAllByUserIDAsync(userId);
 
-            IEnumerable<Auction> allAuctions = await _auctionDao.GetAllAsync<Auction>();
+            IEnumerable<Auction> allAuctions = await _auctionDao.GetAllAsync();
 
             IEnumerable<Auction> auctions2 = new List<Auction>();
             // Assert  
@@ -108,7 +108,7 @@ namespace AuctionHouse.Test.DaoTests
 
             IEnumerable<Auction> auctions2 = new List<Auction>();
 
-            IEnumerable<Auction> allAuctions = await _auctionDao.GetAllAsync<Auction>();
+            IEnumerable<Auction> allAuctions = await _auctionDao.GetAllAsync();
 
             foreach (var auction in allAuctions)
             {
@@ -142,7 +142,7 @@ namespace AuctionHouse.Test.DaoTests
         {
             // Arrange  
             // Act  
-            IEnumerable<Auction> auctions = await _auctionDao.GetAllAsync<Auction>();
+            IEnumerable<Auction> auctions = await _auctionDao.GetAllAsync();
             // Assert  
             Assert.NotNull(auctions);
             // Check that all auctions are returned
@@ -155,7 +155,7 @@ namespace AuctionHouse.Test.DaoTests
             // Arrange  
             int auctionId = 1;
             // Act  
-            Auction auction = await _auctionDao.GetByIdAsync<Auction>(auctionId);
+            Auction auction = await _auctionDao.GetByIdAsync(auctionId);
             // Assert  
             Assert.NotNull(auction);
             Assert.Equal(auctionId, auction.AuctionID);
@@ -182,13 +182,13 @@ namespace AuctionHouse.Test.DaoTests
         {
             // Arrange  
             int auctionId = 1;
-            Auction auction = await _auctionDao.GetByIdAsync<Auction>(auctionId);
+            Auction auction = await _auctionDao.GetByIdAsync(auctionId);
             var originalVersion = auction.Version;
 
             // Act  
             bool result = await _auctionDao.UpdateAuctionOptimistically(auctionId, auction.Version);
 
-            Auction newAuction = await _auctionDao.GetByIdAsync<Auction>(auctionId);
+            Auction newAuction = await _auctionDao.GetByIdAsync(auctionId);
             var newVersion = newAuction.Version;
             // Assert  
             Assert.NotEqual(originalVersion,newVersion);
@@ -199,7 +199,7 @@ namespace AuctionHouse.Test.DaoTests
         {
             // Arrange  
             int auctionId = 1;
-            Auction auction = await _auctionDao.GetByIdAsync<Auction>(auctionId);
+            Auction auction = await _auctionDao.GetByIdAsync(auctionId);
             // Act  
             bool result = await _auctionDao.DeleteAsync(auction);
             // Assert  

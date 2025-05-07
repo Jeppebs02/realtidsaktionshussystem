@@ -40,45 +40,17 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return item;
         }
 
-        public async Task<List<T>> GetAllAsync<T>()
+        public async Task<List<Item>> GetAllAsync()
         {
-            // Runtime check for safety
-            if (!typeof(Item).IsAssignableFrom(typeof(T)))
-            {
-                throw new InvalidOperationException($"Type parameter T ('{typeof(T).Name}') in GetAllAsync must be assignable from Item for this DAO.");
-            }
 
             // SQL to join Item and User tables
             const string sql = @"SELECT
                         i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData,
-                        i.UserId AS ItemUserId, u.UserId AS User_UserId, u.UserName, u.FirstName,
-                        u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell,
-                        u.PasswordHash, u.RegistrationDate
-                    FROM dbo.Item i
-                    INNER JOIN dbo.[User] u ON i.UserId = u.UserId;";
+                        i.UserId
+                    FROM dbo.Item;";
 
-            // Use the method's generic T for Dapper's types parameter
-            var items = await _dbConnection.QueryAsync<T, User, T>(
-                sql: sql,
-                map: (itemT, user) =>
-                {
-                    if (itemT != null)
-                    {
-                        // Runtime cast: Treat itemT AS an Item to access .User
-                        // This relies on the assumption T is actually an Item or derived.
-                        if (itemT is Item concreteItem)
-                        {
-                            concreteItem.User = user; // Assign the mapped User object
-                        }
-                        // else: Could log a warning or throw if T isn't Item as expected
-                    }
-                    return itemT; // Return the original T object (modified if cast worked)
-                },
-                splitOn: "User_UserId" // Match alias of first User column selected
-            );
-
-            // Interface requires List<T>
-            return items.Where(i => i != null).ToList(); // Filter out potential nulls before ToList
+            //TODO use user DAO use GetByIdAsync as inspiration
+            return null;
         }
 
         public async Task<IEnumerable<Item>> GetAllByUserId(int id)
@@ -86,27 +58,17 @@ namespace AuctionHouse.DataAccessLayer.DAO
             // SQL query similar to GetAllAsync, but with a WHERE clause on the User's ID
             const string sql = @"SELECT
                         i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData,
-                        i.UserId AS ItemUserId, u.UserId AS User_UserId, u.UserName, u.FirstName,
-                        u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell,
-                        u.PasswordHash, u.RegistrationDate
-                    FROM dbo.Item i
-                    INNER JOIN dbo.[User] u ON i.UserId = u.UserId
-                    WHERE u.UserId = @UserId;"; // Filter by User ID passed in parameter
+                        i.UserId
+                    FROM dbo.Item 
+                    WHERE UserId = @UserId;";
 
-            // Use QueryAsync<Item, User, Item> since the return type is specific to Item
-            var items = await _dbConnection.QueryAsync<Item, User, Item>(
-               sql: sql,
-               map: MapItemWithUser,          // Can use the specific MapItemWithUser helper
-               param: new { UserId = id },    // Pass the user ID parameter for the WHERE clause
-               splitOn: "User_UserId"         // Match alias of first User column selected
-           );
+            //TODO use user DAO, use GetByIdAsync as inspiration
+            return null;
 
-            // Return the resulting collection
-            return items; // QueryAsync already returns IEnumerable<Item>
         }
 
 
-        public async Task<T?> GetByIdAsync<T>(int id)
+        public async Task<Item> GetByIdAsync(int id)
         {
             const string sql = @"SELECT
                                 ItemId, Name, Description, Category, Image AS ImageData,
@@ -114,7 +76,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Item
                             WHERE ItemId = @Id;";
 
-            var itemTList = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { Id = id });
+            var itemTList = await _dbConnection.QuerySingleOrDefaultAsync(sql, new { Id = id });
             var itemT = itemTList;
             Console.WriteLine($"itemT: {itemT.ToString()}");
 
@@ -123,7 +85,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 Console.WriteLine($"concreteItem: {concreteItem.ToString()}");
                 if (concreteItem.User == null)
                 {
-                    concreteItem.User = await _userDao.GetByIdAsync<User>(concreteItem.UserId.Value);
+                    concreteItem.User = await _userDao.GetByIdAsync(concreteItem.UserId.Value);
                     
 
                 }

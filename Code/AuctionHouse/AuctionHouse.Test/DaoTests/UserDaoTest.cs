@@ -52,7 +52,7 @@ namespace AuctionHouse.Test.DaoTests
             // Arrange  
             int userId = 1;
             // Act  
-            User user = await _userDao.GetByIdAsync<User>(userId);
+            User user = await _userDao.GetByIdAsync(userId);
             // Assert  
             Assert.NotNull(user);
             Assert.Equal(userId, user.UserId); // Assuming User has a userId property  
@@ -62,7 +62,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task UpdateAsync_ShouldReturnTrue_WhenUserIsUpdated()
         {
             // Arrange  
-            User user = await _userDao.GetByIdAsync<User>(1);   // Assuming user with ID 1 exists
+            User user = await _userDao.GetByIdAsync(1);   // Assuming user with ID 1 exists
             Console.WriteLine(user.Password);
             user.FirstName = "Zac"; // Update the user's name
 
@@ -77,7 +77,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task DeleteAsync_ShouldReturnTrue_WhenUserIsDeleted()
         {
             // Arrange  
-            User user = await _userDao.GetByIdAsync<User>(1);   // Assuming user with ID 1 exists
+            User user = await _userDao.GetByIdAsync(1);   // Assuming user with ID 1 exists
 
             // Act  
             bool result = await _userDao.DeleteAsync(user);
@@ -103,7 +103,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task GetAll_ShouldReturnListOfUsers_WhenUsersExist()
         {
             // Act  
-            List<User> users = await _userDao.GetAllAsync<User>();
+            List<User> users = await _userDao.GetAllAsync();
 
             // Assert  
             Assert.NotNull(users);

@@ -21,14 +21,14 @@ namespace AuctionHouse.WebAPI.Controllers
         [HttpGet]
         public async Task<IEnumerable<User>> Get()
         {
-            return await _userDao.GetAllAsync<User>();
+            return await _userDao.GetAllAsync();
         }
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
         public async Task<User> Get(int id)
         {
-            return await _userDao.GetByIdAsync<User>(id);
+            return await _userDao.GetByIdAsync(id);
         }
 
         // POST api/<UserController>

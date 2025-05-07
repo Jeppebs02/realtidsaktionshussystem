@@ -65,7 +65,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         }
 
-        public async Task<List<T>> GetAllAsync<T>()
+        public async Task<List<Auction>> GetAllAsync()
         {
             const string sql = @"SELECT
                             AuctionId,
@@ -80,15 +80,25 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             ItemId,
                             AmountOfBids
                         FROM dbo.Auction;";
-            var auctions = await _dbConnection.QueryAsync<T>(sql);
-            foreach (var auctionT in auctions)
-            {
-                if(auctionT is Auction concreteAuction)
-                {
-                    concreteAuction.Bids = await _bidDao.GetAllByAuctionIdAsync(concreteAuction.AuctionID.Value);
-                }
+            var auctions = (await _dbConnection.QueryAsync<Auction>(sql)).ToList();
+            var result = new List<Auction>();
+
+
+            foreach (var auction in auctions) {
+                var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID.Value);
+                var item = _itemDao.GetByIdAsync(auction.itemId.Value);
+
+                Task.WaitAll(bids, item);
+
+                auction.Bids = bids.Result.ToList();
+                auction.item = item.Result;
+
+                result.Add(auction);
             }
-            return auctions.ToList();
+
+
+            
+            return result;
         }
 
         public Task<IEnumerable<Auction>> GetAllByUserIDAsync(int userId)
@@ -96,7 +106,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
 
-        public async Task<T?> GetByIdAsync<T>(int id)
+        public async Task<Auction> GetByIdAsync(int id)
         {
             const string sql = @"SELECT
                             AuctionId,
@@ -129,11 +139,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
                     concreteAuction.Bids.Add(bid);
                 }
 
-                var item = await _itemDao.GetByIdAsync<Item>(concreteAuction.itemId.Value);
+                var item = await _itemDao.GetByIdAsync(concreteAuction.itemId.Value);
                 concreteAuction.item = item;
 
             
-            return (T)(object)concreteAuction;
+            return concreteAuction;
 
         }
 

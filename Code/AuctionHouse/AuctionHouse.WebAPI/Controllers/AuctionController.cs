@@ -33,7 +33,7 @@ namespace AuctionHouse.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<Auction> Get(int id)
         {
-            return await _auctionDao.GetByIdAsync<Auction>(id);
+            return await _auctionDao.GetByIdAsync(id);
         }
 
         // POST api/<AuctionController>

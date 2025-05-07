@@ -123,7 +123,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task GetAllAsync_ShouldReturnListOfWallets()
         {
             // Act  
-            List<Wallet> wallets = await _walletDao.GetAllAsync<Wallet>();
+            List<Wallet> wallets = await _walletDao.GetAllAsync();
 
             // Assert  
             Assert.NotEmpty(wallets);
@@ -136,7 +136,7 @@ namespace AuctionHouse.Test.DaoTests
             int id = 1;
 
             // Act  
-            Wallet wallet = await _walletDao.GetByIdAsync<Wallet>(id);
+            Wallet wallet = await _walletDao.GetByIdAsync(id);
 
             // Assert  
             Assert.NotNull(wallet);

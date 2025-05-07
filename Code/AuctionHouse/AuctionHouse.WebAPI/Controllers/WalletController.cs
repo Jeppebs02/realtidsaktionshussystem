@@ -23,7 +23,7 @@ namespace AuctionHouse.WebAPI.Controllers
         [HttpGet]
         public async Task<IEnumerable<Wallet>> Get()
         {
-            return await _walletDao.GetAllAsync<Wallet>();
+            return await _walletDao.GetAllAsync();
         }
 
         // GET api/<WalletController>/test

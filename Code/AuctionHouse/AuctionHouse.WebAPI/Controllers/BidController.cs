@@ -31,7 +31,7 @@ namespace AuctionHouse.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<Bid> Get(int id)
         {
-            return await _bidDao.GetByIdAsync<Bid>(id);
+            return await _bidDao.GetByIdAsync(id);
         }
 
         // POST api/<BidController>

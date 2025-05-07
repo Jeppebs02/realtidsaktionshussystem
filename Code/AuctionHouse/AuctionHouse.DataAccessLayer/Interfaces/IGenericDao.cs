@@ -11,8 +11,8 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
         Task<int> InsertAsync(T entity);
         Task<bool> UpdateAsync(T entity);
         Task<bool> DeleteAsync(T entity);
-        Task<List<T>> GetAllAsync<T>();
-        Task<T?> GetByIdAsync<T>(int id);
+        Task<List<T>> GetAllAsync();
+        Task<T?> GetByIdAsync(int id);
 
     }
 }

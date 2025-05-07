@@ -37,7 +37,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return rowsAffected > 0;
         }
 
-        public async Task<List<T>> GetAllAsync<T>()
+        public async Task<List<Wallet>> GetAllAsync()
         {
             const string sql = @"SELECT
                             WalletId,
@@ -48,16 +48,16 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Wallet;";
 
             // Await the result of QueryAsync and then convert it to a list
-            var wallets = await _dbConnection.QueryAsync<T>(sql);
+            var wallets = await _dbConnection.QueryAsync<Wallet>(sql);
 
             return wallets.ToList();
         }
 
-        public async Task<T?> GetByIdAsync<T>(int id)
+        public async Task<Wallet?> GetByIdAsync(int id)
         {
             const string sql = "SELECT * FROM Wallet WHERE WalletId = @WalletId";
 
-            var walletT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { WalletId = id });
+            var walletT = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { WalletId = id });
 
 
             if (walletT is Wallet concreteWallet)

@@ -27,14 +27,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException();
         }
 
-        public async Task<List<T>> GetAllAsync<T>()
+        public async Task<List<Bid>> GetAllAsync()
         {
             return null;
         }
 
 
 
-        public async Task<T?> GetByIdAsync<T>(int id)
+        public async Task<Bid> GetByIdAsync(int id)
         {
             const string sql = @"SELECT
                                 BidId,
@@ -45,14 +45,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Bid
                             WHERE BidId = @BidId;";
 
-            var bidT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { BidId = id });
+            var bidT = await _dbConnection.QuerySingleOrDefaultAsync(sql, new { BidId = id });
             Console.WriteLine("In BidDAO.GetByIdAsync");
             if(bidT is Bid concreteBid)
             {
                 Console.WriteLine("Casted bidT as concrete bid");
                 if(concreteBid.User == null || true)
                 {
-                    concreteBid.User =await _userDao.GetByIdAsync<User>(concreteBid.UserId.Value);
+                    concreteBid.User =await _userDao.GetByIdAsync(concreteBid.UserId.Value);
                 }
             }
 
@@ -134,7 +134,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             {
                 if (bid.User == null)
                 {
-                    bid.User = await _userDao.GetByIdAsync<User>(bid.UserId.Value);
+                    bid.User = await _userDao.GetByIdAsync(bid.UserId.Value);
                 }
             }
 

@@ -56,7 +56,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task GetAllAsync_ShouldReturnListOfBids()
         {
             // Act
-            List<Bid> bids = await _bidDao.GetAllAsync<Bid>();
+            List<Bid> bids = await _bidDao.GetAllAsync();
                       
             // Assert   
             Assert.NotEmpty(bids);
@@ -69,7 +69,7 @@ namespace AuctionHouse.Test.DaoTests
             // Arrange  
             int bidId = 1;
             // Act  
-            Bid? bid = await _bidDao.GetByIdAsync<Bid>(bidId);
+            Bid? bid = await _bidDao.GetByIdAsync(bidId);
             // Assert   
             Assert.NotNull(bid);
             Assert.Equal(bidId, bid?.BidId);
@@ -91,7 +91,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task InsertAsync_ShouldReturnId_WhenBidIsInserted()
         {
             // Arrange  
-            User user = await _userDao.GetByIdAsync<User>(1);
+            User user = await _userDao.GetByIdAsync(1);
             Bid bid = new Bid(1, 500, DateTime.Now, user);
             // Act  
             int id = await _bidDao.InsertBidAsync(bid);

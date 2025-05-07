@@ -30,14 +30,14 @@ namespace AuctionHouse.WebAPI.Controllers
         public async Task<IEnumerable<Item>> Get()
         {
             // Same deal here, use await because we return Tasks.
-            return await _itemDao.GetAllAsync<Item>();
+            return await _itemDao.GetAllAsync();
         }
 
         // GET api/<ItemController>/5
         [HttpGet("{id}")]
         public async Task<Item> Get(int id)
         {
-            return await _itemDao.GetByIdAsync<Item>(id);
+            return await _itemDao.GetByIdAsync(id);
         }
 
         // POST api/<ItemController>
