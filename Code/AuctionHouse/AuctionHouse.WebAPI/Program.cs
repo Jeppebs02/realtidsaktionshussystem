@@ -25,7 +25,7 @@ builder.Services.AddSwaggerGen();
 
 // But essentially, builder.Services is a collection (IServiceCollection) of services that you can register.
 // A service can be anything, its not a specific type.
-builder.Services.AddScoped<IDbConnection>(sp =>
+builder.Services.AddTransient<IDbConnection>(sp =>
 {
     // Get the connection string from the environment variable we made in docker-compose.yml :)
     var connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");

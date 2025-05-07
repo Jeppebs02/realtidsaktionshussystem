@@ -112,15 +112,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             AmountOfBids
                         FROM dbo.Auction
             WHERE AuctionId = @AuctionId;";
-            var auctionT = await _dbConnection.QuerySingleOrDefaultAsync<T>(sql, new { AuctionId = id });
-            if(auctionT is Auction concreteAuction)
-            {
+            var auctionT = _dbConnection.QuerySingleOrDefaultAsync<Auction>(sql, new { AuctionId = id });
+            var bids = _bidDao.GetAllByAuctionIdAsync(id);
+            Task.WaitAll(auctionT, bids);
+
+            //if (auctionT is Auction concreteAuction)
+            //{
+            Auction concreteAuction = auctionT.Result;
                 if (concreteAuction.Bids==null) { 
-                    concreteAuction.Bids = new List<Bid>(); 
+                concreteAuction.Bids = new List<Bid>(); 
                 }
 
-                var bids = await _bidDao.GetAllByAuctionIdAsync(concreteAuction.AuctionID.Value);
-                foreach(Bid bid in bids)
+                foreach(Bid bid in bids.Result)
                 {
                     concreteAuction.Bids.Add(bid);
                 }
@@ -128,8 +131,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 var item = await _itemDao.GetByIdAsync<Item>(concreteAuction.itemId.Value);
                 concreteAuction.item = item;
 
-            }
-            return auctionT;
+            //}
+            return auctionT.Result;
 
         }
 
