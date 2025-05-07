@@ -35,6 +35,6 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
 
         Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids=1);
 
-        Task<bool> UpdateAuctionStatusOptimisticallyAsync(int auctionId, AuctionStatus newStatus);
+        Task<bool> UpdateAuctionStatusOptimisticallyAsync(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null);
     }
 }
