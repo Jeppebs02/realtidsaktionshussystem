@@ -52,9 +52,9 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             var auctions = await _dbConnection.QueryAsync<Auction>(sql);
 
-            foreach(var auction in auctions)
+            foreach (var auction in auctions)
             {
-                if(auction.Bids == null)
+                if (auction.Bids == null)
                 {
                     auction.Bids = new List<Bid>();
                 }
@@ -84,9 +84,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
             var result = new List<Auction>();
 
 
-            foreach (var auction in auctions) {
-                var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID.Value);
-                var item = _itemDao.GetByIdAsync(auction.itemId.Value);
+            foreach (var auction in auctions)
+            {
+                var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
+                var item = _itemDao.GetByIdAsync(auction.itemId!.Value);
 
                 Task.WaitAll(bids, item);
 
@@ -97,7 +98,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             }
 
 
-            
+
             return result;
         }
 
@@ -127,22 +128,23 @@ namespace AuctionHouse.DataAccessLayer.DAO
             var bids = _bidDao.GetAllByAuctionIdAsync(id);
             Task.WaitAll(auctionT, bids);
 
-            
+
             Auction concreteAuction = auctionT.Result;
-                if (concreteAuction.Bids==null) { 
-                concreteAuction.Bids = new List<Bid>(); 
-                }
+            if (concreteAuction.Bids == null)
+            {
+                concreteAuction.Bids = new List<Bid>();
+            }
 
             List<Bid> bidsList = bids.Result.ToList();
             foreach (Bid bid in bidsList)
-                {
-                    concreteAuction.Bids.Add(bid);
-                }
+            {
+                concreteAuction.Bids.Add(bid);
+            }
 
-                var item = await _itemDao.GetByIdAsync(concreteAuction.itemId.Value);
-                concreteAuction.item = item;
+            var item = await _itemDao.GetByIdAsync(concreteAuction.itemId!.Value);
+            concreteAuction.item = item;
 
-            
+
             return concreteAuction;
 
         }
@@ -156,7 +158,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             // dbo.Auction includes these columns: AuctionId (PK AI) StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId, AmountOfBids
 
-            const string sql= @"
+            const string sql = @"
                             INSERT INTO dbo.Auction
                             (StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, ItemId)
                             OUTPUT INSERTED.AuctionId

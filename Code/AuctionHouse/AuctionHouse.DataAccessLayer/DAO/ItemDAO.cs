@@ -76,24 +76,16 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Item
                             WHERE ItemId = @Id;";
 
-            var itemTList = await _dbConnection.QuerySingleOrDefaultAsync(sql, new { Id = id });
-            var itemT = itemTList;
-            Console.WriteLine($"itemT: {itemT.ToString()}");
+            var item = await _dbConnection.QuerySingleAsync<Item>(sql, new { Id = id });
 
-            if (itemT is Item concreteItem)
-            {
-                Console.WriteLine($"concreteItem: {concreteItem.ToString()}");
-                if (concreteItem.User == null)
-                {
-                    concreteItem.User = await _userDao.GetByIdAsync(concreteItem.UserId.Value);
-                    
-
-                }
-            }
+            Console.WriteLine($"itemT: {item.ToString()}");
 
 
+            Console.WriteLine($"concreteItem: {item.ToString()}");
 
-            return itemT;
+            item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
+
+            return item;
         }
 
         public async Task<int> InsertAsync(Item entity)
