@@ -44,15 +44,17 @@ namespace AuctionHouse.Test.DaoTests
 
             _output.WriteLine("Test Constructor: Creating SqlConnection...");
             _connection = new SqlConnection(connectionString);
-            _output.WriteLine("Test Constructor: Creating ItemDAO...");
-            _itemDao = new ItemDAO(_connection);
-            _output.WriteLine("Test Constructor: Setup complete.");
-
             TransactionDAO tdao = new TransactionDAO(_connection);
-
+            _output.WriteLine("Test Constructor: Creating ItemDAO...");
             WalletDAO wdao = new WalletDAO(_connection, tdao);
 
             udao = new UserDAO(_connection, wdao);
+            _itemDao = new ItemDAO(_connection, udao);
+            _output.WriteLine("Test Constructor: Setup complete.");
+
+
+
+
 
             //Clean tables
             CleanAndBuild.CleanDB();

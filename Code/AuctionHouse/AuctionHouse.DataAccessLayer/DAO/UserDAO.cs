@@ -62,9 +62,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
             if (userT is User concreteUser)
             {
                 var wallet = await walletDAO.GetByUserId(concreteUser.UserId.Value);
-                concreteUser.Wallet = wallet;
+                if(concreteUser.Wallet== null)
+                {
+                    concreteUser.Wallet = wallet;
+                }
 
-                
+
             }
 
             return userT;
