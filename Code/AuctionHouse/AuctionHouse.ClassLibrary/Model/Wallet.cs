@@ -19,7 +19,6 @@ namespace AuctionHouse.ClassLibrary.Model
             TotalBalance = totalBalance;
             ReservedBalance = reservedBalance;
             Version = version;
-            Transactions = new List<Transaction>();
             UserId = userId;
         }
         #endregion
@@ -32,7 +31,7 @@ namespace AuctionHouse.ClassLibrary.Model
         [Timestamp]
         public byte[] Version { get; set; }
 
-        public List<Transaction> Transactions { get; set; }
+        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
         [JsonIgnore]
         public int? UserId { get; set; }
         #endregion
