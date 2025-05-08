@@ -66,13 +66,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<Item>> GetAllByUserIdAsync(int id)
         {
+            using var conn = _connectionFactory();
             const string sql = @"SELECT
                             ItemId, [Name], [Description], Category, [Image] AS ImageData,
                             UserId
                     FROM dbo.[Item] 
                     WHERE UserId = @UserId;";
 
-            var items = _dbConnection.QueryAsync<Item>(sql, new { UserId = id });
+            var items = conn.QueryAsync<Item>(sql, new { UserId = id });
 
             foreach (var item in await items)
             {
@@ -154,6 +155,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Item> GetItemByAuctionIdAsync(int id)
         {
+            using var conn = _connectionFactory();
             const string sql = @"
                                 SELECT
                                     i.ItemId,
@@ -176,7 +178,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                                 INNER JOIN [AuctionHouse].[dbo].[Auction] a ON i.ItemId = a.ItemId
                                 WHERE a.AuctionId = @AuctionId;";
 
-            var item = await _dbConnection.QuerySingleAsync<Item>(sql, new { AuctionId = id });
+            var item = await conn.QuerySingleAsync<Item>(sql, new { AuctionId = id });
 
             item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
 
