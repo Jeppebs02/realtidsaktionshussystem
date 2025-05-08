@@ -124,7 +124,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                         FROM dbo.Auction
             WHERE AuctionId = @AuctionId;";
 
-            var auctionT = _dbConnection.QuerySingleOrDefaultAsync<Auction>(sql, new { AuctionId = id });
+            var auctionT = _dbConnection.QuerySingleAsync<Auction>(sql, new { AuctionId = id });
             var bids = _bidDao.GetAllByAuctionIdAsync(id);
             Task.WaitAll(auctionT, bids);
 
