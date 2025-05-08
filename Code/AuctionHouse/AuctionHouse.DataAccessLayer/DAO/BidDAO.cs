@@ -45,13 +45,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Bid
                             WHERE BidId = @BidId;";
 
-            var bid = await _dbConnection.QuerySingleOrDefaultAsync(sql, new { BidId = id });
+            var bid = await _dbConnection.QuerySingleOrDefaultAsync<Bid>(sql, new { BidId = id });
             Console.WriteLine("In BidDAO.GetByIdAsync");
 
                 Console.WriteLine("Casted bidT as concrete bid");
                 if(bid.User == null || true)
                 {
-                bid.User =await _userDao.GetByIdAsync(bid.UserId.Value);
+                bid.User =await _userDao.GetByIdAsync(bid.UserId!.Value);
                 }
             
 
