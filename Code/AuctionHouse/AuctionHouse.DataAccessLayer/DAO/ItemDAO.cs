@@ -168,7 +168,9 @@ namespace AuctionHouse.DataAccessLayer.DAO
                                 WHERE a.AuctionId = @AuctionId;";
 
             var item = await _dbConnection.QuerySingleAsync<Item>(sql, new { AuctionId = id });
-            
+
+            item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
+
             return item;
         }
 
