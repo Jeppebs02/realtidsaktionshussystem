@@ -57,9 +57,32 @@ namespace AuctionHouse.WebAPI.BusinessLogic
                 return "You dont have enough money in the wallet";
             }
 
-            _auctionLogic.UpdateAuctionOptimistically(auctionToBidOn.Result, expectedAuctionVersion, null, 1);
+            // our transaction so we can do all operations in one transaction
+            using var transaction = _connectionFactory().BeginTransaction();
 
+            // Is the expected auction version the same as the current version in the db?
+            if (!_auctionLogic.UpdateAuctionOptimistically(auctionToBidOn.Result.AuctionID!.Value, expectedAuctionVersion, transaction, 1).Result)
+            {
+                transaction.Rollback();
+                return "Auction has been updated by another user, please refresh the page";
+            }
 
+            // Did the new bid go through?
+            if (currentHighestBid.Id>=_bidDao.InsertBidAsync(bid, transaction).Result)
+            {
+                transaction.Rollback();
+                return "Bid could not be placed";
+            }
+
+            // Did the wallet update go through?
+            if (!_walletLogic.ReserveFundsAsync(userWallet.WalletId!.Value, bid.Amount, expectedWalletVersion, transaction).Result)
+            {
+                transaction.Rollback();
+                return "Error with wallet version, please try again.";
+            }
+
+            transaction.Commit();
+            return "Bid placed succesfully :)";
 
 
         }
