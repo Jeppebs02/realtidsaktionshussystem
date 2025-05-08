@@ -10,8 +10,12 @@ using System.Data;
 using System.Data.SqlClient;
 using AuctionHouse.DataAccessLayer.DAO;
 
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+
 namespace AuctionHouse.Test.DaoTests
 {
+
+    [Collection("Sequential")]
     public class AuctionDaoTest
     {
         #region Fields

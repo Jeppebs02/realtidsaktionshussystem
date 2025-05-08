@@ -13,6 +13,8 @@ using Xunit.Abstractions;
 
 namespace AuctionHouse.Test.DaoTests
 {
+
+    [Collection("Sequential")]
     public class WalletDaoTest
     {
         #region Fields

@@ -15,6 +15,8 @@ using System.Data.SqlClient;
 
 namespace AuctionHouse.Test.DaoTests
 {
+
+    [Collection("Sequential")]
     public class ItemDaoTest
     {
         #region Fields

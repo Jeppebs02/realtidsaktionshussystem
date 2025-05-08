@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace AuctionHouse.Test.DaoTests
 {
+
+    [Collection("Sequential")]
     public class UserDaoTest
     {
         #region Fields

@@ -13,6 +13,8 @@ using AuctionHouse.DataAccessLayer.DAO;
 
 namespace AuctionHouse.Test.DaoTests
 {
+
+    [Collection("Sequential")]
     public class TransactionDaoTest
     {
         #region Fields

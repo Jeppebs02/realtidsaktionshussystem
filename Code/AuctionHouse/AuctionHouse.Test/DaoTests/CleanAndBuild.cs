@@ -10,6 +10,8 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace AuctionHouse.Test.DaoTests
 {
+
+    [Collection("Sequential")]
     public static class CleanAndBuild
     {
         #region Fields
