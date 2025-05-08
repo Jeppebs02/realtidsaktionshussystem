@@ -1,4 +1,5 @@
-﻿using AuctionHouse.ClassLibrary.Model;
+﻿using AuctionHouse.ClassLibrary.Enum;
+using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
 using Dapper;
 using System;
@@ -7,6 +8,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
 
 namespace AuctionHouse.DataAccessLayer.DAO
 {
@@ -48,7 +51,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Item";
 
             var items = _dbConnection.QueryAsync<Item>(sql);
-            
+
             foreach (var item in await items)
             {
                 item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
@@ -57,7 +60,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return (List<Item>)items.Result;
         }
 
-        public async Task<List<Item>> GetAllByUserId(int id)
+        public async Task<List<Item>> GetAllByUserIdAsync(int id)
         {
             const string sql = @"SELECT
                             ItemId, [Name], [Description], Category, [Image] AS ImageData,
@@ -65,7 +68,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                     FROM dbo.[Item] 
                     WHERE UserId = @UserId;";
 
-            var items = _dbConnection.QueryAsync<Item>(sql, new { UserId=id });
+            var items = _dbConnection.QueryAsync<Item>(sql, new { UserId = id });
 
             foreach (var item in await items)
             {
@@ -139,5 +142,35 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 return task.Result > 0; // Return true if at least one row was updated
             });
         }
+
+        public async Task<Item> GetItemByAuctionIdAsync(int id)
+        {
+            const string sql = @"
+                                SELECT
+                                    i.ItemId,
+                                    i.[Name],
+                                    i.[Description],
+                                    i.[Category],
+                                    i.[Image],
+                                    i.UserId,
+                                    a.AuctionId,
+                                    a.StartTime,
+                                    a.EndTime,
+                                    a.StartPrice,
+                                    a.BuyOutPrice,
+                                    a.MinimumBidIncrement,
+                                    a.AuctionStatus,
+                                    a.Version,
+                                    a.Notify,
+                                    a.AmountOfBids
+                                FROM [AuctionHouse].[dbo].[Item] i
+                                INNER JOIN [AuctionHouse].[dbo].[Auction] a ON i.ItemId = a.ItemId
+                                WHERE a.AuctionId = @AuctionId;";
+
+            var item = await _dbConnection.QuerySingleAsync<Item>(sql, new { AuctionId = id });
+            
+            return item;
+        }
+
     }
 }

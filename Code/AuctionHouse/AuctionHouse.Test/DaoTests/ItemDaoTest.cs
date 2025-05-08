@@ -103,7 +103,7 @@ namespace AuctionHouse.Test.DaoTests
             // Arrange  
             int userId = 1;
             // Act  
-            List<Item> items = await _itemDao.GetAllByUserId(userId);
+            List<Item> items = await _itemDao.GetAllByUserIdAsync(userId);
             // Assert   
             Assert.NotNull(items);
             Assert.NotEmpty(items);
@@ -122,6 +122,19 @@ namespace AuctionHouse.Test.DaoTests
             int id = await _itemDao.InsertAsync(item);
             // Assert  
             Assert.True(id > 0);
+        }
+
+        [Fact]
+        public async Task GetItemByAuctionIdAsync_ShouldReturnSpecificItem_WhenAuctionIdIsInserted()
+        {
+            // Arrange
+            int auctionId = 1;
+
+            // Act
+            Item item = await _itemDao.GetItemByAuctionIdAsync(auctionId);
+
+            // Assert
+            Assert.Equal("Antique Vase", item.Name);
         }
         #endregion
 

@@ -14,8 +14,9 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Task<List<Item>> GetAllByUserId(int id);
+        public Task<List<Item>> GetAllByUserIdAsync(int id);
 
+        public Task<Item> GetItemByAuctionIdAsync(int id);
 
     }
 }
