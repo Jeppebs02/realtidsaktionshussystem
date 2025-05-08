@@ -103,7 +103,7 @@ namespace AuctionHouse.Test.DaoTests
             // Arrange  
             int userId = 1;
             // Act  
-            IEnumerable<Item> items = await _itemDao.GetAllByUserId(userId);
+            List<Item> items = await _itemDao.GetAllByUserId(userId);
             // Assert   
             Assert.NotNull(items);
             Assert.NotEmpty(items);

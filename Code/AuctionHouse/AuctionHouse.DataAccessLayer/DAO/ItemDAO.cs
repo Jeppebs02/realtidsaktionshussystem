@@ -42,8 +42,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<Item>> GetAllAsync()
         {
-
-            // SQL to join Item and User tables
             const string sql = @"SELECT
                             ItemId, [Name], [Description], Category, [Image] AS ImageData,
                             UserId
@@ -56,22 +54,25 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
             }
 
-
-            //TODO use user DAO use GetByIdAsync as inspiration
             return (List<Item>)items.Result;
         }
 
-        public async Task<IEnumerable<Item>> GetAllByUserId(int id)
+        public async Task<List<Item>> GetAllByUserId(int id)
         {
-            // SQL query similar to GetAllAsync, but with a WHERE clause on the User's ID
             const string sql = @"SELECT
-                        i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData,
-                        i.UserId
-                    FROM dbo.Item 
+                            ItemId, [Name], [Description], Category, [Image] AS ImageData,
+                            UserId
+                    FROM dbo.[Item] 
                     WHERE UserId = @UserId;";
 
-            //TODO use user DAO, use GetByIdAsync as inspiration
-            return null;
+            var items = _dbConnection.QueryAsync<Item>(sql, new { UserId=id });
+
+            foreach (var item in await items)
+            {
+                item.User = _userDao.GetByIdAsync(id).Result;
+            }
+
+            return (List<Item>)items.Result;
 
         }
 

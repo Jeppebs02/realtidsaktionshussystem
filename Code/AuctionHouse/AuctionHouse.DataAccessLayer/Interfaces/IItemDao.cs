@@ -14,7 +14,7 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Task<IEnumerable<Item>> GetAllByUserId(int id);
+        public Task<List<Item>> GetAllByUserId(int id);
 
 
     }
