@@ -71,6 +71,34 @@ namespace AuctionHouse.Test.APITests
             var expectedAuctionVersion = auction.Version;
             //Bidder must not own the auction
             var bidder1 = await _userDao.GetByIdAsync(2);
+
+            Bid bidder1_bid = new Bid
+            {
+                AuctionId = auction.AuctionID!.Value,
+                Amount = 650,
+                TimeStamp = DateTime.Now,
+                User = bidder1
+            };
+
+
+            // Act
+            var result_bidder1 = await _bidLogic.PlaceBidAsync(bidder1_bid, expectedAuctionVersion);
+
+            var newauction = await _auctionLogic.GetAuctionByIdAsync(auction.AuctionID!.Value);
+            // Assert
+
+
+            Assert.Equal(1, newauction.AmountOfBids);
+        }
+
+        [Fact]
+        public async Task PlaceBidAsync_ValidBids_ConcurrencyTest_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var auction = await _auctionDao.GetByIdAsync(1);
+            var expectedAuctionVersion = auction.Version;
+            //Bidder must not own the auction
+            var bidder1 = await _userDao.GetByIdAsync(2);
             var bidder2 = await _userDao.GetByIdAsync(3);
 
             Bid bidder1_bid = new Bid
