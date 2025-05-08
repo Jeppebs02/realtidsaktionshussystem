@@ -45,12 +45,20 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             // SQL to join Item and User tables
             const string sql = @"SELECT
-                        i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData,
-                        i.UserId
-                    FROM dbo.Item;";
+                            ItemId, [Name], [Description], Category, [Image] AS ImageData,
+                            UserId
+                            FROM dbo.Item";
+
+            var items = _dbConnection.QueryAsync<Item>(sql);
+            
+            foreach (var item in await items)
+            {
+                item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
+            }
+
 
             //TODO use user DAO use GetByIdAsync as inspiration
-            return null;
+            return (List<Item>)items.Result;
         }
 
         public async Task<IEnumerable<Item>> GetAllByUserId(int id)
