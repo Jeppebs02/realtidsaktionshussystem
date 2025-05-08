@@ -186,8 +186,16 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
         {
-            using var conn = _connectionFactory();
-            const string sql = @"UPDATE Auction
+            
+            var conn = _connectionFactory();
+
+            //Make sure to use the same connection as the transaction if it is not null
+            if (transaction != null)
+            {
+                conn = transaction.Connection;
+            }
+
+                const string sql = @"UPDATE Auction
                                  SET AmountOfBids = AmountOfBids + @AmountOfBids
                                  WHERE AuctionId = @AuctionId
                                  AND Version = @ExpectedVersion";
@@ -202,7 +210,16 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAuctionStatusOptimisticallyAsync(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null)
         {
-            using var conn = _connectionFactory();
+
+            
+            var conn = _connectionFactory();
+
+            //Make sure to use the same connection as the transaction if it is not null
+            if (transaction != null)
+            {
+                conn = transaction.Connection;
+            }
+
             const string sql = @"UPDATE Auction
                                  SET AuctionStatus = @AuctionStatus
                                  WHERE AuctionId = @AuctionId

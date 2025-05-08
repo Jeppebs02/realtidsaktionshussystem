@@ -85,7 +85,7 @@ namespace AuctionHouse.Test.APITests
             Bid bidder2_bid = new Bid
             {
                 AuctionId = auction.AuctionID!.Value,
-                Amount = 650,
+                Amount = 700,
                 TimeStamp = DateTime.Now,
                 User = bidder2
             };

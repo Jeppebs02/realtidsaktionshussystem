@@ -94,7 +94,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
         // Since bid is where our concurrency lies, we need to add an IDbTransaction.
         public async Task<int> InsertBidAsync(Bid entity, IDbTransaction transaction = null)
         {
-            using var conn = _connectionFactory();
+            var conn = _connectionFactory();
+
+            //Make sure to use the same connection as the transaction if it is not null
+            if (transaction != null)
+            {
+                conn = transaction.Connection;
+            }
             const string sql = @"
                                 INSERT INTO Bid (AuctionId, Amount, TimeStamp, UserId)
                                 VALUES (@AuctionId, @Amount, @TimeStamp, @UserId);

@@ -165,7 +165,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> ReserveFundsOptimisticallyAsync(int walletId, decimal amountToReserve, byte[] expectedVersion, IDbTransaction transaction = null)
         {
-            using var conn = _connectionFactory();
+
+            var conn = _connectionFactory();
+
+            //Make sure to use the same connection as the transaction if it is not null
+            if (transaction != null)
+            {
+                conn = transaction.Connection;
+            }
 
             const string sql = @"
                 UPDATE Wallet
