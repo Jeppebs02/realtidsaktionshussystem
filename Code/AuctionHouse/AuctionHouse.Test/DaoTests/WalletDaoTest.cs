@@ -19,33 +19,24 @@ namespace AuctionHouse.Test.DaoTests
     {
         #region Fields
         private readonly IWalletDao _walletDao;
-        private readonly IDbConnection _connection;
-        private readonly ITestOutputHelper _output;
+        private readonly Func<IDbConnection> _connectionFactory;
         #endregion
 
         #region Constructor
-        public WalletDaoTest(ITestOutputHelper output)
+        public WalletDaoTest()
         {
-            _output = output;
+            var cs = Environment.GetEnvironmentVariable("DatabaseConnectionString")
+                 ?? "Server=localhost;Database=AuctionHouseTest;Trusted_Connection=True;TrustServerCertificate=True;";
 
-            _output.WriteLine("Test Constructor: Attempting to read environment variable...");
-            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
-            _output.WriteLine($"Test Constructor: Retrieved Connection String: '{connectionString ?? "NULL"}'");
-
-            if (string.IsNullOrEmpty(connectionString))
+            _connectionFactory = () =>
             {
-                _output.WriteLine("Test Constructor: FATAL - Connection string is null or empty."); // Log before throwing
-                // Consider throwing a more specific exception or using Assert.True within a test setup method if applicable
-                throw new InvalidOperationException("FATAL: DatabaseConnectionString environment variable is not set or is empty. Check test configuration.");
-            }
+                var c = new SqlConnection(cs);
+                c.Open();                       // hand callers an *OPEN* connection
+                return c;
+            };
 
-            _output.WriteLine("Test Constructor: Creating SqlConnection...");
-            _connection = new SqlConnection(connectionString);
-            _output.WriteLine("Test Constructor: Creating ItemDAO...");
-            TransactionDAO transactionDAO = new TransactionDAO(_connection);
-            _walletDao = new WalletDAO(_connection, transactionDAO);
-            _output.WriteLine("Test Constructor: Setup complete.");
-
+            TransactionDAO transactionDAO = new TransactionDAO(_connectionFactory);
+            _walletDao = new WalletDAO(_connectionFactory, transactionDAO);
             //Clean tables
             CleanAndBuild.CleanDB();
             //Generate test data

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,9 +25,9 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // GET: api/<AuctionController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<List<Auction>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return await _auctionDao.GetAllAsync();
         }
 
         // GET api/<AuctionController>/5

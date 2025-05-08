@@ -25,13 +25,17 @@ builder.Services.AddSwaggerGen();
 
 // But essentially, builder.Services is a collection (IServiceCollection) of services that you can register.
 // A service can be anything, its not a specific type.
-builder.Services.AddTransient<IDbConnection>(sp =>
+builder.Services.AddScoped<Func<IDbConnection>>(_ =>
 {
-    // Get the connection string from the environment variable we made in docker-compose.yml :)
-    var connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
-    // System.Data.SqlClient is deprecated, they recommend using Microsoft.Data.SqlClient instead.
-    // But we are using System.Data.SqlClient because we were taught to use it.
-    return new SqlConnection(connectionString ?? throw new InvalidOperationException("Missing DB connection string"));
+    var cs = Environment.GetEnvironmentVariable("DatabaseConnectionString")
+             ?? throw new InvalidOperationException("Missing DB connection string");
+
+    return () =>
+    {
+        var conn = new SqlConnection(cs);
+        conn.Open();                 // hand the DAO a *ready-to-use* connection
+        return conn;
+    };
 });
 
 //This will DI (Dependency Inject) the DAO classes into the controllers.
@@ -46,7 +50,6 @@ builder.Services.AddScoped<IBidDao, BidDAO>();
 builder.Services.AddScoped<IWalletDao, WalletDAO>();
 builder.Services.AddScoped<ITransactionDao, TransactionDAO>();
 builder.Services.AddScoped<IAuctionDao, AuctionDAO>();
-builder.Services.AddScoped<IBidDao, BidDAO>();
 
 //Register logics
 builder.Services.AddScoped<APIInterface.IBidLogic, BidLogic>();
@@ -55,6 +58,7 @@ builder.Services.AddScoped<APIInterface.IAuctionLogic, AuctionLogic>();
 builder.Services.AddScoped<APIInterface.IWalletLogic, WalletLogic>();
 builder.Services.AddScoped<APIInterface.IItemLogic, ItemLogic>();
 
+builder.Services.AddSingleton<IConnectionFactory, SqlConnectionFactory>();
 
 // TODO: Add the other DAOs here
 

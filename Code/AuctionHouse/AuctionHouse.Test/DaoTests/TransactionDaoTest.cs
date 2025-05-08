@@ -18,34 +18,25 @@ namespace AuctionHouse.Test.DaoTests
     public class TransactionDaoTest
     {
         #region Fields
-        private readonly IDbConnection _connection;
+        private readonly Func<IDbConnection> _connectionFactory;
         private readonly ITransactionDao _transactionDao;
-        private readonly ITestOutputHelper _output;
+        
         #endregion
 
         #region Constructor
-        public TransactionDaoTest(ITestOutputHelper output)
+        public TransactionDaoTest()
         {
-            _output = output;
+            var cs = Environment.GetEnvironmentVariable("DatabaseConnectionString")
+                 ?? "Server=localhost;Database=AuctionHouseTest;Trusted_Connection=True;TrustServerCertificate=True;";
 
-            _output.WriteLine("Test Constructor: Attempting to read environment variable...");
-            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
-
-
-            _output.WriteLine($"Test Constructor: Retrieved Connection String: '{connectionString ?? "NULL"}'");
-
-            if (string.IsNullOrEmpty(connectionString))
+            _connectionFactory = () =>
             {
-                _output.WriteLine("Test Constructor: FATAL - Connection string is null or empty."); // Log before throwing
-                // Consider throwing a more specific exception or using Assert.True within a test setup method if applicable
-                throw new InvalidOperationException("FATAL: DatabaseConnectionString environment variable is not set or is empty. Check test configuration.");
-            }
-
-            _output.WriteLine("Test Constructor: Creating SqlConnection...");
-            _connection = new SqlConnection(connectionString);
-            _output.WriteLine("Test Constructor: Creating ItemDAO...");
-            _transactionDao = new TransactionDAO(_connection);
-            _output.WriteLine("Test Constructor: Setup complete.");
+                var c = new SqlConnection(cs);
+                c.Open();                       // hand callers an *OPEN* connection
+                return c;
+            };
+            
+            _transactionDao = new TransactionDAO(_connectionFactory);
 
             //Clean tables
             CleanAndBuild.CleanDB();

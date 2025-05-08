@@ -17,7 +17,7 @@ namespace AuctionHouse.Test.DaoTests
     public class BidDaoTest
     {
         #region Fields
-        private readonly IDbConnection _connection;
+        private readonly Func<IDbConnection> _connectionFactory;
         private readonly IBidDao _bidDao;
         private readonly IUserDao _userDao;
         #endregion
@@ -25,18 +25,23 @@ namespace AuctionHouse.Test.DaoTests
         #region Constructor
         public BidDaoTest()
         {
-            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
-             this._connection = new SqlConnection(connectionString);
+            var cs = Environment.GetEnvironmentVariable("DatabaseConnectionString")
+                  ?? "Server=localhost;Database=AuctionHouseTest;Trusted_Connection=True;TrustServerCertificate=True;";
 
+            _connectionFactory = () =>
+            {
+                var c = new SqlConnection(cs);
+                c.Open();                       // hand callers an *OPEN* connection
+                return c;
+            };
 
+            TransactionDAO tdao = new TransactionDAO(_connectionFactory);
 
-            TransactionDAO tdao = new TransactionDAO(_connection);
+            WalletDAO wdao = new WalletDAO(_connectionFactory, tdao);
 
-            WalletDAO wdao = new WalletDAO(_connection, tdao);
+            _userDao = new UserDAO(_connectionFactory, wdao);
 
-            _userDao = new UserDAO(_connection, wdao);
-
-            _bidDao = new BidDAO(_connection, _userDao);
+            _bidDao = new BidDAO(_connectionFactory, _userDao);
 
             //Clean tables
             CleanAndBuild.CleanDB();

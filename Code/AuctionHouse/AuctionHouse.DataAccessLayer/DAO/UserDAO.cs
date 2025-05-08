@@ -14,21 +14,23 @@ namespace AuctionHouse.DataAccessLayer.DAO
 {
     public class UserDAO : IUserDao
 {
-        private readonly IDbConnection _dbConnection;
+        private readonly Func<IDbConnection> _connectionFactory;
         private readonly IWalletDao walletDAO;
 
-        public UserDAO(IDbConnection dbConnection, IWalletDao walletDAO)
+        public UserDAO(Func<IDbConnection> connectionFactory, IWalletDao walletDAO)
         {
 
-            _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
+            _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
             this.walletDAO = walletDAO;
         }
 
 
         public async Task<bool> DeleteAsync(User entity)
         {
-           const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @UserId";
-           int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { UserId = entity.UserId });
+            using var conn = _connectionFactory();
+
+            const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @UserId";
+           int rowsAffected = await conn.ExecuteAsync(sql, new { UserId = entity.UserId });
 
 
             return rowsAffected > 0;
@@ -36,9 +38,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<User>> GetAllAsync()
         {
+            using var conn = _connectionFactory();
+
             const string sql = @"SELECT * FROM [User] WHERE isDeleted = 0";
 
-            var users = await _dbConnection.QueryAsync<User>(sql);
+            var users = await conn.QueryAsync<User>(sql);
 
                 foreach (var user in users)
                 {
@@ -52,6 +56,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<User> GetByIdAsync(int id)
         {
+            using var conn = _connectionFactory();
+
             const string sql = @"SELECT 
                                 UserId,
                                 CantBuy,
@@ -68,7 +74,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM [User]
                             WHERE UserId = @UserId;";
 
-            var user = await _dbConnection.QuerySingleOrDefaultAsync<User>(sql, new { UserId = id });
+            var user = await conn.QuerySingleOrDefaultAsync<User>(sql, new { UserId = id });
 
 
                 Console.WriteLine($"UserId from UserDAO: {user!.UserId}");
@@ -87,10 +93,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
          public async Task<int> InsertAsync(User entity)
         {
+            using var conn = _connectionFactory();
+
             const string sql = "INSERT INTO [User] (CantBuy, CantSell, UserName, PasswordHash, RegistrationDate, FirstName, LastName, Email, PhoneNumber, Address)" +
                 "VALUES (@cantBuy, @cantSell, @userName, @passwordHash, @registrationDate, @firstName, @lastName, @email, @phoneNumber, @address); SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            var UserId  = await _dbConnection.QuerySingleOrDefaultAsync<int>(sql, new
+            var UserId  = await conn.QuerySingleOrDefaultAsync<int>(sql, new
             {
                 cantBuy = entity.CantBuy,
                 cantSell = entity.CantSell,
@@ -111,8 +119,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
          public async Task<bool> UpdateAsync(User entity)
         {
+            using var conn = _connectionFactory();
+
             const string sql = "UPDATE [User] SET CantBuy = @cantBuy, CantSell = @cantSell, UserName = @userName, FirstName = @firstName, LastName = @lastName, Email = @email, PhoneNumber = @phoneNumber, [Address] = @address WHERE UserId = @UserId";
-            int rowsaffected = await _dbConnection.ExecuteAsync(sql, new
+            int rowsaffected = await conn.ExecuteAsync(sql, new
             {
                 UserId = entity.UserId,
                 cantBuy = entity.CantBuy,
