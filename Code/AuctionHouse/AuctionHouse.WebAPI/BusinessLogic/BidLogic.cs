@@ -7,16 +7,61 @@ namespace AuctionHouse.WebAPI.BusinessLogic
 {
     public class BidLogic : IBidLogic
     {
-        private readonly IAuctionDao _auctionDao;
+        private readonly IAuctionLogic _auctionLogic;
         private readonly IBidDao _bidDao;
-        private readonly IWalletDao _walletDao;
-        private readonly IDbConnection _dbConnection;
+        private readonly IWalletLogic _walletLogic;
+        private readonly Func<IDbConnection> _connectionFactory;
 
 
-        public BidLogic() {}
-        public Task<bool> PlaceBidAsync(Bid bid)
+        public BidLogic(Func<IDbConnection> connectionFactory, IWalletLogic walletLogic, IAuctionLogic auctionLogic, IBidDao bidDao) {
+            _auctionLogic = auctionLogic;
+            _bidDao = bidDao;
+            _walletLogic = walletLogic;
+            _connectionFactory = connectionFactory;
+        }
+
+
+        public async Task<string> PlaceBidAsync(Bid bid, byte[] expectedAuctionVersion)
         {
-            throw new NotImplementedException();
+
+            // Data from http request
+            var userWallet = bid.User.Wallet;
+            var expectedWalletVersion = userWallet.Version;
+            var user = bid.User;
+            var amountToBid = bid.Amount;
+
+            // Data from db
+            var auctionToBidOn = _auctionLogic.GetAuctionByIdAsync(bid.AuctionId);
+            var currentHighestBid = _bidDao.GetLatestByAuctionId(bid.AuctionId);
+
+            Task.WaitAll(auctionToBidOn, currentHighestBid);
+
+            // Can you account buy?
+            if (user.CantBuy)
+            {
+                return "You have been BANNED from buying";
+            }
+
+            // Is new bid higher than current highest bid?
+            if(currentHighestBid.Result != null)
+            {
+                if (amountToBid <= currentHighestBid.Result.Amount)
+                {
+                    return "Bid is not higher than current highest bid";
+                }
+            }
+
+            // Do you have enough available balance in your wallet?
+            if (userWallet.GetAvailableBalance() < amountToBid)
+            {
+                return "You dont have enough money in the wallet";
+            }
+
+            _auctionLogic.UpdateAuctionOptimistically(auctionToBidOn.Result, expectedAuctionVersion, null, 1);
+
+
+
+
         }
 
 

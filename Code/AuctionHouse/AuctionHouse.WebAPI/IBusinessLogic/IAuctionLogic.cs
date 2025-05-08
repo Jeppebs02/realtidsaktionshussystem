@@ -1,4 +1,6 @@
-﻿using AuctionHouse.ClassLibrary.Model;
+﻿using AuctionHouse.ClassLibrary.Enum;
+using AuctionHouse.ClassLibrary.Model;
+using System.Data;
 namespace AuctionHouse.WebAPI.IBusinessLogic
 {
     public interface IAuctionLogic
@@ -6,10 +8,12 @@ namespace AuctionHouse.WebAPI.IBusinessLogic
         Task<List<T>> GetAllAuctionsAsync<T>();
         Task<IEnumerable<Auction>> GetAllActiveAuctionsAsync();
 
+        Task<Auction> GetAuctionByIdAsync(int id);
+
         Task<bool> CreateAuctionAsync(Auction auction);
 
-        Task<bool> UpdateAuctionOptimistically(Auction auction);
+        Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction=null, int newBids=1);
 
-        Task<bool> UpdateAuctionStatusOptimistically(Auction auction);
+        Task<bool> UpdateAuctionStatusOptimistically(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null);
     }
 }
