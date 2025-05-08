@@ -33,7 +33,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
 
         public Task<Auction> GetAuctionByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return _auctionDao.GetByIdAsync(id);
         }
 
         public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)

@@ -46,6 +46,7 @@ namespace AuctionHouse.ClassLibrary.Model
         public decimal StartPrice { get; set; }
         public decimal BuyOutPrice { get; set; }
         public decimal MinimumBidIncrement { get; set; }
+        public int AmountOfBids { get; set; }
         public AuctionStatus AuctionStatus { get; set; }
         [Timestamp]
         public byte[] Version { get; set; }

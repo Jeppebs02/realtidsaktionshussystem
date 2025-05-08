@@ -27,7 +27,7 @@ INSERT INTO dbo.[User] (CantBuy, CantSell, UserName, PasswordHash, RegistrationD
 
 -- 5. Wallets (assuming 1-to-1 relationship)
 INSERT INTO dbo.Wallet (TotalBalance, ReservedBalance, UserId) VALUES
-(2000.00,1225, 1), (750.00,550, 2), (1200.00,600, 3);
+(2000.00,1225, 1), (100000,550, 2), (50000,600, 3);
 
 -- ITEM & AUCTION
 
