@@ -16,21 +16,28 @@ namespace AuctionHouse.Test.DaoTests
     public class UserDaoTest
     {
         #region Fields
+        private readonly Func<IDbConnection> _connectionFactory;
+        
         private readonly IUserDao _userDao;
-        private readonly IDbConnection _connection;
         private readonly IWalletDao _walletDao;
         #endregion
 
         #region Constructor
         public UserDaoTest()
         {
-            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
+            var cs = Environment.GetEnvironmentVariable("DatabaseConnectionString")
+                 ?? "Server=localhost;Database=AuctionHouseTest;Trusted_Connection=True;TrustServerCertificate=True;";
 
-            _connection = new SqlConnection(connectionString);
+            _connectionFactory = () =>
+            {
+                var c = new SqlConnection(cs);
+                c.Open();                       // hand callers an *OPEN* connection
+                return c;
+            };
 
-            TransactionDAO transactionDAO = new TransactionDAO(_connection);
-            _walletDao = new WalletDAO(_connection, transactionDAO);
-            _userDao = new UserDAO(_connection, _walletDao);
+            TransactionDAO transactionDAO = new TransactionDAO(_connectionFactory);
+            _walletDao = new WalletDAO(_connectionFactory, transactionDAO);
+            _userDao = new UserDAO(_connectionFactory, _walletDao);
 
             //Clean tables
             CleanAndBuild.CleanDB();

@@ -14,11 +14,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
     {
 
 
-        private readonly IDbConnection _dbConnection;
+        private readonly Func<IDbConnection> _connectionFactory;
 
-        public TransactionDAO(IDbConnection dbConnection)
+        public TransactionDAO(Func<IDbConnection> connectionFactory)
         {
-            _dbConnection = dbConnection;
+            _connectionFactory = connectionFactory;
         }
 
         public Task<bool> DeleteAsync(Transaction entity)
@@ -28,9 +28,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> DeleteByWalletId(int walletId)
         {
+            using var conn = _connectionFactory();
+
             const string sql = "DELETE FROM [Transaction] WHERE WalletId = @WalletId";
 
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { WalletId = walletId });
+            int rowsAffected = await conn.ExecuteAsync(sql, new { WalletId = walletId });
 
             return rowsAffected > 0;
 
@@ -43,9 +45,11 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<IEnumerable<Transaction>> GetAllByWalletId(int walletId)
         {
+            using var conn = _connectionFactory();
+
             const string sql = "SELECT * FROM [Transaction] WHERE WalletId = @WalletId";
 
-            var transactions = await _dbConnection.QueryAsync<Transaction>(sql, new { WalletId = walletId });
+            var transactions = await conn.QueryAsync<Transaction>(sql, new { WalletId = walletId });
 
             return transactions;
         }

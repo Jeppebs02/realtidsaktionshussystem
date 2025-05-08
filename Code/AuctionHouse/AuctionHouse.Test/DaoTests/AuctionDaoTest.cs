@@ -19,9 +19,10 @@ namespace AuctionHouse.Test.DaoTests
     public class AuctionDaoTest
     {
         #region Fields
+        private readonly Func<IDbConnection> _connectionFactory;
+
         private readonly IAuctionDao _auctionDao;
         private readonly IBidDao _bidDao;
-        private readonly IDbConnection _dbConnection;
         private readonly IItemDao _itemDao;
         private readonly IUserDao _userDao;
         private readonly IWalletDao _walletDao;
@@ -31,14 +32,23 @@ namespace AuctionHouse.Test.DaoTests
         #region Constructor
         public AuctionDaoTest()
         {
-            _dbConnection = new SqlConnection(Environment.GetEnvironmentVariable("DatabaseConnectionString"));
-            
-            _transactionDao = new TransactionDAO(_dbConnection);
-            _walletDao = new WalletDAO(_dbConnection, _transactionDao);
-            _userDao = new UserDAO(_dbConnection,_walletDao);
-            _bidDao = new BidDAO(_dbConnection, _userDao);
-            _itemDao = new ItemDAO(_dbConnection, _userDao);
-            _auctionDao = new AuctionDAO(_dbConnection,_bidDao, _itemDao, _userDao);
+
+            var cs = Environment.GetEnvironmentVariable("DatabaseConnectionString")
+                 ?? "Server=localhost;Database=AuctionHouseTest;Trusted_Connection=True;TrustServerCertificate=True;";
+
+            _connectionFactory = () =>
+            {
+                var c = new SqlConnection(cs);
+                c.Open();                       // hand callers an *OPEN* connection
+                return c;
+            };
+
+            _transactionDao = new TransactionDAO(_connectionFactory);
+            _walletDao = new WalletDAO(_connectionFactory, _transactionDao);
+            _userDao = new UserDAO(_connectionFactory,_walletDao);
+            _bidDao = new BidDAO(_connectionFactory, _userDao);
+            _itemDao = new ItemDAO(_connectionFactory, _userDao);
+            _auctionDao = new AuctionDAO(_connectionFactory,_bidDao, _itemDao, _userDao);
 
             //Clean tables
             CleanAndBuild.CleanDB();

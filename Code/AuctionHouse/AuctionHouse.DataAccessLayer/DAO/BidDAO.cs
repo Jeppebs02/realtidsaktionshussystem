@@ -13,12 +13,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
     public class BidDAO : IBidDao
     {
 
-        private readonly IDbConnection _dbConnection;
+        private readonly Func<IDbConnection> _connectionFactory;
         private readonly IUserDao _userDao;
 
-        public BidDAO(IDbConnection dbConnection, IUserDao userdao)
+        public BidDAO(Func<IDbConnection> connectionFactory, IUserDao userdao)
         {
-            _dbConnection = dbConnection;
+            _connectionFactory = connectionFactory;
             _userDao = userdao;
         }
 
@@ -36,6 +36,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Bid> GetByIdAsync(int id)
         {
+            using var conn = _connectionFactory();
             const string sql = @"SELECT
                                 BidId,
                                 AuctionId,
@@ -45,7 +46,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Bid
                             WHERE BidId = @BidId;";
 
-            var bid = await _dbConnection.QuerySingleOrDefaultAsync<Bid>(sql, new { BidId = id });
+            var bid = await conn.QuerySingleOrDefaultAsync<Bid>(sql, new { BidId = id });
             Console.WriteLine("In BidDAO.GetByIdAsync");
 
                 Console.WriteLine("Casted bidT as concrete bid");
@@ -61,7 +62,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Bid> GetLatestByAuctionId(int auctionId)
         {
-
+            using var conn = _connectionFactory();
             const string sql = @"SELECT TOP 1
                             b.BidId, b.Amount, b.TimeStamp, b.UserId AS BidUserId, b.AuctionId,
                             u.UserId AS User_UserId,
@@ -73,7 +74,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                         WHERE b.AuctionId = @AuctionId
                         ORDER BY b.Amount DESC, b.TimeStamp DESC;";
 
-            var bids = await _dbConnection.QueryAsync<Bid, User, Bid>(
+            var bids = await conn.QueryAsync<Bid, User, Bid>(
                 sql,
                 map: (bid, user) =>
                 {
@@ -93,6 +94,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
         // Since bid is where our concurrency lies, we need to add an IDbTransaction.
         public async Task<int> InsertBidAsync(Bid entity, IDbTransaction transaction = null)
         {
+            using var conn = _connectionFactory();
             const string sql = @"
                                 INSERT INTO Bid (AuctionId, Amount, TimeStamp, UserId)
                                 VALUES (@AuctionId, @Amount, @TimeStamp, @UserId);
@@ -109,25 +111,27 @@ namespace AuctionHouse.DataAccessLayer.DAO
             if (parameters.UserId == null) throw new ArgumentException("Bid must have a User with a userId.");
 
 
-            return await _dbConnection.ExecuteScalarAsync<int>(sql, parameters, transaction: transaction);
+            return await conn.ExecuteScalarAsync<int>(sql, parameters, transaction: transaction);
         }
 
         public async Task<bool> UpdateAsync(Bid entity)
         {
+            using var conn = _connectionFactory();
             const string sql = "UPDATE Bid SET AuctionId = @AuctionId, Amount = @Amount, TimeStamp = @TimeStamp WHERE BidId = @BidId;";
-            var result = await _dbConnection.ExecuteAsync(sql, new { entity.AuctionId, entity.Amount, entity.TimeStamp, entity.BidId });
+            var result = await conn.ExecuteAsync(sql, new { entity.AuctionId, entity.Amount, entity.TimeStamp, entity.BidId });
             return result > 0;
         }
 
         public async Task<List<Bid>> GetAllByAuctionIdAsync(int auctionId)
         {
+            using var conn = _connectionFactory();
             const string sql = @"SELECT
                             BidId, Amount, TimeStamp, UserId, AuctionId
                         FROM dbo.Bid
                         WHERE AuctionId = @AuctionId
                         ORDER BY TimeStamp DESC;";
 
-            var bidT = await _dbConnection.QueryAsync<Bid>(sql, new { AuctionId = auctionId });
+            var bidT = await conn.QueryAsync<Bid>(sql, new { AuctionId = auctionId });
             Console.WriteLine("In BidDAO");
             foreach(var bid in bidT)
             {

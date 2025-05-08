@@ -12,19 +12,21 @@ namespace AuctionHouse.DataAccessLayer.DAO
 {
     public class ItemDAO : IItemDao
     {
-        private readonly IDbConnection _dbConnection;
+        private readonly Func<IDbConnection> _connectionFactory;
         private readonly IUserDao _userDao;
 
-        public ItemDAO(IDbConnection dbConnection, IUserDao userdao)
+        public ItemDAO(Func<IDbConnection> connectionFactory, IUserDao userdao)
         {
-            _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
+            _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
             _userDao = userdao;
         }
 
         public async Task<bool> DeleteAsync(Item entity)
         {
+            using var conn = _connectionFactory();
+
             const string sql = "DELETE FROM dbo.Item WHERE ItemId = @ItemId";
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { ItemId = entity.ItemId });
+            int rowsAffected = await conn.ExecuteAsync(sql, new { ItemId = entity.ItemId });
             return (rowsAffected > 0);
         }
 
@@ -42,14 +44,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<Item>> GetAllAsync()
         {
-
+            using var conn = _connectionFactory();
             // SQL to join Item and User tables
             const string sql = @"SELECT
                             ItemId, [Name], [Description], Category, [Image] AS ImageData,
                             UserId
                             FROM dbo.Item";
 
-            var items = _dbConnection.QueryAsync<Item>(sql);
+            var items = conn.QueryAsync<Item>(sql);
             
             foreach (var item in await items)
             {
@@ -78,13 +80,15 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Item> GetByIdAsync(int id)
         {
+            using var conn = _connectionFactory();
+
             const string sql = @"SELECT
                                 ItemId, Name, Description, Category, Image AS ImageData,
                                 UserId
                             FROM dbo.Item
                             WHERE ItemId = @Id;";
 
-            var item = await _dbConnection.QuerySingleAsync<Item>(sql, new { Id = id });
+            var item = await conn.QuerySingleAsync<Item>(sql, new { Id = id });
 
             Console.WriteLine($"itemT: {item.ToString()}");
 
@@ -98,6 +102,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<int> InsertAsync(Item entity)
         {
+            using var conn = _connectionFactory();
+
             const string sql = @"INSERT INTO dbo.Item (Name, Description, Category, Image, UserId)
                             OUTPUT INSERTED.ItemId
                             VALUES (@Name, @Description, @Category, @ImageData, @UserId);";
@@ -112,12 +118,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 UserId = entity.User.UserId // Assuming User is not null and has UserId
             };
             // Execute the query and return the inserted ItemId
-            return await _dbConnection.ExecuteScalarAsync<int>(sql, parameters);
+            return await conn.ExecuteScalarAsync<int>(sql, parameters);
 
         }
 
         public async Task<bool> UpdateAsync(Item entity)
         {
+            using var conn = _connectionFactory();
             const string sql = @"UPDATE dbo.Item
                             SET Name = @Name, Description = @Description, Category = @Category, Image = @ImageData
                             WHERE ItemId = @ItemId;";
@@ -133,7 +140,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             };
 
             // Execute the query and return true if rows were affected
-            return await _dbConnection.ExecuteAsync(sql, parameters).ContinueWith(task =>
+            return await conn.ExecuteAsync(sql, parameters).ContinueWith(task =>
             {
                 return task.Result > 0; // Return true if at least one row was updated
             });

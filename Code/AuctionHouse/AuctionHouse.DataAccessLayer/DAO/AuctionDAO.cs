@@ -15,14 +15,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
     public class AuctionDAO : IAuctionDao
     {
 
-        private readonly IDbConnection _dbConnection;
+        private readonly Func<IDbConnection> _connectionFactory;
         private readonly IBidDao _bidDao;
         private readonly IUserDao _userDao;
         private readonly IItemDao _itemDao;
 
-        public AuctionDAO(IDbConnection dbConnection, IBidDao biddao, IItemDao itemDao, IUserDao userdao)
+        public AuctionDAO(Func<IDbConnection> connectionFactory, IBidDao biddao, IItemDao itemDao, IUserDao userdao)
         {
-            _dbConnection = dbConnection;
+            _connectionFactory = connectionFactory;
             _bidDao = biddao;
             _itemDao = itemDao;
             _userDao = userdao;
@@ -35,6 +35,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<IEnumerable<Auction>> GetAllActiveAsync()
         {
+            using var conn = _connectionFactory();
             const string sql = @"SELECT
                             AuctionId,
                             StartTime,
@@ -50,7 +51,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                         FROM dbo.Auction
                         WHERE AuctionStatus = 'ACTIVE'";
 
-            var auctions = await _dbConnection.QueryAsync<Auction>(sql);
+            var auctions = await conn.QueryAsync<Auction>(sql);
 
             foreach (var auction in auctions)
             {
@@ -67,6 +68,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<List<Auction>> GetAllAsync()
         {
+            using var conn = _connectionFactory();
             const string sql = @"SELECT
                             AuctionId,
                             StartTime,
@@ -80,7 +82,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             ItemId,
                             AmountOfBids
                         FROM dbo.Auction;";
-            var auctions = (await _dbConnection.QueryAsync<Auction>(sql)).ToList();
+            var auctions = (await conn.QueryAsync<Auction>(sql)).ToList();
             var result = new List<Auction>();
 
 
@@ -109,6 +111,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Auction> GetByIdAsync(int id)
         {
+            using var conn = _connectionFactory();
             const string sql = @"SELECT
                             AuctionId,
                             StartTime,
@@ -124,7 +127,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                         FROM dbo.Auction
             WHERE AuctionId = @AuctionId;";
 
-            var auctionT = _dbConnection.QuerySingleAsync<Auction>(sql, new { AuctionId = id });
+            var auctionT = conn.QuerySingleAsync<Auction>(sql, new { AuctionId = id });
             var bids = _bidDao.GetAllByAuctionIdAsync(id);
             Task.WaitAll(auctionT, bids);
 
@@ -157,7 +160,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<int> InsertAsync(Auction entity)
         {
             // dbo.Auction includes these columns: AuctionId (PK AI) StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId, AmountOfBids
-
+            using var conn = _connectionFactory();
             const string sql = @"
                             INSERT INTO dbo.Auction
                             (StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, ItemId)
@@ -175,7 +178,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             parameters.Add("ItemId", entity.item.ItemId);
 
-            var auctionId = await _dbConnection.ExecuteScalarAsync<int>(sql, parameters);
+            var auctionId = await conn.ExecuteScalarAsync<int>(sql, parameters);
             return auctionId;
         }
 
@@ -186,6 +189,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
         {
+            using var conn = _connectionFactory();
             const string sql = @"UPDATE Auction
                                  SET AmountOfBids = AmountOfBids + @AmountOfBids
                                  WHERE AuctionId = @AuctionId
@@ -195,12 +199,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
             parameters.Add("AmountOfBids", newBids);
             parameters.Add("ExpectedVersion", expectedVersion);
 
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction: transaction);
+            int rowsAffected = await conn.ExecuteAsync(sql, parameters, transaction: transaction);
             return rowsAffected > 0;
         }
 
         public async Task<bool> UpdateAuctionStatusOptimisticallyAsync(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null)
         {
+            using var conn = _connectionFactory();
             const string sql = @"UPDATE Auction
                                  SET AuctionStatus = @AuctionStatus
                                  WHERE AuctionId = @AuctionId
@@ -210,7 +215,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             parameters.Add("AuctionId", auctionId);
             parameters.Add("AuctionStatus", newStatus);
             parameters.Add("ExpectedVersion", expectedVersion);
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction: transaction);
+            int rowsAffected = await conn.ExecuteAsync(sql, parameters, transaction: transaction);
             return rowsAffected > 0;
         }
 

@@ -20,42 +20,30 @@ namespace AuctionHouse.Test.DaoTests
     public class ItemDaoTest
     {
         #region Fields
-        private readonly IDbConnection _connection;
+        private readonly Func<IDbConnection> _connectionFactory;
+        
         private readonly IItemDao _itemDao;
-        private readonly ITestOutputHelper _output;
         private readonly IUserDao udao;
         #endregion
 
         #region Constructor
-        public ItemDaoTest(ITestOutputHelper output)
+        public ItemDaoTest()
         {
-            _output = output;
+            var cs = Environment.GetEnvironmentVariable("DatabaseConnectionString")
+                 ?? "Server=localhost;Database=AuctionHouseTest;Trusted_Connection=True;TrustServerCertificate=True;";
 
-            _output.WriteLine("Test Constructor: Attempting to read environment variable...");
-            string connectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
-
-            
-            _output.WriteLine($"Test Constructor: Retrieved Connection String: '{connectionString ?? "NULL"}'");
-                
-            if (string.IsNullOrEmpty(connectionString))
+            _connectionFactory = () =>
             {
-                _output.WriteLine("Test Constructor: FATAL - Connection string is null or empty."); // Log before throwing
-                // Consider throwing a more specific exception or using Assert.True within a test setup method if applicable
-                throw new InvalidOperationException("FATAL: DatabaseConnectionString environment variable is not set or is empty. Check test configuration.");
-            }
+                var c = new SqlConnection(cs);
+                c.Open();                       // hand callers an *OPEN* connection
+                return c;
+            };
 
-            _output.WriteLine("Test Constructor: Creating SqlConnection...");
-            _connection = new SqlConnection(connectionString);
-            TransactionDAO tdao = new TransactionDAO(_connection);
-            _output.WriteLine("Test Constructor: Creating ItemDAO...");
-            WalletDAO wdao = new WalletDAO(_connection, tdao);
+            TransactionDAO tdao = new TransactionDAO(_connectionFactory);
+            WalletDAO wdao = new WalletDAO(_connectionFactory, tdao);
 
-            udao = new UserDAO(_connection, wdao);
-            _itemDao = new ItemDAO(_connection, udao);
-            _output.WriteLine("Test Constructor: Setup complete.");
-
-
-
+            udao = new UserDAO(_connectionFactory, wdao);
+            _itemDao = new ItemDAO(_connectionFactory, udao);
 
 
             //Clean tables

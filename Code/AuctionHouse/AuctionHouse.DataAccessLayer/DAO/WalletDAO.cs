@@ -12,12 +12,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
 {
     public class WalletDAO : IWalletDao
     {
-        private readonly IDbConnection _dbConnection;
+        private readonly Func<IDbConnection> _connectionFactory;
         private readonly ITransactionDao _transactionDao;
 
-        public WalletDAO(IDbConnection dbConnection, ITransactionDao transactionDAO)
+        public WalletDAO(Func<IDbConnection> connectionFactory, ITransactionDao transactionDAO)
         {
-            _dbConnection = dbConnection;
+            _connectionFactory = connectionFactory;
             _transactionDao = transactionDAO;
         }
 
@@ -26,19 +26,23 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<bool> DeleteAsync(Wallet entity)
         {
             const string sql = "DELETE FROM Wallet WHERE WalletId = @WalletId";
+            
+            using var conn = _connectionFactory();
 
-            TransactionDAO transactionDao = new TransactionDAO(_dbConnection);
+            TransactionDAO transactionDao = new TransactionDAO(_connectionFactory);
 
             // Delete all transactions associated with the wallet
             await transactionDao.DeleteByWalletId((int)entity.WalletId);
 
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new { entity.WalletId });
+            int rowsAffected = await conn.ExecuteAsync(sql, new { entity.WalletId });
 
             return rowsAffected > 0;
         }
 
         public async Task<List<Wallet>> GetAllAsync()
         {
+            using var conn = _connectionFactory();
+
             const string sql = @"SELECT
                             WalletId,
                             TotalBalance,
@@ -48,16 +52,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM dbo.Wallet;";
 
             // Await the result of QueryAsync and then convert it to a list
-            var wallets = await _dbConnection.QueryAsync<Wallet>(sql);
+            var wallets = await conn.QueryAsync<Wallet>(sql);
 
             return wallets.ToList();
         }
 
         public async Task<Wallet?> GetByIdAsync(int id)
         {
+            using var conn = _connectionFactory();
+
             const string sql = "SELECT * FROM Wallet WHERE WalletId = @WalletId";
 
-            var walletT = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { WalletId = id });
+            var walletT = await conn.QuerySingleOrDefaultAsync<Wallet>(sql, new { WalletId = id });
 
 
             if (walletT is Wallet concreteWallet)
@@ -80,6 +86,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Wallet> GetByUserId(int userId)
         {
+            using var conn = _connectionFactory();
+
             const string sql = @"SELECT 
                                 WalletId,
                                 TotalBalance,
@@ -91,7 +99,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             Console.WriteLine("in walletDAO");
 
-            var wallet = await _dbConnection.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
+            var wallet = await conn.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
 
 
             if (wallet == null)
@@ -115,12 +123,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<int> InsertAsync(Wallet entity)
         {
+            using var conn = _connectionFactory();
+
             const string sql = "INSERT INTO Wallet (TotalBalance, ReservedBalance, UserId) " +
                 "VALUES (@TotalBalance, @ReservedBalance, @UserId); SELECT CAST(SCOPE_IDENTITY() as int);";
 
             
 
-            var walletId = await _dbConnection.QuerySingleAsync<int>(sql, new
+            var walletId = await conn.QuerySingleAsync<int>(sql, new
             {
                 entity.TotalBalance,
                 entity.ReservedBalance,
@@ -134,13 +144,15 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAsync(Wallet entity)
         {
+            using var conn = _connectionFactory();
+
             // TODO
             // This should take a expected version and check against the version in db (like in ReserveFundsOptmisticallyAsync)
             // It should also NOT BE ABLE to change reserved balance, only total balance, so maybe change the name
             const string sql = "UPDATE Wallet SET TotalBalance = @TotalBalance, ReservedBalance = @ReservedBalance " +
                 "WHERE WalletId = @WalletId";
 
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, new
+            int rowsAffected = await conn.ExecuteAsync(sql, new
             {
                 entity.TotalBalance,
                 entity.ReservedBalance,
@@ -153,6 +165,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> ReserveFundsOptimisticallyAsync(int walletId, decimal amountToReserve, byte[] expectedVersion, IDbTransaction transaction = null)
         {
+            using var conn = _connectionFactory();
+
             const string sql = @"
                 UPDATE Wallet
                 SET ReservedBalance = ReservedBalance + @AmountToReserve
@@ -163,7 +177,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 WalletId = walletId,
                 ExpectedVersion = expectedVersion
             };
-            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters, transaction);
+            int rowsAffected = await conn.ExecuteAsync(sql, parameters, transaction);
             return rowsAffected > 0;
         }
     }
