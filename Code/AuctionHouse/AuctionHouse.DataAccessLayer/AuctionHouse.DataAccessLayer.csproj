@@ -7,13 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AuctionHouse.ClassLibrary\AuctionHouse.ClassLibrary.csproj" />
+    <Compile Remove="Interfaces_temp\**" />
+    <Compile Remove="SqlServer\**" />
+    <Compile Remove="Stub\**" />
+    <EmbeddedResource Remove="Interfaces_temp\**" />
+    <EmbeddedResource Remove="SqlServer\**" />
+    <EmbeddedResource Remove="Stub\**" />
+    <None Remove="Interfaces_temp\**" />
+    <None Remove="SqlServer\**" />
+    <None Remove="Stub\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces_temp\" />
-    <Folder Include="SqlServer\" />
-    <Folder Include="Stub\" />
+    <ProjectReference Include="..\AuctionHouse.ClassLibrary\AuctionHouse.ClassLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

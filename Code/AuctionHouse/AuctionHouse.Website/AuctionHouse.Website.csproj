@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuctionHouse.APIRequester\AuctionHouse.APIRequester.csproj" />
     <ProjectReference Include="..\AuctionHouse.ClassLibrary\AuctionHouse.ClassLibrary.csproj" />
   </ItemGroup>
 

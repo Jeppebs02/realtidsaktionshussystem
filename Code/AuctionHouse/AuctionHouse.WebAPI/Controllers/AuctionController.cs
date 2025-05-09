@@ -26,16 +26,16 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // GET: api/<AuctionController>
         [HttpGet]
-        public async Task<List<Auction>> Get()
+        public async Task<ActionResult<List<Auction>>> Get()
         {
-            return (List<Auction>)await _auctionLogic.GetAllActiveAuctionsAsync();
+            return Ok(await _auctionLogic.GetAllActiveAuctionsAsync());
         }
 
         // GET api/<AuctionController>/5
         [HttpGet("{id}")]
-        public async Task<Auction> Get(int id)
-        {
-            return await _auctionLogic.GetAuctionByIdAsync(id);
+        public async Task<ActionResult<Auction>> Get(int id)
+        { 
+            return Ok(await _auctionLogic.GetAuctionByIdAsync(id));
         }
 
         // POST api/<AuctionController>

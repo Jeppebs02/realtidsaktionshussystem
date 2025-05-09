@@ -24,6 +24,7 @@ RUN dotnet restore "AuctionHouse.WebSite/AuctionHouse.WebSite.csproj"
 COPY ["AuctionHouse.WebSite/", "AuctionHouse.WebSite/"]
 # Copy the code for its direct dependency
 COPY ["AuctionHouse.ClassLibrary/", "AuctionHouse.ClassLibrary/"]
+COPY ["AuctionHouse.APIRequester/", "AuctionHouse.APIRequester/"]
 
 # --- Step 4: Build and Publish ---
 # Set WORKDIR to the project to be published
