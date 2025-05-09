@@ -119,17 +119,19 @@ namespace AuctionHouse.Test.APITests
             };
 
             // Act
-            var result_bidder1 = await _bidLogic.PlaceBidAsync(bidder1_bid, expectedAuctionVersion);
+            var result_bidder1 = _bidLogic.PlaceBidAsync(bidder1_bid, expectedAuctionVersion);
 
-            var result_bidder2 = await _bidLogic.PlaceBidAsync(bidder2_bid, expectedAuctionVersion);
+            var result_bidder2 = _bidLogic.PlaceBidAsync(bidder2_bid, expectedAuctionVersion);
+
+            Task.WaitAll(result_bidder1, result_bidder2);
 
             var newauction = await _auctionLogic.GetAuctionByIdAsync(auction.AuctionID!.Value);
             // Assert
 
 
             Assert.Equal(1, newauction.AmountOfBids);
-            Assert.Equal("Bid placed succesfully :)", result_bidder1);
-            Assert.Equal("Auction has been updated by another user, please refresh the page", result_bidder2);
+            Assert.Equal("Bid placed succesfully :)", result_bidder1.Result);
+            Assert.Equal("Auction has been updated by another user, please refresh the page", result_bidder2.Result);
         }
 
         #endregion
