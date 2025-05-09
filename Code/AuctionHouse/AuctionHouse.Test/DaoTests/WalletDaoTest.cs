@@ -76,7 +76,7 @@ namespace AuctionHouse.Test.DaoTests
             // Arrange  
             // remember user with id 4 must have no wallet in db at the time of this test
             
-            Wallet wallet = new Wallet(100, 0, 4);
+            Wallet wallet = new Wallet(100, 0, new byte[0], 4);
 
             // Act  
             int id = await _walletDao.InsertAsync(wallet);

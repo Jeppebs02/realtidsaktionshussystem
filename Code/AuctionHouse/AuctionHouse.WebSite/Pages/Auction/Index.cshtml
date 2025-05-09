@@ -1,4 +1,5 @@
 ﻿@page "/auction/{auctionId:int}"
+@using System.Globalization
 @model AuctionHouse.WebSite.Pages.Auction.IndexModel
 @{
 }
@@ -36,7 +37,7 @@
     @if (Model.specificAuction.item.ImageData != null && Model.specificAuction.item.ImageData.Length > 0)
     {
         // Convert byte array to Base64 string
-        var imageBase64 = Convert.ToBase64String(Model.specificAuction.item.ImageData);
+        var imageBase64 = Convert.ToBase64String(Model.specificAuction.item.ImageData?? new byte[0]);
         // Specify MIME type.
         var imageSrc = $"data:image/jpeg;base64,{imageBase64}";
 
@@ -71,7 +72,7 @@
             @if (startingPrice != null)
             {
                 // If a starting price exists, display its amount
-                <span>@startingPrice.ToString("C")</span>
+                <span>@startingPrice.ToString("C", CultureInfo.GetCultureInfo("da-DK"));</span>
             }
         </h3>
     }
@@ -171,7 +172,7 @@
             @if (highestBid != null)
             {
                 // If a bid exists, display its amount (formatted as currency)
-                <span>@highestBid.Amount.ToString("C")</span>
+                <span>@highestBid.Amount.ToString("C", CultureInfo.GetCultureInfo("da-DK"))</span>
             }
             else
             {
@@ -190,7 +191,7 @@
             @if (buyoutPrice != null)
             {
                 // If a buyout price exists, display its amount
-                <span>@buyoutPrice.ToString("C")</span>
+                <span>@buyoutPrice.ToString("C", CultureInfo.GetCultureInfo("da-DK"))</span>
             }
             else
             {

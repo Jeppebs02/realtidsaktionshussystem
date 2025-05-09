@@ -13,13 +13,12 @@ namespace AuctionHouse.ClassLibrary.Model
         #region Constructors
         // Blank constructor required by Dapper
         public Wallet() { }
-        public Wallet(decimal totalBalance, decimal reservedBalance, int userId, byte[]? version = null, int? walletId = null)
+        public Wallet(decimal totalBalance, decimal reservedBalance, byte[]? version = null, int? walletId = null)
         {
             WalletId = walletId;
             TotalBalance = totalBalance;
             ReservedBalance = reservedBalance;
             Version = version;
-            UserId = userId;
         }
         #endregion
 

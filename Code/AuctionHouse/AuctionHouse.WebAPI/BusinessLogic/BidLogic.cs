@@ -25,7 +25,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             return await _bidDao.GetByIdAsync(id);
         }
 
-        public async Task<string> PlaceBidAsync(Bid bid, byte[] expectedAuctionVersion)
+        public async Task<string> PlaceBidAsync(Bid bid)
         {
 
             // Data from http request
@@ -33,6 +33,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             var expectedWalletVersion = userWallet.Version;
             var user = bid.User;
             var amountToBid = bid.Amount;
+            byte[] expectedAuctionVersion = bid.ExpectedAuctionVersion!;
 
             // Data from db
             var auctionToBidOn = _auctionLogic.GetAuctionByIdAsync(bid.AuctionId);

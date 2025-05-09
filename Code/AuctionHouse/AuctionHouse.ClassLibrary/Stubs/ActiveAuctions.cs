@@ -15,7 +15,7 @@ namespace AuctionHouse.ClassLibrary.Stubs
 
         public static List<Auction> testAuctions = new List<Auction>();
 
-        public static User stubUser = new User("sven1", "123", "Sven", "Svensson", "sven@.com", "12345678", "sven street", new Wallet(10000, 0, 0));
+        public static User stubUser = new User("sven1", "123", "Sven", "Svensson", "sven@.com", "12345678", "sven street", new Wallet(10000, 0, new byte[0],0));
 
         private static bool isInitialized = false;
 

@@ -179,7 +179,7 @@ namespace AuctionHouse.Test.DaoTests
         public async Task InsertAsync_ShouldInsertAuction()
         {
             // Arrange  
-            Wallet wallet = new Wallet(1000, 0,0);
+            Wallet wallet = new Wallet(1000, 0,new byte[0], 0);
             User user = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", wallet);
             user.UserId = 1;
             Item item = new Item(user, "testItem", "testDescription", Category.ELECTRONICS, new byte[0], ItemStatus.AVAILABLE);

@@ -138,7 +138,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                         ORDER BY TimeStamp DESC;";
 
             var bidT = await conn.QueryAsync<Bid>(sql, new { AuctionId = auctionId });
-            Console.WriteLine("In BidDAO");
+
             foreach(var bid in bidT)
             {
                 if (bid.User == null)

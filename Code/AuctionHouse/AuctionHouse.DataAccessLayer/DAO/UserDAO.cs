@@ -77,7 +77,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
             var user = await conn.QuerySingleOrDefaultAsync<User>(sql, new { UserId = id });
 
 
-                Console.WriteLine($"UserId from UserDAO: {user!.UserId}");
             // This fixed it
                 var wallet = await walletDAO.GetByUserId(user.UserId!.Value);
                 if(user.Wallet == null)
@@ -112,7 +111,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 address = entity.Address
             });
 
-            Wallet wallet = new Wallet(0, 0, UserId);
+            Wallet wallet = new Wallet(0, 0, new byte[0], UserId);
             await walletDAO.InsertAsync(wallet);
             return  Task.FromResult(UserId).Result;
         }

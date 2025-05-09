@@ -61,7 +61,7 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                         Console.WriteLine("Creating item Object");
 
                         //TODO: FIX THIS STUBBED SHIT
-                        User stubUser = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", new Wallet(1000, 0, 0));
+                        User stubUser = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", new Wallet(1000, 0, new byte[0], 0));
                         item = new Item(stubUser, itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
                     }
                 }

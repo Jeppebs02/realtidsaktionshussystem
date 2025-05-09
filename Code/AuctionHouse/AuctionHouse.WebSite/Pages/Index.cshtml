@@ -1,5 +1,6 @@
 ﻿@page
 @using AuctionHouse.ClassLibrary.Enum
+@using System.Globalization
 @model AuctionHouse.WebSite.Pages.Homepage.IndexModel
 @{
 }
@@ -46,14 +47,14 @@
                             <strong>Current bid:</strong>
                             @if (auction.Bids.Any())
                             {
-                                @auction.Bids.Last().Amount.ToString("C")
+                                @auction.Bids.Last().Amount.ToString("C", CultureInfo.GetCultureInfo("da-DK"))
                             }
                             else
                             {
                                 <span>No bids yet</span>
                                 <br />
                                 <span>Start price:</span>
-                                @auction.StartPrice.ToString("C")
+                                @auction.StartPrice.ToString("C", CultureInfo.GetCultureInfo("da-DK"))
                             }
                         }
                         else

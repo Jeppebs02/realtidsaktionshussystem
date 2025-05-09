@@ -82,7 +82,7 @@ namespace AuctionHouse.Test.APITests
 
 
             // Act
-            var result_bidder1 = await _bidLogic.PlaceBidAsync(bidder1_bid, expectedAuctionVersion);
+            var result_bidder1 = await _bidLogic.PlaceBidAsync(bidder1_bid);
 
             var newauction = await _auctionLogic.GetAuctionByIdAsync(auction.AuctionID!.Value);
             // Assert
@@ -119,9 +119,9 @@ namespace AuctionHouse.Test.APITests
             };
 
             // Act
-            var result_bidder1 = _bidLogic.PlaceBidAsync(bidder1_bid, expectedAuctionVersion);
+            var result_bidder1 = _bidLogic.PlaceBidAsync(bidder1_bid);
 
-            var result_bidder2 = _bidLogic.PlaceBidAsync(bidder2_bid, expectedAuctionVersion);
+            var result_bidder2 = _bidLogic.PlaceBidAsync(bidder2_bid);
 
             Task.WaitAll(result_bidder1, result_bidder2);
 
