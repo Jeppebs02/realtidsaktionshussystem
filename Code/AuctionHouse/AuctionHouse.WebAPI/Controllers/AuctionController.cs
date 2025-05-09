@@ -1,4 +1,4 @@
-﻿using AuctionHouse.ClassLibrary.Interfaces;
+﻿using AuctionHouse.WebAPI.IBusinessLogic;
 using Microsoft.AspNetCore.Mvc;
 using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
@@ -13,12 +13,13 @@ namespace AuctionHouse.WebAPI.Controllers
     public class AuctionController : ControllerBase
     {
 
-        private readonly IAuctionDao _auctionDao;
+        private readonly IAuctionLogic _auctionLogic;
 
-        public AuctionController(IAuctionDao auctionDao)
+        public AuctionController(IAuctionLogic auctionLogic)
         {
             // This is where we inject the IItemDao into the controller
-            _auctionDao = auctionDao;
+            
+            _auctionLogic = auctionLogic;
         }
 
 
@@ -27,14 +28,14 @@ namespace AuctionHouse.WebAPI.Controllers
         [HttpGet]
         public async Task<List<Auction>> Get()
         {
-            return await _auctionDao.GetAllAsync();
+            return (List<Auction>)await _auctionLogic.GetAllActiveAuctionsAsync();
         }
 
         // GET api/<AuctionController>/5
         [HttpGet("{id}")]
         public async Task<Auction> Get(int id)
         {
-            return await _auctionDao.GetByIdAsync(id);
+            return await _auctionLogic.GetAuctionByIdAsync(id);
         }
 
         // POST api/<AuctionController>

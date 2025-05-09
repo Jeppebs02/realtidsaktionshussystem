@@ -23,7 +23,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
 
         public Task<IEnumerable<Auction>> GetAllActiveAuctionsAsync()
         {
-            throw new NotImplementedException();
+            return _auctionDao.GetAllActiveAsync();
         }
 
         public Task<List<T>> GetAllAuctionsAsync<T>()
