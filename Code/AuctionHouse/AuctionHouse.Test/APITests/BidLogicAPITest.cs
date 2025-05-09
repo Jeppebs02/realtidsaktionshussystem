@@ -129,7 +129,7 @@ namespace AuctionHouse.Test.APITests
 
             Assert.Equal(1, newauction.AmountOfBids);
             Assert.Equal("Bid placed succesfully :)", result_bidder1);
-            Assert.Equal("Error with wallet version, please try again.", result_bidder2);
+            Assert.Equal("Auction has been updated by another user, please refresh the page", result_bidder2);
         }
 
         #endregion
