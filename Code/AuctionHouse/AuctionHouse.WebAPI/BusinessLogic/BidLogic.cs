@@ -20,6 +20,10 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             _connectionFactory = connectionFactory;
         }
 
+        public async Task<Bid> GetByIdAsync(int id)
+        {
+            return await _bidDao.GetByIdAsync(id);
+        }
 
         public async Task<string> PlaceBidAsync(Bid bid, byte[] expectedAuctionVersion)
         {

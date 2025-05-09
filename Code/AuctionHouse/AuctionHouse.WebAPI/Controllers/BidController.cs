@@ -1,7 +1,7 @@
-﻿using AuctionHouse.ClassLibrary.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
+using AuctionHouse.WebAPI.IBusinessLogic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,12 +12,12 @@ namespace AuctionHouse.WebAPI.Controllers
     public class BidController : ControllerBase
     {
         
-        private readonly IBidDao _bidDao;
+        private readonly IBidLogic _bidLogic;
 
-        public BidController(IBidDao bidDao)
+        public BidController(IBidLogic bidLogic)
         {
             // This is where we inject the IItemDao into the controller
-            _bidDao = bidDao;
+            _bidLogic = bidLogic;
         }
 
         // GET: api/<BidController>
@@ -29,15 +29,58 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // GET api/<BidController>/5
         [HttpGet("{id}")]
-        public async Task<Bid> Get(int id)
+        public async Task<ActionResult<Bid>> Get(int id)
         {
-            return await _bidDao.GetByIdAsync(id);
+            var bid = await _bidLogic.GetByIdAsync(id);
+
+            if (bid is null) { 
+                return NotFound();
+            }
+
+            return Ok(bid);
         }
 
         // POST api/<BidController>
         [HttpPost]
-        public void Post([FromBody] Bid bid)
+        public async Task<ActionResult<string>> Post([FromBody] Bid bid, byte[] expectedAuctionVersion)
         {
+            var result = _bidLogic.PlaceBidAsync(bid, expectedAuctionVersion);
+
+            if (result.Result == "Bid is not higher than current highest bid")
+            {
+                return BadRequest(result.Result);
+                
+            }
+            else if (result.Result == "You have been BANNED from buying")
+            {
+                return BadRequest(result.Result);
+
+            }
+            else if (result.Result == "Bid placed successfully")
+            {
+                return Ok(result.Result);
+            }
+            else if (result.Result == "You dont have enough money in the wallet")
+            {
+                return BadRequest(result.Result);
+            }
+            else if (result.Result == "Auction has been updated by another user, please refresh the page")
+            {
+                return BadRequest(result.Result);
+            }
+            else if (result.Result == "Bid could not be placed")
+            {
+                return BadRequest(result.Result);
+            }
+            else if (result.Result == "Bid placed succesfully :)")
+            {
+                return Ok(result.Result);
+            }
+            else
+            {
+                throw new Exception(result.Result);
+            }
+
         }
 
         // PUT api/<BidController>/5
