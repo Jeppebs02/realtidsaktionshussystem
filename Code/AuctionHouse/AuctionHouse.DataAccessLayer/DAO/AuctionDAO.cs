@@ -51,18 +51,24 @@ namespace AuctionHouse.DataAccessLayer.DAO
                         FROM dbo.Auction
                         WHERE AuctionStatus = 'ACTIVE'";
 
-            var auctions = await conn.QueryAsync<Auction>(sql);
+            var auctions = (await conn.QueryAsync<Auction>(sql)).ToList();
+            var result = new List<Auction>();
+
 
             foreach (var auction in auctions)
             {
-                if (auction.Bids == null)
-                {
-                    auction.Bids = new List<Bid>();
-                }
-                auction.Bids = await _bidDao.GetAllByAuctionIdAsync(auction.AuctionID.Value);
+                var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
+                var item = _itemDao.GetByIdAsync(auction.itemId!.Value);
+
+                Task.WaitAll(bids, item);
+
+                auction.Bids = bids.Result.ToList();
+                auction.item = item.Result;
+
+                result.Add(auction);
             }
 
-            return auctions;
+            return result;
 
         }
 

@@ -3,13 +3,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using AuctionHouse.ClassLibrary.Stubs;
 using System.Collections.Generic;
 using AuctionHouse.ClassLibrary.Enum;
+using AuctionHouse.Requester;
+using Newtonsoft.Json;
 
 namespace AuctionHouse.WebSite.Pages.Homepage
 {
     public class IndexModel : PageModel
     {
-        public List<AuctionHouse.ClassLibrary.Model.Auction> TestAuctions { get; set; }
+        public List<AuctionHouse.ClassLibrary.Model.Auction> Auctions { get; set; }
         public List<AuctionHouse.ClassLibrary.Model.Auction> FilteredAuctions { get; set; } = new();
+
+        private APIRequester _apiRequester;
 
         [BindProperty(SupportsGet = true)]
         public string? SearchTerm { get; set; }
@@ -19,11 +23,22 @@ namespace AuctionHouse.WebSite.Pages.Homepage
 
         public void OnGet()
         {
+
+            //get json response from API
+            _apiRequester = new APIRequester(new HttpClient());
+
+            var json = _apiRequester.Get("api/auction").Result;
+            Console.WriteLine(json);
+            // Deserialize the JSON response into a list of auctions
+
+            var auctions = JsonConvert.DeserializeObject<List<AuctionHouse.ClassLibrary.Model.Auction>>(json);
+
+
             // Load test data
-            TestAuctions = AuctionHouse.ClassLibrary.Stubs.AuctionTestData.GetTestAuctions();
+            Auctions = auctions;
 
             // Start with all auctions
-            FilteredAuctions = TestAuctions;
+            FilteredAuctions = Auctions;
 
             // Apply search term
             if (!string.IsNullOrWhiteSpace(SearchTerm))

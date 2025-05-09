@@ -35,6 +35,7 @@ namespace AuctionHouse.ClassLibrary.Model
 
         [Required(ErrorMessage = "User is required")]
         public User User { get; set; }
+        public byte[]? ExpectedAuctionVersion { get; set; } = null;
         #endregion
 
         #region Methods

@@ -14,6 +14,7 @@ WORKDIR /src
 COPY ["AuctionHouse.WebSite/AuctionHouse.WebSite.csproj", "AuctionHouse.WebSite/"]
 # Copy project file for its direct dependency
 COPY ["AuctionHouse.ClassLibrary/AuctionHouse.ClassLibrary.csproj", "AuctionHouse.ClassLibrary/"]
+COPY ["AuctionHouse.APIRequester/AuctionHouse.APIRequester.csproj", "AuctionHouse.APIRequester/"]
 
 # --- Step 2: Restore dependencies ---
 # Restore the main project; it restores ClassLibrary transitively

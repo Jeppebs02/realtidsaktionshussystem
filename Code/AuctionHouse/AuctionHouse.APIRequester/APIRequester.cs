@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 
-namespace AuctionHouse.APIRequester
+namespace AuctionHouse.Requester
 {
     public class APIRequester
     {

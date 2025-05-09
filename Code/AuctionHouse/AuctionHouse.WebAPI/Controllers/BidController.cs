@@ -42,9 +42,9 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // POST api/<BidController>
         [HttpPost]
-        public async Task<ActionResult<string>> Post([FromBody] Bid bid, byte[] expectedAuctionVersion)
+        public async Task<ActionResult<string>> Post([FromBody] Bid bid)
         {
-            var result = _bidLogic.PlaceBidAsync(bid, expectedAuctionVersion);
+            var result = _bidLogic.PlaceBidAsync(bid, bid.ExpectedAuctionVersion);
 
             if (result.Result == "Bid is not higher than current highest bid")
             {
