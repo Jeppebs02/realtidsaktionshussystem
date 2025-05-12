@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            checkBox1 = new CheckBox();
-            checkBox2 = new CheckBox();
-            listBox1 = new ListBox();
-            button2 = new Button();
-            button3 = new Button();
-            textBox1 = new TextBox();
+            CantBuycheckbox = new CheckBox();
+            CantSellcheckbox = new CheckBox();
+            Userlistbox = new ListBox();
+            GetAllUsersbtn = new Button();
+            Savebtn = new Button();
+            Searchtxtbox = new TextBox();
             label1 = new Label();
-            button1 = new Button();
-            button4 = new Button();
+            Searchbtn = new Button();
+            DeleteUserbtn = new Button();
             Emailtxtbox = new TextBox();
             Addresstxtbox = new TextBox();
             Passwordtxtbox = new TextBox();
@@ -53,59 +53,59 @@
             PhoneNumbertxtbox = new TextBox();
             SuspendLayout();
             // 
-            // checkBox1
+            // CantBuycheckbox
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(65, 189);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(108, 29);
-            checkBox1.TabIndex = 1;
-            checkBox1.Text = "Cant Buy";
-            checkBox1.UseVisualStyleBackColor = true;
+            CantBuycheckbox.AutoSize = true;
+            CantBuycheckbox.Location = new Point(65, 189);
+            CantBuycheckbox.Name = "CantBuycheckbox";
+            CantBuycheckbox.Size = new Size(108, 29);
+            CantBuycheckbox.TabIndex = 1;
+            CantBuycheckbox.Text = "Cant Buy";
+            CantBuycheckbox.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // CantSellcheckbox
             // 
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(65, 224);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(106, 29);
-            checkBox2.TabIndex = 2;
-            checkBox2.Text = "Cant Sell";
-            checkBox2.UseVisualStyleBackColor = true;
+            CantSellcheckbox.AutoSize = true;
+            CantSellcheckbox.Location = new Point(65, 224);
+            CantSellcheckbox.Name = "CantSellcheckbox";
+            CantSellcheckbox.Size = new Size(106, 29);
+            CantSellcheckbox.TabIndex = 2;
+            CantSellcheckbox.Text = "Cant Sell";
+            CantSellcheckbox.UseVisualStyleBackColor = true;
             // 
-            // listBox1
+            // Userlistbox
             // 
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 25;
-            listBox1.Location = new Point(349, 319);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(786, 304);
-            listBox1.TabIndex = 3;
+            Userlistbox.FormattingEnabled = true;
+            Userlistbox.ItemHeight = 25;
+            Userlistbox.Location = new Point(349, 319);
+            Userlistbox.Name = "Userlistbox";
+            Userlistbox.Size = new Size(786, 304);
+            Userlistbox.TabIndex = 3;
             // 
-            // button2
+            // GetAllUsersbtn
             // 
-            button2.Location = new Point(65, 319);
-            button2.Name = "button2";
-            button2.Size = new Size(267, 64);
-            button2.TabIndex = 4;
-            button2.Text = "Get All Users";
-            button2.UseVisualStyleBackColor = true;
+            GetAllUsersbtn.Location = new Point(65, 319);
+            GetAllUsersbtn.Name = "GetAllUsersbtn";
+            GetAllUsersbtn.Size = new Size(267, 64);
+            GetAllUsersbtn.TabIndex = 4;
+            GetAllUsersbtn.Text = "Get All Users";
+            GetAllUsersbtn.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // Savebtn
             // 
-            button3.Location = new Point(65, 559);
-            button3.Name = "button3";
-            button3.Size = new Size(267, 64);
-            button3.TabIndex = 5;
-            button3.Text = "Save";
-            button3.UseVisualStyleBackColor = true;
+            Savebtn.Location = new Point(65, 559);
+            Savebtn.Name = "Savebtn";
+            Savebtn.Size = new Size(267, 64);
+            Savebtn.TabIndex = 5;
+            Savebtn.Text = "Save";
+            Savebtn.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // Searchtxtbox
             // 
-            textBox1.Location = new Point(65, 81);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(200, 31);
-            textBox1.TabIndex = 6;
+            Searchtxtbox.Location = new Point(65, 81);
+            Searchtxtbox.Name = "Searchtxtbox";
+            Searchtxtbox.Size = new Size(200, 31);
+            Searchtxtbox.TabIndex = 6;
             // 
             // label1
             // 
@@ -116,23 +116,23 @@
             label1.TabIndex = 7;
             label1.Text = "Search User";
             // 
-            // button1
+            // Searchbtn
             // 
-            button1.Location = new Point(285, 81);
-            button1.Name = "button1";
-            button1.Size = new Size(78, 31);
-            button1.TabIndex = 8;
-            button1.Text = "Search";
-            button1.UseVisualStyleBackColor = true;
+            Searchbtn.Location = new Point(285, 81);
+            Searchbtn.Name = "Searchbtn";
+            Searchbtn.Size = new Size(78, 31);
+            Searchbtn.TabIndex = 8;
+            Searchbtn.Text = "Search";
+            Searchbtn.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // DeleteUserbtn
             // 
-            button4.Location = new Point(65, 489);
-            button4.Name = "button4";
-            button4.Size = new Size(267, 64);
-            button4.TabIndex = 9;
-            button4.Text = "Delete User";
-            button4.UseVisualStyleBackColor = true;
+            DeleteUserbtn.Location = new Point(65, 489);
+            DeleteUserbtn.Name = "DeleteUserbtn";
+            DeleteUserbtn.Size = new Size(267, 64);
+            DeleteUserbtn.TabIndex = 9;
+            DeleteUserbtn.Text = "Delete User";
+            DeleteUserbtn.UseVisualStyleBackColor = true;
             // 
             // Emailtxtbox
             // 
@@ -265,15 +265,15 @@
             Controls.Add(Passwordtxtbox);
             Controls.Add(Addresstxtbox);
             Controls.Add(Emailtxtbox);
-            Controls.Add(button4);
-            Controls.Add(button1);
+            Controls.Add(DeleteUserbtn);
+            Controls.Add(Searchbtn);
             Controls.Add(label1);
-            Controls.Add(textBox1);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(listBox1);
-            Controls.Add(checkBox2);
-            Controls.Add(checkBox1);
+            Controls.Add(Searchtxtbox);
+            Controls.Add(Savebtn);
+            Controls.Add(GetAllUsersbtn);
+            Controls.Add(Userlistbox);
+            Controls.Add(CantSellcheckbox);
+            Controls.Add(CantBuycheckbox);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -281,15 +281,15 @@
         }
 
         #endregion
-        private CheckBox checkBox1;
-        private CheckBox checkBox2;
-        private ListBox listBox1;
-        private Button button2;
-        private Button button3;
-        private TextBox textBox1;
+        private CheckBox CantBuycheckbox;
+        private CheckBox CantSellcheckbox;
+        private ListBox Userlistbox;
+        private Button GetAllUsersbtn;
+        private Button Savebtn;
+        private TextBox Searchtxtbox;
         private Label label1;
-        private Button button1;
-        private Button button4;
+        private Button Searchbtn;
+        private Button DeleteUserbtn;
         private TextBox Emailtxtbox;
         private TextBox Addresstxtbox;
         private TextBox Passwordtxtbox;
