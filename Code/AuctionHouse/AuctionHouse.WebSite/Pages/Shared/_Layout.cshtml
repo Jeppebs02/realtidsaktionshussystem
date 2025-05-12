@@ -127,34 +127,49 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
+        function getCookie(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+
         (async () => {
             const dropdown = document.getElementById('userSelect');
             const avail = document.getElementById('availLbl');
             const reserv = document.getElementById('resLbl');
 
-            // Get all users
             const users = await fetch('http://localhost:5002/api/user').then(r => r.json());
+
+            const selectedUserId = getCookie("selectedUserId");
 
             users.forEach(user => {
                 const opt = document.createElement('option');
                 opt.value = user.userId;
                 opt.textContent = user.userName;
+                if (selectedUserId == user.userId) {
+                    opt.selected = true; // ✅ Set selected
+                }
                 dropdown.appendChild(opt);
             });
 
-            // On change, load wallet
+            if (selectedUserId) {
+                const user = await fetch(`http://localhost:5002/api/user/${selectedUserId}`).then(r => r.json());
+                if (user.wallet) {
+                    let availableBalance = user.wallet.totalBalance - user.wallet.reservedBalance;
+                    avail.textContent = availableBalance.toFixed(2);
+                    reserv.textContent = user.wallet.reservedBalance.toFixed(2);
+                }
+            }
+
             dropdown.addEventListener('change', async e => {
                 const selectedUserId = e.target.value;
                 const user = await fetch(`http://localhost:5002/api/user/${selectedUserId}`).then(r => r.json());
-                        if (user.wallet) {
-                            avail.textContent = user.wallet.totalBalance.toFixed(2);
-                            reserv.textContent = user.wallet.reservedBalance.toFixed(2);
-                            document.cookie = `selectedUserId=${selectedUserId}; path=/`;
-                            window.location.reload();
-                        } else {
-                            avail.textContent = "N/A";
-                            reserv.textContent = "N/A";
-                        }
+                if (user.wallet) {
+                    let availableBalance = user.wallet.totalBalance - user.wallet.reservedBalance;
+                    avail.textContent = availableBalance.toFixed(2);
+                    reserv.textContent = user.wallet.reservedBalance.toFixed(2);
+                    document.cookie = `selectedUserId=${selectedUserId}; path=/`;
+                    window.location.reload();
+                }
             });
         })();
 
