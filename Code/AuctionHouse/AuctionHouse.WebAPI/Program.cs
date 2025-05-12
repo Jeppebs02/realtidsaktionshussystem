@@ -60,9 +60,27 @@ builder.Services.AddScoped<APIInterface.IItemLogic, ItemLogic>();
 
 builder.Services.AddSingleton<IConnectionFactory, SqlConnectionFactory>();
 
+
+// Allow CORS
+// Allow any origin (for dev only — restrict this in production)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+
+
+
 // TODO: Add the other DAOs here
 
 var app = builder.Build();
+
+app.UseCors("AllowAll"); // Enable CORS globally
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

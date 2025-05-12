@@ -1,9 +1,7 @@
 ﻿@using AuctionHouse.ClassLibrary.Interfaces
-@inject IWalletAccess WalletAcces
 
 @{
-	var userName = AuctionHouse.ClassLibrary.Stubs.AuctionTestData.stubUser.UserName;
-    var Wallet = WalletAcces.GetWalletForUser(userName);
+    var userName = "";
 }
 
 <!DOCTYPE html>
@@ -99,16 +97,15 @@
 
                     <!-- Wallet info to the right -->
                     <div class="navbar-text fw-semibold">
-                        💰 Available: <span id="availLbl" class="text-success">@Wallet.GetAvailableBalance() DKK</span> |
-                        🔒 Reserved:  <span id="resLbl" class="text-danger">@Wallet.ReservedBalance DKK</span>
+                        💰 Available: <span id="availLbl" class="text-success"> DKK</span> |
+                        🔒 Reserved:  <span id="resLbl" class="text-danger"> DKK</span>
                     </div>
 
                     <!--Login button-->
-                    <div class="d-flex align-items-center ms-3">
-                        <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            Log In
-                        </button>
-                    </div>
+                    <select id="userSelect" class="form-select form-select-sm me-3" style="width: auto;">
+                        <option selected disabled>Select user</option>
+                    </select>
+
                 </div>
             </div>
         </nav>
@@ -130,60 +127,34 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-        (() => {
-            const form   = document.getElementById('depositForm');
-            const input  = document.getElementById('amount');
-            const avail  = document.getElementById('availLbl');
+        (async () => {
+            const dropdown = document.getElementById('userSelect');
+            const avail = document.getElementById('availLbl');
             const reserv = document.getElementById('resLbl');
-            const user   = '@userName';                            // Razor variable
 
-            form.addEventListener('submit', async e => {
-                e.preventDefault();
-                const amt = parseFloat(input.value);
-                if (amt <= 0) { input.classList.add('is-invalid'); return; }
+            // Get all users
+            const users = await fetch('http://localhost:5002/api/user').then(r => r.json());
 
-                const resp = await fetch('/wallet/deposit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: user, amount: amt })
-                });
-
-                if (!resp.ok) { alert(await resp.text()); return; }
-                
-                const wallet = await resp.json();        // { available, reserved }
-
-                avail.textContent  = wallet.availableBalance.toFixed(2);
-                reserv.textContent = wallet.reservedBalance.toFixed(2);
-
-                bootstrap.Modal.getInstance(
-                    document.getElementById('depositModal')).hide();
-                input.value = '';
+            users.forEach(user => {
+                const opt = document.createElement('option');
+                opt.value = user.userId;
+                opt.textContent = user.userName;
+                dropdown.appendChild(opt);
             });
-        })();
 
-            // Login form script
-                (() => {
-            const loginForm = document.getElementById('loginForm');
-            loginForm.addEventListener('submit', async e => {
-                e.preventDefault();
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value.trim();
-
-                if (!username || !password) {
-                    alert('Please enter both username and password.');
-                    return;
-                }
-
-                // For now just show an alert
-                alert(`Logging in with\nUsername: ${username}\nPassword: ${password}`);
-
-                // TODO WebAPI logic
-
-                // Close modal
-                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
-
-                // Clear form
-                loginForm.reset();
+            // On change, load wallet
+            dropdown.addEventListener('change', async e => {
+                const selectedUserId = e.target.value;
+                const user = await fetch(`http://localhost:5002/api/user/${selectedUserId}`).then(r => r.json());
+                        if (user.wallet) {
+                            avail.textContent = user.wallet.totalBalance.toFixed(2);
+                            reserv.textContent = user.wallet.reservedBalance.toFixed(2);
+                            document.cookie = `selectedUserId=${selectedUserId}; path=/`;
+                            window.location.reload();
+                        } else {
+                            avail.textContent = "N/A";
+                            reserv.textContent = "N/A";
+                        }
             });
         })();
 
