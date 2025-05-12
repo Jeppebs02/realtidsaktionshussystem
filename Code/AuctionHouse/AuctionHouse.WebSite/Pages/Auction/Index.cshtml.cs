@@ -15,6 +15,9 @@ namespace AuctionHouse.WebSite.Pages.Auction
         [BindProperty]
         public String? errorMessage { get; set; } = null;
 
+        [BindProperty(SupportsGet = true)]
+        public int? userId { get; set; }
+
         public WalletDTO userWallet { get; set; }
 
         [BindProperty]
@@ -80,8 +83,35 @@ namespace AuctionHouse.WebSite.Pages.Auction
             if (!string.IsNullOrWhiteSpace(apiResponse))
                 return ShowModal(apiResponse, redirect: true);
 
+
             // success – no modal, just redirect
             return RedirectToPage(new { AuctionId });
+
+                if (newBid.Amount > userWallet.GetAvailableBalance())
+                {
+                    errorMessage = "Insufficient funds.";
+                }
+                else
+                {
+                    var json = JsonSerializer.Serialize(newBid, new JsonSerializerOptions
+                    {
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                        WriteIndented = true
+                    });
+
+                    Console.WriteLine(json);
+
+                    newBid.ExpectedAuctionVersion = specificAuction.Version;
+
+                    var response = await _apiRequester.Post($"api/bid", newBid);
+
+                    errorMessage = response;
+                }
+            }
+            // refresh the url
+            return RedirectToPage(new { AuctionId = this.AuctionId, userId = loggedInUser.UserId });
+
+
         }
 
 
@@ -106,7 +136,8 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
             }
 
-            return RedirectToPage(new { AuctionId = this.AuctionId });
+            return RedirectToPage(new { AuctionId = this.AuctionId, userId = loggedInUser.UserId });
+
         }
 
 
@@ -122,13 +153,26 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
                 specificAuction = JsonSerializer.Deserialize<AuctionHouse.ClassLibrary.Model.Auction>(auctionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 // Fetch and deserialize the logged-in user
-                string userJson = await _apiRequester.Get("api/user/2");
-                loggedInUser = JsonSerializer.Deserialize<UserDTO>(
-                    userJson,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                );
 
+
+                var userIdStr = Request.Cookies["selectedUserId"];                // Use session storage to get userid
+                if (string.IsNullOrEmpty(userIdStr))
+                {
+                    userIdStr = Request.Query["userId"]; // fallback via URL
+                }
+
+                if (!int.TryParse(userIdStr, out int selectedUserId))
+                {
+
+                    selectedUserId = 2; // fallback user (optional)
+
+                }
+                    
+
+                string userJson = await _apiRequester.Get($"api/user/{selectedUserId}");
+                loggedInUser = JsonSerializer.Deserialize<UserDTO>(userJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 userWallet = loggedInUser?.Wallet;
+
             }
             catch (Exception ex)
             {

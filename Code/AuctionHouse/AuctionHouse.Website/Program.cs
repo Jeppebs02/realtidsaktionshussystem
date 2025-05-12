@@ -7,10 +7,31 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<IWalletAccess, WalletAccess>();
+
+
+
+// Allow CORS
+// Allow any origin (for dev only — restrict this in production)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+
+
+
 builder.Services.AddAuthorization();
 
+
+
 var app = builder.Build();
+
+app.UseCors("AllowAll"); // Enable CORS globally
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -30,21 +51,5 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 
-app.MapPost("/wallet/deposit", (
-        [FromBody] DepositRequest dto,
-        IWalletAccess walletAccess) =>
-{
-    try
-    {
-        var wallet = walletAccess.Deposit(dto.Username, dto.Amount);
-        return Results.Ok(wallet);
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(ex.Message);
-    }
-});
-
 app.Run();
 
-record DepositRequest(string Username, decimal Amount);
