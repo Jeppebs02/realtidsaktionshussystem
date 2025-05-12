@@ -102,7 +102,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 conn = transaction.Connection;
             }
             const string sql = @"
-                                INSERT INTO Bid (AuctionId, Amount, TimeStamp, UserId)
+                                INSERT INTO Bid (AuctionId, Amount, [TimeStamp], UserId)
                                 VALUES (@AuctionId, @Amount, @TimeStamp, @UserId);
                                 SELECT CAST(SCOPE_IDENTITY() as int);";
 

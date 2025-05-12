@@ -84,6 +84,8 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
                     Console.WriteLine(json);
 
+                    newBid.ExpectedAuctionVersion = specificAuction.Version;
+
                     var response = await _apiRequester.Post($"api/bid", newBid);
 
                     errorMessage = response;
