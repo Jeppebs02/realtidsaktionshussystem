@@ -31,7 +31,51 @@ namespace AuctionHouse.ClassLibrary.DTO
         public byte[] Version { get; set; }
 
         public List<Transaction>? Transactions { get; set; } = new List<Transaction>();
-        
+
+        #endregion
+
+        #region Methods
+
+        public decimal GetAvailableBalance()
+        {
+
+            return TotalBalance - ReservedBalance;
+
+        }
+
+        public void AddFunds(decimal amount)
+        {
+            TotalBalance += amount;
+        }
+
+        public bool reserveFunds(decimal amount)
+        {
+            if (amount <= GetAvailableBalance())
+            {
+                ReservedBalance += amount;
+                return true;
+            }
+            return false;
+        }
+
+        public bool addTransaction(Transaction transaction)
+        {
+            try
+            {
+                Transactions.Add(transaction);
+                return true;
+
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+
+        }
+
+
         #endregion
     }
 }
