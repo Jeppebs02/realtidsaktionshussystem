@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using AuctionHouse.ClassLibrary.Stubs;
-using System.Collections.Generic;
 using AuctionHouse.ClassLibrary.Enum;
 using Newtonsoft.Json;
 using AuctionHouse.Requester;

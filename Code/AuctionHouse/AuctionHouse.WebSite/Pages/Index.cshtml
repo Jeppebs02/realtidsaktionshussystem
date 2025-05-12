@@ -47,7 +47,7 @@
                             <strong>Current bid:</strong>
                             @if (auction.Bids.Any())
                             {
-                                @auction.Bids.Last().Amount.ToString("C", CultureInfo.GetCultureInfo("da-DK"))
+                                @auction.GetHighestBid().Amount.ToString("C", CultureInfo.GetCultureInfo("da-DK"))
                             }
                             else
                             {

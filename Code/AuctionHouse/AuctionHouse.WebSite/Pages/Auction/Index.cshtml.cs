@@ -91,7 +91,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
                     errorMessage = response;
                 }
             }
-
+            // refresh the url
             return Page();
         }
 
