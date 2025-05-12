@@ -92,7 +92,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 }
             }
             // refresh the url
-            return Page();
+            return RedirectToPage(new { AuctionId = this.AuctionId });
         }
 
 
@@ -116,7 +116,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
             }
 
-            return Page();
+            return RedirectToPage(new { AuctionId = this.AuctionId });
         }
 
 

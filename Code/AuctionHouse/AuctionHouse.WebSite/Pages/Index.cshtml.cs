@@ -38,7 +38,7 @@ namespace AuctionHouse.WebSite.Pages.Homepage
             // Start with all auctions
             FilteredAuctions = Auctions;
 
-            // Apply search term
+            // Apply search termz
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
                 FilteredAuctions = FilteredAuctions
