@@ -32,6 +32,46 @@
 
     <br />
 
+    @{
+        // Pull message from either source
+        var popupMessage = (ViewData["PopupMessage"] as string)
+        ?? (TempData["PopupMessage"] as string);
+    }
+
+    <!-- rest of your page -->
+    @if (!string.IsNullOrEmpty(popupMessage))
+    {
+        <!-- Bootstrap 5 modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <button type="button" class="btn-close"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>@popupMessage</p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"
+                                data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Show the modal as soon as the DOM is ready
+            document.addEventListener("DOMContentLoaded", () => {
+                const modal = new bootstrap.Modal(document.getElementById("errorModal"));
+                modal.show();
+            });
+        </script>
+    }
 
 
     @if (Model.specificAuction.item.ImageData != null && Model.specificAuction.item.ImageData.Length > 0)

@@ -53,47 +53,37 @@ namespace AuctionHouse.WebSite.Pages.Auction
 
 
 
+        // Helpers to park the message in either ViewData (same request) or TempData (redirect)
+        private IActionResult ShowModal(string message, bool redirect)
+        {
+            if (redirect)
+            {
+                TempData["PopupMessage"] = message;   // lives for one request after redirect
+                return RedirectToPage(new { AuctionId });
+            }
+
+            ViewData["PopupMessage"] = message;       // lives only for this request
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostBidAsync(decimal amount)
         {
-
-            // Load the page properties
             await loadPageProperties();
 
-            BidDTO newBid = new BidDTO(AuctionId, amount, DateTime.Now, loggedInUser);
+            
+            // --- place bid ---
+            var bid = new BidDTO(AuctionId, amount, DateTime.UtcNow, loggedInUser)
+            { ExpectedAuctionVersion = specificAuction.Version };
 
-            if (amount <= 0)
-            {
-                errorMessage = "Bid amount must be greater than zero.";
-            }
-            else
-            {
+            var apiResponse = await _apiRequester.Post("api/bid", bid);
 
-                var auctionId = specificAuction.AuctionID;
+            if (!string.IsNullOrWhiteSpace(apiResponse))
+                return ShowModal(apiResponse, redirect: true);
 
-                if (newBid.Amount > userWallet.GetAvailableBalance())
-                {
-                    errorMessage = "Insufficient funds.";
-                }
-                else
-                {
-                    var json = JsonSerializer.Serialize(newBid, new JsonSerializerOptions
-                    {
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                        WriteIndented = true
-                    });
-
-                    Console.WriteLine(json);
-
-                    newBid.ExpectedAuctionVersion = specificAuction.Version;
-
-                    var response = await _apiRequester.Post($"api/bid", newBid);
-
-                    errorMessage = response;
-                }
-            }
-            // refresh the url
-            return RedirectToPage(new { AuctionId = this.AuctionId });
+            // success – no modal, just redirect
+            return RedirectToPage(new { AuctionId });
         }
+
 
 
         public async Task<IActionResult> OnPostBuyOutAsync()
