@@ -151,6 +151,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 concreteAuction.Bids.Add(bid);
             }
 
+            concreteAuction.item = item.Result;
+
             return concreteAuction;
 
         }
