@@ -73,7 +73,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
         {
 
             // Load the page properties
-            loadPageProperties();
+            await loadPageProperties();
 
             BidDTO newBid = new BidDTO(AuctionId, amount, DateTime.Now, loggedInUser);
 
@@ -110,7 +110,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
         }
 
 
-        public async Task<IActionResult> OnPostBuyOut()
+        public async Task<IActionResult> OnPostBuyOutAsync()
         {
             // Load the page properties
             loadPageProperties();
@@ -129,20 +129,13 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 errorMessage = "Insufficient funds.";
 
             }
-            else
-            {
-                specificAuction.AuctionStatus = ClassLibrary.Enum.AuctionStatus.ENDED_SOLD;
-                _walletLogic.subtractBidAmountFromTotalBalance(loggedInUser.UserName, specificAuction.BuyOutPrice);
-                specificAuction.AddBid(buyoutBid);
-                errorMessage = $"Bid with {buyoutBid.Amount} is good. You did a buyout";
-            }
 
             return Page();
         }
 
 
 
-        private async void loadPageProperties()
+        private async Task loadPageProperties()
         {
             // Instanciating API Requester
             _apiRequester = new APIRequester(new HttpClient());

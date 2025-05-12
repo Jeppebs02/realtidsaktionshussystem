@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using AuctionHouse.ClassLibrary.Stubs;
 using System.Collections.Generic;
 using AuctionHouse.ClassLibrary.Enum;
-using AuctionHouse.Requester;
 using Newtonsoft.Json;
+using AuctionHouse.Requester;
 
 namespace AuctionHouse.WebSite.Pages.Homepage
 {
