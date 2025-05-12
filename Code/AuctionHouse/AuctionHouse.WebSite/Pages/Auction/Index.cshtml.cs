@@ -73,7 +73,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
         {
             await loadPageProperties();
 
-            
+
             // --- place bid ---
             var bid = new BidDTO(AuctionId, amount, DateTime.UtcNow, loggedInUser)
             { ExpectedAuctionVersion = specificAuction.Version };
@@ -81,38 +81,21 @@ namespace AuctionHouse.WebSite.Pages.Auction
             var apiResponse = await _apiRequester.Post("api/bid", bid);
 
             if (!string.IsNullOrWhiteSpace(apiResponse))
+            {
                 return ShowModal(apiResponse, redirect: true);
+            }
 
 
             // success – no modal, just redirect
             return RedirectToPage(new { AuctionId });
 
-                if (newBid.Amount > userWallet.GetAvailableBalance())
-                {
-                    errorMessage = "Insufficient funds.";
-                }
-                else
-                {
-                    var json = JsonSerializer.Serialize(newBid, new JsonSerializerOptions
-                    {
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                        WriteIndented = true
-                    });
-
-                    Console.WriteLine(json);
-
-                    newBid.ExpectedAuctionVersion = specificAuction.Version;
-
-                    var response = await _apiRequester.Post($"api/bid", newBid);
-
-                    errorMessage = response;
-                }
-            }
-            // refresh the url
-            return RedirectToPage(new { AuctionId = this.AuctionId, userId = loggedInUser.UserId });
+         }
+        
 
 
-        }
+
+
+
 
 
 
@@ -167,7 +150,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
                     selectedUserId = 2; // fallback user (optional)
 
                 }
-                    
+
 
                 string userJson = await _apiRequester.Get($"api/user/{selectedUserId}");
                 loggedInUser = JsonSerializer.Deserialize<UserDTO>(userJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
