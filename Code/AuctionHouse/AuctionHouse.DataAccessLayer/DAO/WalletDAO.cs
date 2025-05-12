@@ -144,22 +144,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAsync(Wallet entity)
         {
-            using var conn = _connectionFactory();
-
-            // TODO
-            // This should take a expected version and check against the version in db (like in ReserveFundsOptmisticallyAsync)
-            // It should also NOT BE ABLE to change reserved balance, only total balance, so maybe change the name
-            const string sql = "UPDATE Wallet SET TotalBalance = @TotalBalance, ReservedBalance = @ReservedBalance " +
-                "WHERE WalletId = @WalletId";
-
-            int rowsAffected = await conn.ExecuteAsync(sql, new
-            {
-                entity.TotalBalance,
-                entity.ReservedBalance,
-                entity.WalletId
-            });
-
-            return rowsAffected > 0;
+            // USE ANOTHER FUNCTION
+            return false;
         }
 
 
@@ -186,6 +172,33 @@ namespace AuctionHouse.DataAccessLayer.DAO
             };
             int rowsAffected = await conn.ExecuteAsync(sql, parameters, transaction);
             return rowsAffected > 0;
+        }
+
+        public async Task<byte[]> UpdateTotalBalanceAsync(Wallet entity)
+        {
+            using var conn = _connectionFactory();
+
+            const string sql = @"
+                                UPDATE Wallet
+                                SET TotalBalance = @TotalBalance
+                                OUTPUT INSERTED.Version
+                                WHERE WalletId = @WalletId AND Version = @ExpectedVersion;
+                            ";
+
+            // Use OUTPUT INSERTED.Version to get the new version after the update
+            // The OUTPUT clause returns the value of the specified column from the updated row
+            // This is why we put byte[]? in the return type. To say "execute this sql and return the version of the wallet"
+
+            var result = await conn.QueryFirstOrDefaultAsync<byte[]?>(sql, new
+            {
+                entity.TotalBalance,
+                entity.WalletId,
+                ExpectedVersion = entity.Version
+            });
+
+            // If the update was successful, the new version will be returned
+            // If no rows were affected (unsuccessful update), result will be null
+            return result;
         }
     }
 }

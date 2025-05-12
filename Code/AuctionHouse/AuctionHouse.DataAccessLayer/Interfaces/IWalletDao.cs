@@ -20,5 +20,6 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
 
         Task<bool> ReserveFundsOptimisticallyAsync(int walletId, decimal amountToReserve, byte[] expectedVersion, IDbTransaction transaction = null);
 
+        Task<byte[]> UpdateTotalBalanceAsync(Wallet entity);
     }
 }

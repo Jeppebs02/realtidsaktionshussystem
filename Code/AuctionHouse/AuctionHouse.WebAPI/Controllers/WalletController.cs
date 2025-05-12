@@ -49,9 +49,9 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // PUT api/<WalletController>/5
         [HttpPut("{id}")]
-        public async Task<bool> Put([FromBody]Wallet wallet)
+        public async Task<byte[]> Put([FromBody]Wallet wallet)
         {
-            return await _walletDao.UpdateAsync(wallet);
+            return await _walletDao.UpdateTotalBalanceAsync(wallet);
         }
 
         // DELETE api/<WalletController>/5
