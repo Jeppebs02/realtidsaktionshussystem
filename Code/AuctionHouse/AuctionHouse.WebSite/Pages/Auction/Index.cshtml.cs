@@ -37,23 +37,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
             try
             {
                 // Load the page properties
-                loadPageProperties();
-
-
-                // Error checks
-                if (auctions != null)
-                {
-                    Console.WriteLine("list of auctions is set");
-                }
-
-
-                //Select a single auction based on the number entered in the url.
-                specificAuction = auctions[AuctionId];
-                if (specificAuction != null)
-                {
-                    Console.WriteLine($"Specific auction is set:{specificAuction.ToString()}");
-
-                }
+                await loadPageProperties();
 
 
                 // If auction found, the page will be rendered with the Auction data :)
@@ -105,7 +89,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
                     errorMessage = response;
                 }
             }
- 
+
             return Page();
         }
 
@@ -113,7 +97,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
         public async Task<IActionResult> OnPostBuyOutAsync()
         {
             // Load the page properties
-            loadPageProperties();
+            await loadPageProperties();
             // Get the auction ID from the specific auction
 
             Console.WriteLine($"Trying to buy out auction: {specificAuction}");
@@ -144,7 +128,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
             {
                 string auctionJson = await _apiRequester.Get($"api/auction/{AuctionId}");
 
-                specificAuction = JsonSerializer.Deserialize<AuctionHouse.ClassLibrary.Model.Auction>(auctionJson, new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
+                specificAuction = JsonSerializer.Deserialize<AuctionHouse.ClassLibrary.Model.Auction>(auctionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 // Fetch and deserialize the logged-in user
                 string userJson = await _apiRequester.Get("api/user/2");
                 loggedInUser = JsonSerializer.Deserialize<UserDTO>(
@@ -158,7 +142,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
             {
                 Console.WriteLine("There was an error" + ex);
             }
-                
+
         }
 
     }
