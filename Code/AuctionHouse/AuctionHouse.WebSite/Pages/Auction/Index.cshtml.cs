@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using AuctionHouse.ClassLibrary.Model; //Fix this ask jeppe
 using Microsoft.AspNetCore.Components;
 using System.Runtime.CompilerServices;
-using AuctionHouse.ClassLibrary.Stubs;
-using AuctionHouse.ClassLibrary.Interfaces;
-using Newtonsoft.Json;
+using System.Text.Json;
+using AuctionHouse.ClassLibrary.DTO;
+using AuctionHouse.Requester;
+using System.Text.Json.Serialization;
 
 namespace AuctionHouse.WebSite.Pages.Auction
 {
@@ -14,21 +15,19 @@ namespace AuctionHouse.WebSite.Pages.Auction
         [BindProperty]
         public String? errorMessage { get; set; } = null;
 
-        private IWalletLogic? _walletLogic;//TODO Implement Interface instead
-        private IWalletAccess _walletAccess;
-        public Wallet userWallet { get; set; }
+        public WalletDTO userWallet { get; set; }
 
         [BindProperty]
-        public User loggedInUser { get; set; }
+        public UserDTO loggedInUser { get; set; }
 
         List<AuctionHouse.ClassLibrary.Model.Auction> auctions;
-
-        BidLogic bidlogic;
 
         public AuctionHouse.ClassLibrary.Model.Auction? specificAuction { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public int AuctionId { get; set; }
+
+        private APIRequester _apiRequester { get; set; }
 
 
         public async Task<IActionResult> OnGetAsync()
@@ -38,22 +37,7 @@ namespace AuctionHouse.WebSite.Pages.Auction
             try
             {
                 // Load the page properties
-                loadPageProperties();
-
-
-                // Error checks
-                if (auctions != null)
-                {
-                    Console.WriteLine("list of auctions is set");
-                }
-
-
-                //Select a single auction based on the number entered in the url.
-                specificAuction = auctions[AuctionId];
-                if (specificAuction != null) {
-                    Console.WriteLine($"Specific auction is set:{specificAuction.ToString()}");
-                
-                }
+                await loadPageProperties();
 
 
                 // If auction found, the page will be rendered with the Auction data :)
@@ -66,57 +50,62 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 return NotFound(); // Or RedirectToPage("/Error");
             }
         }
-    
 
 
-        public async Task<IActionResult> OnPostBid(decimal amount)
+
+        public async Task<IActionResult> OnPostBidAsync(decimal amount)
         {
 
             // Load the page properties
-            loadPageProperties();
+            await loadPageProperties();
 
-            Bid newBid = new Bid(AuctionId, amount, DateTime.Now, loggedInUser);
+            BidDTO newBid = new BidDTO(AuctionId, amount, DateTime.Now, loggedInUser);
 
-            if(amount <= 0)
+            if (amount <= 0)
             {
-                errorMessage= "Bid amount must be greater than zero.";
+                errorMessage = "Bid amount must be greater than zero.";
             }
             else
             {
-                
-                var auctionId = specificAuction.AuctionID; // This should be replaced with the actual auction ID
-                
-                if (newBid.Amount > userWallet.GetAvailableBalance()) {
+
+                var auctionId = specificAuction.AuctionID;
+
+                if (newBid.Amount > userWallet.GetAvailableBalance())
+                {
                     errorMessage = "Insufficient funds.";
-
                 }
-                else 
-                { 
-                    errorMessage = $"Bid with {newBid.Amount} is good.";
-                    _walletLogic.subtractBidAmountFromTotalBalance(loggedInUser.UserName, newBid.Amount);
-                    specificAuction.AddBid(newBid);
-                }
+                else
+                {
+                    var json = JsonSerializer.Serialize(newBid, new JsonSerializerOptions
+                    {
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                        WriteIndented = true
+                    });
 
+                    Console.WriteLine(json);
+
+                    newBid.ExpectedAuctionVersion = specificAuction.Version;
+
+                    var response = await _apiRequester.Post($"api/bid", newBid);
+
+                    errorMessage = response;
+                }
             }
-            // add auction to dummy list of auctions
-
-            
-            var JSONData = JsonConvert.SerializeObject(newBid);
-
+            // refresh the url
             return Page();
         }
 
 
-        public async Task<IActionResult> OnPostBuyOut()
+        public async Task<IActionResult> OnPostBuyOutAsync()
         {
             // Load the page properties
-            loadPageProperties();
+            await loadPageProperties();
             // Get the auction ID from the specific auction
 
             Console.WriteLine($"Trying to buy out auction: {specificAuction}");
 
             // Create a new bid with the buyout amount
-            var buyoutBid = new Bid(AuctionId,specificAuction.BuyOutPrice, DateTime.Now, loggedInUser);
+            var buyoutBid = new BidDTO(AuctionId, specificAuction.BuyOutPrice, DateTime.Now, loggedInUser);
 
             Console.WriteLine($"Created bid: {buyoutBid}");
 
@@ -126,38 +115,35 @@ namespace AuctionHouse.WebSite.Pages.Auction
                 errorMessage = "Insufficient funds.";
 
             }
-            else
-            {
-                specificAuction.AuctionStatus = ClassLibrary.Enum.AuctionStatus.ENDED_SOLD;
-                _walletLogic.subtractBidAmountFromTotalBalance(loggedInUser.UserName, specificAuction.BuyOutPrice);
-                specificAuction.AddBid(buyoutBid);
-                errorMessage = $"Bid with {buyoutBid.Amount} is good. You did a buyout";
-            }
 
             return Page();
         }
 
 
 
-        private void loadPageProperties()
+        private async Task loadPageProperties()
         {
-            // We need to refetch the list of auctions when using the post method
-            auctions = AuctionTestData.GetTestAuctions();
-            loggedInUser = AuctionTestData.stubUser;
-            //Then we set the property specificAuction.
-            specificAuction = auctions[AuctionId];
+            // Instanciating API Requester
+            _apiRequester = new APIRequester(new HttpClient());
 
-            bidlogic = new();
+            try
+            {
+                string auctionJson = await _apiRequester.Get($"api/auction/{AuctionId}");
 
+                specificAuction = JsonSerializer.Deserialize<AuctionHouse.ClassLibrary.Model.Auction>(auctionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                // Fetch and deserialize the logged-in user
+                string userJson = await _apiRequester.Get("api/user/2");
+                loggedInUser = JsonSerializer.Deserialize<UserDTO>(
+                    userJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
 
-            loggedInUser.UserName = User.Identity?.Name ?? loggedInUser.UserName;
-            _walletLogic = new WalletLogic();
-            _walletAccess = new WalletAccess();
-
-            userWallet = _walletAccess.GetWalletForUser(loggedInUser.UserName);
-
-
-
+                userWallet = loggedInUser?.Wallet;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("There was an error" + ex);
+            }
 
         }
 
