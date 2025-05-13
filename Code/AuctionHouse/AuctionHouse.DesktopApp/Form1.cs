@@ -114,7 +114,7 @@ namespace AuctionHouse.DesktopApp
             if (Userlistbox.SelectedItem is not User user)
             {
                 MessageBox.Show("Select a user first.", "Nothing to save",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                 return;
             }
 
@@ -151,12 +151,12 @@ namespace AuctionHouse.DesktopApp
                 // 3. Refresh the row’s caption so the ListBox shows new data
                 Userlistbox.Refresh();           // simple; or re-data-bind if you prefer
                 MessageBox.Show("User saved 👍", "Success",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Unable to save user:\n{ex.Message}",
-                                "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
             }
             finally
             {
