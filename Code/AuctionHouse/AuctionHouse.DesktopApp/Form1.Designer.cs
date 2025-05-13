@@ -90,6 +90,7 @@
             GetAllUsersbtn.TabIndex = 4;
             GetAllUsersbtn.Text = "Get All Users";
             GetAllUsersbtn.UseVisualStyleBackColor = true;
+            GetAllUsersbtn.Click += GetAllUsersbtn_Click;
             // 
             // Savebtn
             // 

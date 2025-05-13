@@ -1,33 +1,42 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
+using AuctionHouse.DataAccessLayer.Interfaces;
 using AuctionHouse.WebAPI.IBusinessLogic;
 
 namespace AuctionHouse.WebAPI.BusinessLogic
 {
     public class UserLogic : IUserLogic
     {
-        public Task<bool> CreateUserAsync(User user)
+
+        private readonly IUserDao _userDao;
+
+        public UserLogic(IUserDao userDao)
         {
-            throw new NotImplementedException();
+            _userDao = userDao;
         }
 
-        public Task<bool> DeleteUserAsync(User user)
+        public async Task<int> CreateUserAsync(User user)
         {
-            throw new NotImplementedException();
+            return await _userDao.InsertAsync(user);
         }
 
-        public Task<List<User>> GetAllUsersAsync()
+        public async Task<bool> DeleteUserAsync(User user)
         {
-            throw new NotImplementedException();
+            return await _userDao.DeleteAsync(user);
         }
 
-        public Task<User> GetUserByIdAsync(int userId)
+        public async Task<List<User>> GetAllUsersAsync()
         {
-            throw new NotImplementedException();
+            return await _userDao.GetAllAsync();
         }
 
-        public Task<bool> UpdateUserAsync(User user)
+        public async Task<User> GetUserByIdAsync(int userId)
         {
-            throw new NotImplementedException();
+            return await _userDao.GetByIdAsync(userId);
+        }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            return await _userDao.UpdateAsync(user);
         }
     }
 }

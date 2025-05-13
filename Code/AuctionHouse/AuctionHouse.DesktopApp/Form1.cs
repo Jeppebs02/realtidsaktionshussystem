@@ -6,5 +6,10 @@ namespace AuctionHouse.DesktopApp
         {
             InitializeComponent();
         }
+
+        private void GetAllUsersbtn_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
