@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using AuctionHouse.ClassLibrary.Enum;
 using AuctionHouse.ClassLibrary.Model;
-using Newtonsoft.Json;
-using AuctionHouse.ClassLibrary.Stubs;
-using AuctionHouse.ClassLibrary.Interfaces;
+using System.Text.Json;
+using AuctionHouse.ClassLibrary.DTO;
+using AuctionHouse.Requester;
+using System.Text.Json.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace AuctionHouse.WebSite.Pages.CreateAuction
 {
@@ -20,22 +22,55 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
         [BindProperty]
         public String? errorMessage { get; set; } = null;
 
+        private APIRequester _apiRequester { get; set; }
+
         public List<Category> Categories { get; set; } = new List<Category>();
         public void OnGet()
         {
             Categories = Enum.GetValues(typeof(Category)).Cast<Category>().ToList();
+            _apiRequester = new APIRequester(new HttpClient());
             Console.WriteLine("Categories loaded");
+            var userIdStr = Request.Cookies["selectedUserId"];
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            {
+                ModelState.AddModelError("", "No valid user selected.");
+            }
         }
 
 
         public async Task<IActionResult> OnPostCreateAuctionAsync(DateTime startTime, DateTime endTime, decimal startPrice, decimal buyOutPrice, decimal minimumBidIncrement, string itemName, string itemDescription, Category category)
         {
+            Console.WriteLine("Creat auction pressed");
+            _apiRequester = new APIRequester(new HttpClient());
+
             // Check if the model state is valid
             if (!ModelState.IsValid)
             {
                 Console.WriteLine("Model state is not valid");
+                foreach (var entry in ModelState)
+                {
+                    var key = entry.Key;
+                    var errors = entry.Value.Errors;
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine($" - Field: {key}, Error: {error.ErrorMessage}");
+                    }
+                }
+
                 return Page();
             }
+
+            var userIdStr = Request.Cookies["selectedUserId"];
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            {
+                ModelState.AddModelError("", "No valid user selected.");
+                return Page();
+            }
+
+            string userJson = await _apiRequester.Get($"api/user/{userId}");
+            var user = JsonSerializer.Deserialize<User>(userJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            user.Password = "passwd"; // Clear the password for security reasons
+
             Item item;
             Console.WriteLine("Item object declared");
             try
@@ -60,9 +95,8 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                         // Create the item with the provided data
                         Console.WriteLine("Creating item Object");
 
-                        //TODO: FIX THIS STUBBED SHIT
-                        User stubUser = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", new Wallet(1000, 0, 0));
-                        item = new Item(stubUser, itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
+
+                        item = new Item(user, itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
                     }
                 }
 
@@ -93,16 +127,11 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                 // Using full namespace because "Auction" is a namespace in this project
                 AuctionHouse.ClassLibrary.Model.Auction auction = new AuctionHouse.ClassLibrary.Model.Auction(startTime, endTime, startPrice, buyOutPrice, minimumBidIncrement, false, item);
 
-                var JSONData = JsonConvert.SerializeObject(auction);
-
-                auction.AuctionID = AuctionTestData.testAuctions.Count; // Giv nyt id
-                AuctionTestData.testAuctions.Add(auction);
+                Console.WriteLine("About to post to API to create auction");
+                string respose = await _apiRequester.Post("api/auction", auction);
 
 
-                Console.WriteLine($"Auction Created with data: {JSONData}");
-
-
-                return Page();
+                return RedirectToPage("Index");
 
 
             }

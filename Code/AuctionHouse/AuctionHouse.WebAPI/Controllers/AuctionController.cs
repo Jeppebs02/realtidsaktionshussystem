@@ -40,8 +40,18 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // POST api/<AuctionController>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Post([FromBody]Auction entity)
         {
+            Console.WriteLine("Recieved post to create an auction from a client");
+            bool ans = await _auctionLogic.CreateAuctionAsync(entity);
+            if (ans)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Failed to create auction");
+            }
         }
 
         // PUT api/<AuctionController>/5

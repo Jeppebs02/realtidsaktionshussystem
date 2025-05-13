@@ -10,15 +10,31 @@ namespace AuctionHouse.WebAPI.BusinessLogic
     {
         private readonly Func<IDbConnection> _connectionFactory;
         private readonly IAuctionDao _auctionDao;
+        private readonly IItemDao _itemDao;
 
-        public AuctionLogic(Func<IDbConnection> connectionFactory, IAuctionDao auctionDao)
+        public AuctionLogic(Func<IDbConnection> connectionFactory, IAuctionDao auctionDao, IItemDao itemDao)
         {
             _connectionFactory = connectionFactory;
             _auctionDao = auctionDao;
+            _itemDao = itemDao;
         }
-        public Task<bool> CreateAuctionAsync(Auction auction)
+        public async Task<bool> CreateAuctionAsync(Auction auction)
         {
-            throw new NotImplementedException();
+            int itemId = await _itemDao.InsertAsync(auction.item);
+            Console.WriteLine($"Inserted Item ID: {itemId}");
+
+            if (itemId == 0)
+            {
+                Console.WriteLine("Item insert failed.");
+                return false;
+            }
+
+            auction.item.ItemId = itemId;
+
+            int auctionId = await _auctionDao.InsertAsync(auction);
+            Console.WriteLine($"Inserted Auction ID: {auctionId}");
+
+            return auctionId != 0;
         }
 
         public Task<IEnumerable<Auction>> GetAllActiveAuctionsAsync()

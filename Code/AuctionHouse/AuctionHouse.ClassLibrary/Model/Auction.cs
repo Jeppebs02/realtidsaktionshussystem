@@ -49,7 +49,8 @@ namespace AuctionHouse.ClassLibrary.Model
         public int AmountOfBids { get; set; }
         public AuctionStatus AuctionStatus { get; set; }
         [Timestamp]
-        public byte[] Version { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public byte[]? Version { get; set; }
         public bool Notify { get; set; }
         public Item item { get; set; }
         [JsonIgnore]

@@ -39,21 +39,36 @@ namespace AuctionHouse.Requester
 
         public async Task<string> Post(string endpoint, object data)
         {
-            Console.WriteLine($"Sending Post request to: {_baseUrl}/{endpoint}"); // Just logging
+            try
+            {
+                Console.WriteLine($"Sending Post request to: {_baseUrl}/{endpoint}"); // Just logging
 
-            // Serialize the Object
-            var json = System.Text.Json.JsonSerializer.Serialize(data, _serializerOptions);
-            Console.WriteLine(json); //Just debugging
+                // Serialize the Object
+                var json = System.Text.Json.JsonSerializer.Serialize(data, _serializerOptions);
+                Console.WriteLine(json); //Just debugging
 
-            // Add header and define encodeing type
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            Console.WriteLine(content); //Just debugging
+                // Add header and define encodeing type
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                Console.WriteLine(content); //Just debugging
 
-            // Send the JSON object
-            var response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
+                // Send the JSON object
+                var response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
 
-            // Return the response
-            return await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"POST response status code: {(int)response.StatusCode} {response.ReasonPhrase}");
+
+
+
+                // Return the response
+                var result = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine("POST response body: " + result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"HTTP POST failed: {ex.Message}");
+                return $"EXCEPTION: {ex.Message}";
+            }
         }
 
         public async Task<string> Put(string endpoint, object data)

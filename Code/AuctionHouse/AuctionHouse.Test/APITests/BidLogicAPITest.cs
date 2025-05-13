@@ -51,7 +51,7 @@ namespace AuctionHouse.Test.APITests
             _auctionDao = new AuctionDAO(_connectionFactory, _bidDao, _itemDao, _userDao);
             //logics
             _walletLogic = new WalletLogic(_connectionFactory,_walletDao);
-            _auctionLogic = new AuctionLogic(_connectionFactory,_auctionDao);
+            _auctionLogic = new AuctionLogic(_connectionFactory,_auctionDao, _itemDao);
             _bidLogic = new BidLogic(_connectionFactory, _walletLogic,_auctionLogic,_bidDao);
             //Clean tables
             CleanAndBuild.CleanDB();

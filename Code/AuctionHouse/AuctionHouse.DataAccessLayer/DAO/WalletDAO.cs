@@ -97,7 +97,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             FROM Wallet
                             WHERE UserId = @UserId;";
 
-            Console.WriteLine("in walletDAO");
+
 
             var wallet = await conn.QuerySingleOrDefaultAsync<Wallet>(sql, new { UserId = userId });
 

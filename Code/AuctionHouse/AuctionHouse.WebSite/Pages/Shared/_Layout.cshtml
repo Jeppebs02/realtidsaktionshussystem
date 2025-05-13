@@ -109,6 +109,7 @@
                 </div>
             </div>
         </nav>
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -121,7 +122,9 @@
             &copy; 2025 - AuctionHouse.WebSite - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
 
         // This is an Immediately Invoked Function Expression (IIFE)
@@ -145,6 +148,7 @@
             // This is an eventlistener, it is like an eventlistener in Winforms, or Java SWING
 			// It waits for the DOM to be fully loaded before executing the function
             window.addEventListener('DOMContentLoaded', async () => {
+                console.log("DOMContentLoaded fired");
                 // all logic inside this runs only after DOM is fully parsed.
 				// The DOM is the structure of the HTML document, it is like a tree of elements.
 
@@ -230,11 +234,17 @@
                 });
 
                 // Here we get the deposit form from the html and add the submit event listener
-                document.getElementById('depositForm').addEventListener('submit', async function (e) {
+
+                        const form = document.getElementById('depositForm');
+                        console.log("Form found:", form);
+                form.addEventListener('submit', async function (e) {
+                    console.log("Add funds pressed");
                     // Since this is a form that we can submit with, we use the line below to prevent the
 					// default action of the form, which is to refresh the page and submit data.
                     // We want custom logic so we dont want to immediately refresh the page and submit data.
                     e.preventDefault();
+
+                    
 
 					// We get the amount from the input field and parse it to a float
                     const amountInput = document.getElementById('amount');

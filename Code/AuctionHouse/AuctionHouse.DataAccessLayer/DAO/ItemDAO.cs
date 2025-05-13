@@ -156,27 +156,16 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<Item> GetItemByAuctionIdAsync(int id)
         {
             using var conn = _connectionFactory();
-            const string sql = @"
-                                SELECT
-                                    i.ItemId,
-                                    i.[Name],
-                                    i.[Description],
-                                    i.[Category],
-                                    i.[Image],
-                                    i.UserId,
-                                    a.AuctionId,
-                                    a.StartTime,
-                                    a.EndTime,
-                                    a.StartPrice,
-                                    a.BuyOutPrice,
-                                    a.MinimumBidIncrement,
-                                    a.AuctionStatus,
-                                    a.Version,
-                                    a.Notify,
-                                    a.AmountOfBids
-                                FROM [AuctionHouse].[dbo].[Item] i
-                                INNER JOIN [AuctionHouse].[dbo].[Auction] a ON i.ItemId = a.ItemId
-                                WHERE a.AuctionId = @AuctionId;";
+            const string sql = @"SELECT 
+                                i.ItemId,
+                                i.Name,
+                                i.Description,
+                                i.Category,
+                                i.Image AS ImageData,
+                                i.UserId
+                            FROM dbo.Item i
+                            JOIN dbo.Auction a ON a.ItemId = i.ItemId
+                            WHERE a.AuctionId = @AuctionId;";
 
             var item = await conn.QuerySingleAsync<Item>(sql, new { AuctionId = id });
 
