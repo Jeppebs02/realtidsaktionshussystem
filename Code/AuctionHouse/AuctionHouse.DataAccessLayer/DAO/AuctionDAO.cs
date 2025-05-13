@@ -221,7 +221,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             
             var conn = _connectionFactory();
-
+            Console.WriteLine("Trying to update auction status");
             //Make sure to use the same connection as the transaction if it is not null
             if (transaction != null)
             {
@@ -238,6 +238,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             parameters.Add("AuctionStatus", newStatus);
             parameters.Add("ExpectedVersion", expectedVersion);
             int rowsAffected = await conn.ExecuteAsync(sql, parameters, transaction: transaction);
+            Console.WriteLine(rowsAffected);
             return rowsAffected > 0;
         }
 

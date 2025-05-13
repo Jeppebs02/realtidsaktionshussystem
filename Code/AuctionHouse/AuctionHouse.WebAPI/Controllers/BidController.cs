@@ -76,7 +76,19 @@ namespace AuctionHouse.WebAPI.Controllers
             else if (result.Result == "Bid could not be placed")
             {
                 return BadRequest(result.Result);
+            } else if(result.Result == "Bid is not higher than current highest bid + minimum increment")
+            {
+                return BadRequest(result.Result);
             }
+            else if (result.Result == "Error with auction status update")
+            {
+                return BadRequest(result.Result);
+            }
+
+
+
+
+
             else if (result.Result == "Bid placed succesfully :)")
             {
                 return Ok(result.Result);

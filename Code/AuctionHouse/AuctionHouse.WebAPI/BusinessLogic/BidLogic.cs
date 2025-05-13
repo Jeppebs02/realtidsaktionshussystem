@@ -55,6 +55,15 @@ namespace AuctionHouse.WebAPI.BusinessLogic
                 }
             }
 
+            // Is your bid higher than last bid + minimum increment?
+            if (currentHighestBid.Result != null)
+            {
+                if (amountToBid < currentHighestBid.Result.Amount + auctionToBidOn.Result.MinimumBidIncrement)
+                {
+                    return "Bid is not higher than current highest bid + minimum increment";
+                }
+            }
+
             // Do you have enough available balance in your wallet?
             if (userWallet.GetAvailableBalance() < amountToBid)
             {
@@ -76,6 +85,16 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             {
                 transaction.Rollback();
                 return "Bid could not be placed";
+            }
+
+            // Is the bid amount equal or higher than buyout? if so, set auction to sold
+            if (bid.Amount >= auctionToBidOn.Result.BuyOutPrice)
+            {
+                if (!_auctionLogic.UpdateAuctionStatusOptimistically(auctionToBidOn.Result.AuctionID!.Value, expectedAuctionVersion, ClassLibrary.Enum.AuctionStatus.ENDED_SOLD, transaction).Result)
+                {
+                    transaction.Rollback();
+                    return "Error with auction status update";
+                }
             }
 
             // Did the wallet update go through?

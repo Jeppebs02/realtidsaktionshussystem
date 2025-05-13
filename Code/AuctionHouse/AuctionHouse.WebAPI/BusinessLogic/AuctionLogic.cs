@@ -57,9 +57,9 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             return await _auctionDao.UpdateAuctionOptimistically(auctionId, expectedVersion, transaction, newBids);
         }
 
-        public Task<bool> UpdateAuctionStatusOptimistically(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null)
+        public async Task<bool> UpdateAuctionStatusOptimistically(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null)
         {
-            throw new NotImplementedException();
+            return await _auctionDao.UpdateAuctionStatusOptimisticallyAsync(auctionId, expectedVersion, newStatus, transaction);
         }
     }
 }
