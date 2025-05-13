@@ -81,6 +81,7 @@
             Userlistbox.Name = "Userlistbox";
             Userlistbox.Size = new Size(786, 304);
             Userlistbox.TabIndex = 3;
+            Userlistbox.SelectedIndexChanged += Userlistbox_SelectedIndexChanged;
             // 
             // GetAllUsersbtn
             // 

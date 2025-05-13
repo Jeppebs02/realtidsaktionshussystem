@@ -74,5 +74,13 @@ namespace AuctionHouse.ClassLibrary.Model
         public Wallet Wallet { get; set; }
 
         #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return $"{UserName} ({FirstName} {LastName})";
+        }
+        #endregion
     }
 }
