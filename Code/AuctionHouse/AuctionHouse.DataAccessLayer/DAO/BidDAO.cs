@@ -34,31 +34,44 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
 
 
-        public async Task<Bid> GetByIdAsync(int id)
+        public async Task<Bid> GetByIdAsync(int id) // This one is called by AuctionDAO.GetByIdAsync's dependency chain
         {
             using var conn = _connectionFactory();
             const string sql = @"SELECT
-                                BidId,
-                                AuctionId,
-                                Amount,
-                                TimeStamp,
-                                UserId    
-                            FROM dbo.Bid
-                            WHERE BidId = @BidId;";
+                            b.BidId, b.AuctionId, b.Amount, b.TimeStamp, b.UserId,
+                            -- User part
+                            u.UserId AS User_UserId, u.UserName, u.FirstName, u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell, u.RegistrationDate, u.IsDeleted, u.PasswordHash,
+                            -- Wallet part
+                            w.WalletId AS User_Wallet_WalletId, w.TotalBalance AS User_Wallet_TotalBalance,
+                            w.ReservedBalance AS User_Wallet_ReservedBalance, w.UserId AS User_Wallet_UserId,
+                            w.Version AS User_Wallet_Version
+                        FROM dbo.Bid b
+                        JOIN dbo.[User] u ON b.UserId = u.UserId
+                        LEFT JOIN dbo.Wallet w ON u.UserId = w.UserId
+                        WHERE b.BidId = @BidId;";
 
-            var bid = await conn.QuerySingleOrDefaultAsync<Bid>(sql, new { BidId = id });
-            Console.WriteLine("In BidDAO.GetByIdAsync");
-
-                Console.WriteLine("Casted bidT as concrete bid");
-                if(bid.User == null || true)
+            var bidResult = await conn.QueryAsync<Bid, User, Wallet, Bid>(
+                sql,
+                (bid, user, wallet) =>
                 {
-                bid.User =await _userDao.GetByIdAsync(bid.UserId!.Value);
-                }
-            
-
-            return bid;
-
+                    bid.User = user;
+                    if (bid.User != null)
+                    {
+                        bid.User.Wallet = wallet;
+                        if (bid.User.Wallet != null)
+                        {
+                            bid.User.Wallet.Transactions = new List<Transaction>();
+                        }
+                    }
+                    return bid;
+                },
+                new { BidId = id },
+                splitOn: "User_UserId,User_Wallet_WalletId"
+            );
+            return bidResult.SingleOrDefault();
         }
+
+
 
         public async Task<Bid> GetLatestByAuctionId(int auctionId)
         {
@@ -132,25 +145,38 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             using var conn = _connectionFactory();
             const string sql = @"SELECT
-                            BidId, Amount, TimeStamp, UserId, AuctionId
-                        FROM dbo.Bid
-                        WHERE AuctionId = @AuctionId
-                        ORDER BY TimeStamp DESC;";
+                            b.BidId, b.Amount, b.TimeStamp, b.AuctionId, b.UserId,
+                            -- User part
+                            u.UserId AS User_UserId, u.UserName, u.FirstName, u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell, u.RegistrationDate, u.IsDeleted, u.PasswordHash,
+                            -- Wallet part
+                            w.WalletId AS User_Wallet_WalletId, w.TotalBalance AS User_Wallet_TotalBalance,
+                            w.ReservedBalance AS User_Wallet_ReservedBalance, w.UserId AS User_Wallet_UserId,
+                            w.Version AS User_Wallet_Version
+                        FROM dbo.Bid b
+                        JOIN dbo.[User] u ON b.UserId = u.UserId
+                        LEFT JOIN dbo.Wallet w ON u.UserId = w.UserId
+                        WHERE b.AuctionId = @AuctionId
+                        ORDER BY b.TimeStamp DESC;";
 
-            var bidT = await conn.QueryAsync<Bid>(sql, new { AuctionId = auctionId });
-
-            foreach(var bid in bidT)
-            {
-                if (bid.User == null)
+            var bids = await conn.QueryAsync<Bid, User, Wallet, Bid>(
+                sql,
+                (bid, user, wallet) =>
                 {
-                    bid.User = await _userDao.GetByIdAsync(bid.UserId!.Value);
-                }
-            }
-
-
-            return bidT.ToList();
-
-
+                    bid.User = user;
+                    if (bid.User != null)
+                    {
+                        bid.User.Wallet = wallet;
+                        if (bid.User.Wallet != null)
+                        {
+                            bid.User.Wallet.Transactions = new List<Transaction>();
+                        }
+                    }
+                    return bid;
+                },
+                new { AuctionId = auctionId },
+                splitOn: "User_UserId,User_Wallet_WalletId"
+            );
+            return bids.ToList();
         }
 
         Task<int> IGenericDao<Bid>.InsertAsync(Bid entity)

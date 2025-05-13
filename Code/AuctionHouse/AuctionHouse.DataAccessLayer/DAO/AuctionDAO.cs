@@ -57,57 +57,38 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             foreach (var auction in auctions)
             {
-                var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
-                var item = _itemDao.GetByIdAsync(auction.itemId!.Value);
+                // These calls will internally create their own connections and run efficient queries :)
+                var bidsTask = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
+                var itemTask = _itemDao.GetByIdAsync(auction.itemId!.Value); // Assuming item.itemId is populated by the first query
 
-                await Task.WhenAll(bids, item);
+                await Task.WhenAll(bidsTask, itemTask);
 
-                auction.Bids = bids.Result.ToList();
-                auction.item = item.Result;
-
-                result.Add(auction);
+                auction.Bids = bidsTask.Result; // This is already a List<Bid>
+                auction.item = itemTask.Result;
+                
             }
-
-            return result;
+            return auctions; // Return the modified list of auctions
 
         }
 
         public async Task<List<Auction>> GetAllAsync()
         {
+            // Similar logic to GetAllActiveAsync
             using var conn = _connectionFactory();
-            const string sql = @"SELECT
-                            AuctionId,
-                            StartTime,
-                            EndTime,
-                            StartPrice,
-                            BuyOutPrice,
-                            MinimumBidIncrement,
-                            AuctionStatus,
-                            Version,
-                            Notify,
-                            ItemId,
-                            AmountOfBids
+
+            const string sql = @"SELECT AuctionId, StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId, AmountOfBids
                         FROM dbo.Auction;";
             var auctions = (await conn.QueryAsync<Auction>(sql)).ToList();
-            var result = new List<Auction>();
-
 
             foreach (var auction in auctions)
             {
-                var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
-                var item = _itemDao.GetByIdAsync(auction.itemId!.Value);
-
-                await Task.WhenAll(bids, item);
-
-                auction.Bids = bids.Result.ToList();
-                auction.item = item.Result;
-
-                result.Add(auction);
+                var bidsTask = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
+                var itemTask = _itemDao.GetByIdAsync(auction.itemId!.Value);
+                await Task.WhenAll(bidsTask, itemTask);
+                auction.Bids = bidsTask.Result;
+                auction.item = itemTask.Result;
             }
-
-
-
-            return result;
+            return auctions;
         }
 
         public Task<IEnumerable<Auction>> GetAllByUserIDAsync(int userId)
@@ -140,16 +121,13 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
 
             Auction concreteAuction = auction.Result;
-            if (concreteAuction.Bids == null)
+            if(concreteAuction == null)
             {
-                concreteAuction.Bids = new List<Bid>();
+                return null;
             }
 
-            List<Bid> bidsList = bids.Result.ToList();
-            foreach (Bid bid in bidsList)
-            {
-                concreteAuction.Bids.Add(bid);
-            }
+
+            concreteAuction.Bids = bids.Result;
 
             concreteAuction.item = item.Result;
 

@@ -39,59 +39,70 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<List<User>> GetAllAsync()
         {
             using var conn = _connectionFactory();
+            const string sql = @"SELECT
+                            u.UserId, u.CantBuy, u.CantSell, u.UserName, u.PasswordHash,
+                            u.RegistrationDate, u.FirstName, u.LastName, u.Email,
+                            u.PhoneNumber, u.Address, u.IsDeleted,
+                            w.WalletId AS Wallet_WalletId, w.TotalBalance AS Wallet_TotalBalance,
+                            w.ReservedBalance AS Wallet_ReservedBalance, w.UserId AS Wallet_UserId,
+                            w.Version AS Wallet_Version
+                        FROM [User] u
+                        LEFT JOIN Wallet w ON u.UserId = w.UserId
+                        WHERE u.isDeleted = 0;";
 
-            const string sql = @"SELECT * FROM [User] WHERE isDeleted = 0";
-
-            var users = await conn.QueryAsync<User>(sql);
-
-                foreach (var user in users)
+            var users = await conn.QueryAsync<User, Wallet, User>(
+                sql,
+                (user, wallet) =>
                 {
-                    var wallet = await walletDAO.GetByUserId(user.UserId.Value);
                     user.Wallet = wallet;
-                }
-            
-
+                    if (user.Wallet != null)
+                    {
+                        user.Wallet.Transactions = new List<Transaction>();
+                    }
+                    return user;
+                },
+                splitOn: "Wallet_WalletId"
+            );
             return users.ToList();
         }
 
         public async Task<User> GetByIdAsync(int id)
         {
             using var conn = _connectionFactory();
+            const string sql = @"SELECT
+                            u.UserId, u.CantBuy, u.CantSell, u.UserName, u.PasswordHash,
+                            u.RegistrationDate, u.FirstName, u.LastName, u.Email,
+                            u.PhoneNumber, u.Address, u.IsDeleted,
+                            -- Wallet part (aliased for Dapper multi-mapping)
+                            w.WalletId AS Wallet_WalletId, w.TotalBalance AS Wallet_TotalBalance,
+                            w.ReservedBalance AS Wallet_ReservedBalance, w.UserId AS Wallet_UserId,
+                            w.Version AS Wallet_Version
+                        FROM [User] u
+                        LEFT JOIN Wallet w ON u.UserId = w.UserId
+                        WHERE u.UserId = @UserId;";
 
-            const string sql = @"SELECT 
-                                UserId,
-                                CantBuy,
-                                CantSell,
-                                UserName,
-                                PasswordHash,
-                                RegistrationDate,
-                                FirstName,
-                                LastName,
-                                Email,
-                                PhoneNumber,
-                                Address,
-                                IsDeleted
-                            FROM [User]
-                            WHERE UserId = @UserId;";
-
-            var user = await conn.QuerySingleOrDefaultAsync<User>(sql, new { UserId = id });
-
-
-
-            // This fixed it
-                var wallet = await walletDAO.GetByUserId(user.UserId!.Value);
-                if(user.Wallet == null)
+            var userResult = await conn.QueryAsync<User, Wallet, User>(
+                sql,
+                (user, wallet) =>
                 {
-                user.Wallet = wallet;
-                }
+                    if (user != null) // User should exist if found by ID
+                    {
+                        user.Wallet = wallet; // Wallet can be null if LEFT JOIN and no wallet exists
+                        if (user.Wallet != null)
+                        {
+                            user.Wallet.Transactions = new List<Transaction>(); // Initialize, don't load
+                        }
+                    }
+                    return user;
+                },
+                new { UserId = id },
+                splitOn: "Wallet_WalletId" // Dapper splits to a new Wallet object here
+            );
 
-
-            
-
-            return user;
+            return userResult.SingleOrDefault();
         }
 
-         public async Task<int> InsertAsync(User entity)
+        public async Task<int> InsertAsync(User entity)
         {
             using var conn = _connectionFactory();
 

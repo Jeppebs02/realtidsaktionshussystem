@@ -48,63 +48,114 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<List<Item>> GetAllAsync()
         {
             using var conn = _connectionFactory();
-            // SQL to join Item and User tables
             const string sql = @"SELECT
-                            ItemId, [Name], [Description], Category, [Image] AS ImageData,
-                            UserId
-                            FROM dbo.Item";
+                            i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData, i.UserId,
+                            u.UserId AS User_UserId, u.UserName, u.FirstName, u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell, u.RegistrationDate, u.IsDeleted, u.PasswordHash,
+                            w.WalletId AS User_Wallet_WalletId, w.TotalBalance AS User_Wallet_TotalBalance,
+                            w.ReservedBalance AS User_Wallet_ReservedBalance, w.UserId AS User_Wallet_UserId,
+                            w.Version AS User_Wallet_Version
+                        FROM dbo.Item i
+                        JOIN dbo.[User] u ON i.UserId = u.UserId
+                        LEFT JOIN dbo.Wallet w ON u.UserId = w.UserId;";
+            // Add WHERE clause if we only want "available" items, etc.
 
-            var items = conn.QueryAsync<Item>(sql);
-            
-            foreach (var item in await items)
-            {
-                item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
-            }
-
-            return (List<Item>)items.Result;
+            var items = await conn.QueryAsync<Item, User, Wallet, Item>(
+                sql,
+                (item, user, wallet) =>
+                {
+                    item.User = user;
+                    if (item.User != null)
+                    {
+                        item.User.Wallet = wallet;
+                        if (item.User.Wallet != null)
+                        {
+                            item.User.Wallet.Transactions = new List<Transaction>();
+                        }
+                    }
+                    // Handle default image data if necessary, and if ImageData can be null from DB
+                    if (item.ImageData == null)
+                    {
+                        // Your default image logic
+                        // item.ImageData = Convert.FromBase64String("...");
+                    }
+                    return item;
+                },
+                splitOn: "User_UserId,User_Wallet_WalletId"
+            );
+            return items.ToList();
         }
 
         public async Task<List<Item>> GetAllByUserIdAsync(int id)
         {
             using var conn = _connectionFactory();
             const string sql = @"SELECT
-                            ItemId, [Name], [Description], Category, [Image] AS ImageData,
-                            UserId
-                    FROM dbo.[Item] 
-                    WHERE UserId = @UserId;";
+                            i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData, i.UserId,
+                            u.UserId AS User_UserId, u.UserName, u.FirstName, u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell, u.RegistrationDate, u.IsDeleted, u.PasswordHash,
+                            w.WalletId AS User_Wallet_WalletId, w.TotalBalance AS User_Wallet_TotalBalance,
+                            w.ReservedBalance AS User_Wallet_ReservedBalance, w.UserId AS User_Wallet_UserId,
+                            w.Version AS User_Wallet_Version
+                        FROM dbo.Item i
+                        JOIN dbo.[User] u ON i.UserId = u.UserId
+                        LEFT JOIN dbo.Wallet w ON u.UserId = w.UserId
+                        WHERE i.UserId = @UserId;";
 
-            var items = conn.QueryAsync<Item>(sql, new { UserId = id });
-
-            foreach (var item in await items)
-            {
-                item.User = _userDao.GetByIdAsync(id).Result;
-            }
-
-            return (List<Item>)items.Result;
-
+            var items = await conn.QueryAsync<Item, User, Wallet, Item>(
+                sql,
+                (item, user, wallet) =>
+                {
+                    item.User = user;
+                    if (item.User != null)
+                    {
+                        item.User.Wallet = wallet;
+                        if (item.User.Wallet != null)
+                        {
+                            item.User.Wallet.Transactions = new List<Transaction>();
+                        }
+                    }
+                    if (item.ImageData == null) { /* default image */ }
+                    return item;
+                },
+                new { UserId = id },
+                splitOn: "User_UserId,User_Wallet_WalletId"
+            );
+            return items.ToList();
         }
 
 
         public async Task<Item> GetByIdAsync(int id)
         {
             using var conn = _connectionFactory();
-
             const string sql = @"SELECT
-                                ItemId, Name, Description, Category, Image AS ImageData,
-                                UserId
-                            FROM dbo.Item
-                            WHERE ItemId = @Id;";
+                            i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData, i.UserId,
+                            u.UserId AS User_UserId, u.UserName, u.FirstName, u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell, u.RegistrationDate, u.IsDeleted, u.PasswordHash,
+                            w.WalletId AS User_Wallet_WalletId, w.TotalBalance AS User_Wallet_TotalBalance,
+                            w.ReservedBalance AS User_Wallet_ReservedBalance, w.UserId AS User_Wallet_UserId,
+                            w.Version AS User_Wallet_Version
+                        FROM dbo.Item i
+                        JOIN dbo.[User] u ON i.UserId = u.UserId
+                        LEFT JOIN dbo.Wallet w ON u.UserId = w.UserId
+                        WHERE i.ItemId = @Id;";
 
-            var item = await conn.QuerySingleAsync<Item>(sql, new { Id = id });
-
-            Console.WriteLine($"itemT: {item.ToString()}");
-
-
-            Console.WriteLine($"concreteItem: {item.ToString()}");
-
-            item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
-
-            return item;
+            var itemResult = await conn.QueryAsync<Item, User, Wallet, Item>(
+                sql,
+                (item, user, wallet) =>
+                {
+                    item.User = user;
+                    if (item.User != null)
+                    {
+                        item.User.Wallet = wallet;
+                        if (item.User.Wallet != null)
+                        {
+                            item.User.Wallet.Transactions = new List<Transaction>();
+                        }
+                    }
+                    if (item.ImageData == null) { /* default image */ }
+                    return item;
+                },
+                new { Id = id },
+                splitOn: "User_UserId,User_Wallet_WalletId"
+            );
+            return itemResult.SingleOrDefault();
         }
 
         public async Task<int> InsertAsync(Item entity)
@@ -153,26 +204,43 @@ namespace AuctionHouse.DataAccessLayer.DAO
             });
         }
 
-        public async Task<Item> GetItemByAuctionIdAsync(int id)
+        public async Task<Item> GetItemByAuctionIdAsync(int auctionId) // auctionId is passed as 'id' in original code
         {
             using var conn = _connectionFactory();
-            const string sql = @"SELECT 
-                                i.ItemId,
-                                i.Name,
-                                i.Description,
-                                i.Category,
-                                i.Image AS ImageData,
-                                i.UserId
-                            FROM dbo.Item i
-                            JOIN dbo.Auction a ON a.ItemId = i.ItemId
-                            WHERE a.AuctionId = @AuctionId;";
+            const string sql = @"SELECT
+                            i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData, i.UserId,
+                            u.UserId AS User_UserId, u.UserName, u.FirstName, u.LastName, u.Email, u.PhoneNumber, u.Address, u.CantBuy, u.CantSell, u.RegistrationDate, u.IsDeleted, u.PasswordHash,
+                            w.WalletId AS User_Wallet_WalletId, w.TotalBalance AS User_Wallet_TotalBalance,
+                            w.ReservedBalance AS User_Wallet_ReservedBalance, w.UserId AS User_Wallet_UserId,
+                            w.Version AS User_Wallet_Version
+                        FROM dbo.Item i
+                        JOIN dbo.Auction a ON a.ItemId = i.ItemId
+                        JOIN dbo.[User] u ON i.UserId = u.UserId
+                        LEFT JOIN dbo.Wallet w ON u.UserId = w.UserId
+                        WHERE a.AuctionId = @AuctionId_Param;"; // Renamed parameter to avoid conflict
 
-            var item = await conn.QuerySingleAsync<Item>(sql, new { AuctionId = id });
-
-            item.User = await _userDao.GetByIdAsync(item.UserId!.Value);
-
-            return item;
+            var itemResult = await conn.QueryAsync<Item, User, Wallet, Item>(
+                sql,
+                (item, user, wallet) =>
+                {
+                    item.User = user;
+                    if (item.User != null)
+                    {
+                        item.User.Wallet = wallet;
+                        if (item.User.Wallet != null)
+                        {
+                            item.User.Wallet.Transactions = new List<Transaction>();
+                        }
+                    }
+                    if (item.ImageData == null) { /* default image */ }
+                    return item;
+                },
+                new { AuctionId_Param = auctionId }, // Use the renamed parameter
+                splitOn: "User_UserId,User_Wallet_WalletId"
+            );
+            return itemResult.SingleOrDefault();
         }
+
 
     }
 }

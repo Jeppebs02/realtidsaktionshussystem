@@ -63,25 +63,26 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             const string sql = "SELECT * FROM Wallet WHERE WalletId = @WalletId";
 
-            var walletT = await conn.QuerySingleOrDefaultAsync<Wallet>(sql, new { WalletId = id });
+            var concreteWallet = await conn.QuerySingleOrDefaultAsync<Wallet>(sql, new { WalletId = id });
 
 
-            if (walletT is Wallet concreteWallet)
-            {
+
 
                 if (concreteWallet.Transactions == null)
                 {
                     concreteWallet.Transactions = new List<Transaction>();
                 }
-                var transactions = await _transactionDao.GetAllByWalletId(concreteWallet.WalletId.Value);
-                foreach ( Transaction transaction in transactions)
-                {
-                    concreteWallet.Transactions.Add(transaction);
 
-                }
-            }
+                //TODO: again notice we dont want to load transactions by default
+            
+                //var transactions = await _transactionDao.GetAllByWalletId(concreteWallet.WalletId.Value);
+                //foreach ( Transaction transaction in transactions)
+                //{
+                //    concreteWallet.Transactions.Add(transaction);
 
-            return walletT;
+                //}
+
+            return concreteWallet;
         }
 
         public async Task<Wallet> GetByUserId(int userId)
@@ -111,12 +112,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 wallet.Transactions = new List<Transaction>();
             }
 
-            var transactions = await _transactionDao.GetAllByWalletId(wallet.WalletId.Value);
+            //TODO: notice, we dont want to load transactions by default.
 
-            foreach (var transaction in transactions)
-            {
-                wallet.Transactions.Add(transaction);
-            }
+            //var transactions = await _transactionDao.GetAllByWalletId(wallet.WalletId.Value);
+
+            //foreach (var transaction in transactions)
+            //{
+            //    wallet.Transactions.Add(transaction);
+            //}
 
             return wallet;
         }
