@@ -8,7 +8,7 @@ namespace AuctionHouse.WebAPI.IBusinessLogic
         Task<List<T>> GetAllAuctionsAsync<T>();
         Task<IEnumerable<Auction>> GetAllActiveAuctionsAsync();
 
-        Task<Auction> GetAuctionByIdAsync(int id);
+        Task<Auction> GetAuctionByIdAsync(int id, IDbTransaction transaction = null);
 
         Task<bool> CreateAuctionAsync(Auction auction);
 

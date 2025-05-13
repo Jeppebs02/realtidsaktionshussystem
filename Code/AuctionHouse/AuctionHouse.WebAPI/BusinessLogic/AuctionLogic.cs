@@ -47,9 +47,9 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             throw new NotImplementedException();
         }
 
-        public Task<Auction> GetAuctionByIdAsync(int id)
+        public Task<Auction> GetAuctionByIdAsync(int id, IDbTransaction transaction)
         {
-            return _auctionDao.GetByIdAsync(id);
+            return _auctionDao.GetByIdAsync(id, transaction);
         }
 
         public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
