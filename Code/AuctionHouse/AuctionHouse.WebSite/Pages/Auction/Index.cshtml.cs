@@ -7,6 +7,7 @@ using System.Text.Json;
 using AuctionHouse.ClassLibrary.DTO;
 using AuctionHouse.Requester;
 using System.Text.Json.Serialization;
+using System.Security.Cryptography;
 
 namespace AuctionHouse.WebSite.Pages.Auction
 {
@@ -108,7 +109,8 @@ namespace AuctionHouse.WebSite.Pages.Auction
             Console.WriteLine($"Trying to buy out auction: {specificAuction}");
 
             // Create a new bid with the buyout amount
-            var buyoutBid = new BidDTO(AuctionId, specificAuction.BuyOutPrice, DateTime.Now, loggedInUser);
+            var buyoutBid = new BidDTO(AuctionId, specificAuction.BuyOutPrice, DateTime.Now, loggedInUser)
+            { ExpectedAuctionVersion = specificAuction.Version };
 
             Console.WriteLine($"Created bid: {buyoutBid}");
 
@@ -116,10 +118,16 @@ namespace AuctionHouse.WebSite.Pages.Auction
             {
                 Console.WriteLine($"buyout bid: {buyoutBid} \n (must be greater than) \n {userWallet.GetAvailableBalance()}");
                 errorMessage = "Insufficient funds.";
-
             }
 
-            return RedirectToPage(new { AuctionId = this.AuctionId, userId = loggedInUser.UserId });
+            var apiResponse = await _apiRequester.Post("api/bid", buyoutBid);
+
+            if (!string.IsNullOrWhiteSpace(apiResponse))
+            {
+                return ShowModal(apiResponse, redirect: true);
+            }
+
+            return RedirectToPage(new { AuctionId });
 
         }
 
