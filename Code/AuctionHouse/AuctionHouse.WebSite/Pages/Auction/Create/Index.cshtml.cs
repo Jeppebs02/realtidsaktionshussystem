@@ -96,7 +96,7 @@ namespace AuctionHouse.WebSite.Pages.CreateAuction
                         Console.WriteLine("Creating item Object");
 
 
-                        item = new Item(user, itemName, itemDescription, category, imageData, ItemStatus.AVAILABLE);
+                        item = new Item(user, itemName, itemDescription, category, imageData);
                     }
                 }
 

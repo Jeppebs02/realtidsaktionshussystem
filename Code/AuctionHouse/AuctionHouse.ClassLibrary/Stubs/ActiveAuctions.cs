@@ -34,11 +34,11 @@ namespace AuctionHouse.ClassLibrary.Stubs
                 
 
                 // Create some items
-                var sword = new Item(stubUser ,"Legendary Sword", "An ancient sword with mystical powers.", Category.OTHER, dummyImage, ItemStatus.AVAILABLE);
-                var painting = new Item(stubUser, "Sunset Painting", "A beautiful painting of a sunset.", Category.ART_ANTIQUES, dummyImage, ItemStatus.AVAILABLE);
-                var car = new Item(stubUser, "Vintage Car", "A classic 1960s Mustang.", Category.VEHICLES, dummyImage, ItemStatus.AVAILABLE);
-                var laptop = new Item(stubUser, "Gaming Laptop", "High-end gaming laptop with RTX 4090.", Category.ELECTRONICS, dummyImage, ItemStatus.AVAILABLE);
-                var book = new Item(stubUser, "First Edition Book", "Rare first edition of a famous novel.", Category.BOOKS_MANUSCRIPTS, dummyImage, ItemStatus.AVAILABLE);
+                var sword = new Item(stubUser ,"Legendary Sword", "An ancient sword with mystical powers.", Category.OTHER, dummyImage);
+                var painting = new Item(stubUser, "Sunset Painting", "A beautiful painting of a sunset.", Category.ART_ANTIQUES, dummyImage);
+                var car = new Item(stubUser, "Vintage Car", "A classic 1960s Mustang.", Category.VEHICLES, dummyImage);
+                var laptop = new Item(stubUser, "Gaming Laptop", "High-end gaming laptop with RTX 4090.", Category.ELECTRONICS, dummyImage);
+                var book = new Item(stubUser, "First Edition Book", "Rare first edition of a famous novel.", Category.BOOKS_MANUSCRIPTS, dummyImage);
 
                 // Create auctions
                 var auction1 = new Auction(

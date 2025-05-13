@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
     //    public static readonly Dictionary<string, Auction> Auctions = new()
     //    {
-    //        { "Vase", new Auction(DateTime.Now.AddHours(1), DateTime.Now.AddDays(1), 100, 800, 20, false, new Item("Vase", "Really old vase", Enum.Category.ART_ANTIQUES, [], Enum.ItemStatus.IN_AUCTION)) },
+    //        { "Vase", new Auction(DateTime.Now.AddHours(1), DateTime.Now.AddDays(1), 100, 800, 20, false, new Item("Vase", "Really old vase", Enum.Category.ART_ANTIQUES, [])) },
 
     //    };
 

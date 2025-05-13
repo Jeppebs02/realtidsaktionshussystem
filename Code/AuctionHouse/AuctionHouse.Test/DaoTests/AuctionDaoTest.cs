@@ -182,7 +182,7 @@ namespace AuctionHouse.Test.DaoTests
             Wallet wallet = new Wallet(1000, 0,0);
             User user = new User("testUser", "testPassword", "firstname", "lastname", "email", "phonenr", "address", wallet);
             user.UserId = 1;
-            Item item = new Item(user, "testItem", "testDescription", Category.ELECTRONICS, new byte[0], ItemStatus.AVAILABLE);
+            Item item = new Item(user, "testItem", "testDescription", Category.ELECTRONICS, new byte[0]);
             item.ItemId = 1;
             Auction auction = new Auction(DateTime.Now, DateTime.Now.AddDays(1), 100, 200, 10, false, item);
             // Act  

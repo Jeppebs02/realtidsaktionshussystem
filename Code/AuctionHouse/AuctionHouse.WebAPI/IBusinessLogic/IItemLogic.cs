@@ -12,6 +12,6 @@ namespace AuctionHouse.WebAPI.IBusinessLogic
         //Task<List<Item>> GetItemsByCategoryAsync(Category category);
         //Task<List<Item>> GetItemsByAuctionIdAsync(int auctionId);
         //Task<List<Item>> GetItemsByUserIdAsync(int userId);
-        //Task<List<Item>> GetItemsByStatusAsync(ItemStatus status);
+        
     }
 }

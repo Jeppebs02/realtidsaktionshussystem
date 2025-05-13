@@ -48,9 +48,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<List<Item>> GetAllAsync()
         {
             using var conn = _connectionFactory();
-            await conn.OpenAsync();
 
-            const string itemsSql = @"SELECT ItemId, Name, Description, Category, Image AS ImageData, UserId, ItemStatus FROM dbo.Item;";
+            const string itemsSql = @"SELECT ItemId, Name, Description, Category, Image AS ImageData, UserId FROM dbo.Item;";
             var items = (await conn.QueryAsync<Item>(itemsSql)).ToList();
 
             if (!items.Any()) return items;
@@ -111,7 +110,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 return new List<Item>(); // Or throw if user must exist
             }
 
-            const string itemsSql = @"SELECT ItemId, Name, Description, Category, Image AS ImageData, UserId, ItemStatus
+            const string itemsSql = @"SELECT ItemId, Name, Description, Category, Image AS ImageData, UserId
                                     FROM dbo.Item WHERE UserId = @UserId_Param;";
             var items = (await conn.QueryAsync<Item>(itemsSql, new { UserId_Param = userId })).ToList();
 
@@ -157,7 +156,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             using var conn = _connectionFactory();
 
 
-            const string itemSql = @"SELECT ItemId, Name, Description, Category, Image AS ImageData, UserId, ItemStatus
+            const string itemSql = @"SELECT ItemId, Name, Description, Category, Image AS ImageData, UserId
                                     FROM dbo.Item WHERE ItemId = @Id;";
             Item item = await conn.QuerySingleOrDefaultAsync<Item>(itemSql, new { Id = id });
 
@@ -219,7 +218,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             using var conn = _connectionFactory();
 
-            const string itemSql = @"SELECT i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData, i.UserId, i.ItemStatus
+            const string itemSql = @"SELECT i.ItemId, i.Name, i.Description, i.Category, i.Image AS ImageData, i.UserId
                                     FROM dbo.Item i
                                     JOIN dbo.Auction a ON a.ItemId = i.ItemId
                                     WHERE a.AuctionId = @AuctionId_Param;";

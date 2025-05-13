@@ -15,14 +15,13 @@ namespace AuctionHouse.ClassLibrary.Model
 
         // Blank constructor requied by Dapper
         public Item() { }
-        public Item(User user, string name, string description, Category category, byte[] imageData, ItemStatus itemStatus)
+        public Item(User user, string name, string description, Category category, byte[] imageData)
         {
             User = user;
             Name = name;
             Description = description;
             Category = category;
             ImageData = imageData;
-            ItemStatus = itemStatus;
         }
         #endregion
 
@@ -44,9 +43,6 @@ namespace AuctionHouse.ClassLibrary.Model
 
         [Required(ErrorMessage = "An Image must be uploaded")]
         public byte[] ImageData { get; set; }
-
-        [Required(ErrorMessage = "An Item Status must be initated")]
-        public ItemStatus ItemStatus { get; set; }
 
         [Required(ErrorMessage = "An User must be chosen")]
         public User User { get; set; }
