@@ -200,7 +200,7 @@ namespace AuctionHouse.Test.DaoTests
             var originalVersion = auction.Version;
 
             // Act  
-            bool result = await _auctionDao.UpdateAuctionOptimistically(auctionId, auction.Version);
+            byte[] result = await _auctionDao.UpdateAuctionOptimistically(auctionId, auction.Version);
 
             Auction newAuction = await _auctionDao.GetByIdAsync(auctionId);
             var newVersion = newAuction.Version;

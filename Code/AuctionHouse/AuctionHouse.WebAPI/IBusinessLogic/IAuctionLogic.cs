@@ -12,7 +12,7 @@ namespace AuctionHouse.WebAPI.IBusinessLogic
 
         Task<bool> CreateAuctionAsync(Auction auction);
 
-        Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction=null, int newBids=1);
+        Task<byte[]> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction=null, int newBids=1);
 
         Task<bool> UpdateAuctionStatusOptimistically(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null);
     }

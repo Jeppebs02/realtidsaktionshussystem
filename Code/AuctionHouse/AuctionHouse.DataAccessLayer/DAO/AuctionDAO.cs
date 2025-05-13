@@ -60,11 +60,15 @@ namespace AuctionHouse.DataAccessLayer.DAO
             else
             {
                 conn = _connectionFactory();
+
+                ownConnection = true;
                 // Dapper will open/close this connection for its operation if ownConnection is true.
                 // Or, if you prefer explicit open/close:
                 // await conn.OpenAsync();
                 // ownConnection = true;
             }
+
+
 
             // SQL to fetch only the Auction data
             const string auctionSql = @"SELECT
@@ -216,9 +220,9 @@ namespace AuctionHouse.DataAccessLayer.DAO
             throw new NotImplementedException("Dont use, use UpdateAuctionOptimistically instead");
         }
 
-        public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
+        public async Task<byte[]> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
         {
-            
+
             var conn = _connectionFactory();
 
             //Make sure to use the same connection as the transaction if it is not null
@@ -227,8 +231,9 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 conn = transaction.Connection;
             }
 
-                const string sql = @"UPDATE Auction
+            const string sql = @"UPDATE Auction
                                  SET AmountOfBids = AmountOfBids + @AmountOfBids
+                                 OUTPUT INSERTED.Version
                                  WHERE AuctionId = @AuctionId
                                  AND Version = @ExpectedVersion";
             var parameters = new DynamicParameters();
@@ -236,14 +241,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
             parameters.Add("AmountOfBids", newBids);
             parameters.Add("ExpectedVersion", expectedVersion);
 
-            int rowsAffected = await conn.ExecuteAsync(sql, parameters, transaction: transaction);
-            return rowsAffected > 0;
+            byte[] newVersion = await conn.ExecuteScalarAsync<byte[]>(sql, parameters, transaction: transaction);
+            return newVersion;
         }
 
         public async Task<bool> UpdateAuctionStatusOptimisticallyAsync(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null)
         {
 
-            
+
             var conn = _connectionFactory();
             Console.WriteLine("Trying to update auction status");
             //Make sure to use the same connection as the transaction if it is not null
@@ -259,7 +264,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             var parameters = new DynamicParameters();
             parameters.Add("AuctionId", auctionId);
-            parameters.Add("AuctionStatus", newStatus);
+            parameters.Add("AuctionStatus", newStatus.ToString());
             parameters.Add("ExpectedVersion", expectedVersion);
             int rowsAffected = await conn.ExecuteAsync(sql, parameters, transaction: transaction);
             Console.WriteLine(rowsAffected);

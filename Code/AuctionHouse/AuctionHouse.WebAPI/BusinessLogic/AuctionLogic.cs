@@ -52,7 +52,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             return _auctionDao.GetByIdAsync(id, transaction);
         }
 
-        public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
+        public async Task<byte[]> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
         {
             return await _auctionDao.UpdateAuctionOptimistically(auctionId, expectedVersion, transaction, newBids);
         }

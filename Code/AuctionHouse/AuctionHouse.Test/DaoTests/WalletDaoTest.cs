@@ -90,13 +90,16 @@ namespace AuctionHouse.Test.DaoTests
         {
             // Arrange  
             Wallet wallet = await _walletDao.GetByUserId(1); // Assuming user with ID 1 exists
+            decimal old_balance = wallet.TotalBalance; // Store the old balance for verification
             wallet.TotalBalance += 50; // Update the wallet balance
 
             // Act  
-            bool result = await _walletDao.UpdateAsync(wallet);
+            byte[] result = await _walletDao.UpdateTotalBalanceAsync(wallet);
+
+            decimal new_balance = _walletDao.GetByUserId(1).Result.TotalBalance; // Get the updated balance
 
             // Assert  
-            Assert.True(result);
+            Assert.NotEqual(old_balance,new_balance);
         }
 
         [Fact]

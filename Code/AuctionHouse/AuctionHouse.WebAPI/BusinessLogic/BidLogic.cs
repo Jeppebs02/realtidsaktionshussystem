@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.SqlClient;
 using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.DataAccessLayer.Interfaces;
 using AuctionHouse.WebAPI.IBusinessLogic;
@@ -47,7 +48,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             }
 
             // Is new bid higher than current highest bid?
-            if(currentHighestBid != null)
+            if (currentHighestBid != null)
             {
                 if (amountToBid <= currentHighestBid.Amount)
                 {
@@ -70,51 +71,89 @@ namespace AuctionHouse.WebAPI.BusinessLogic
                 return "You dont have enough money in the wallet";
             }
 
-            // our transaction so we can do all operations in one transaction
-            using var transaction = _connectionFactory().BeginTransaction();
 
-            // Is the expected auction version the same as the current version in the db?
-            if (!await _auctionLogic.UpdateAuctionOptimistically(auctionToBidOn.AuctionID!.Value, expectedAuctionVersion, transaction, 1))
+
+            IDbConnection? connectionForTransaction = null; // Declare here for finally block
+            IDbTransaction? transaction = null;
+
+            try
             {
-                transaction.Rollback();
-                return "Auction has been updated by another user, please refresh the page";
-            }
+                connectionForTransaction = _connectionFactory();
+                //if (connectionForTransaction.State != ConnectionState.Open) await connectionForTransaction.OpenAsync();
+                transaction = connectionForTransaction.BeginTransaction();
 
-            // Did the new bid go through?
-            var insertedBidId = await _bidDao.InsertBidAsync(bid, transaction);
-            if (currentHighestBid!=null && currentHighestBid.BidId>=insertedBidId)
-            {
-                transaction.Rollback();
-                return "Bid could not be placed";
-            }
+                // 1. Update Auction Optimistically and get the NEW version
+                byte[]? newVersionFromFirstUpdate = await _auctionLogic.UpdateAuctionOptimistically(
+                    auctionToBidOn.AuctionID!.Value,
+                    expectedAuctionVersion,
+                    transaction,
+                    1);
 
-            // Is the bid amount equal or higher than buyout? if so, set auction to sold
-            if (bid.Amount >= auctionToBidOn.BuyOutPrice)
-            {
-                // get the new version
-                var newAuction = await _auctionLogic.GetAuctionByIdAsync(bid.AuctionId);
-                var expVersion = newAuction.Version;
-
-                if (!await _auctionLogic.UpdateAuctionStatusOptimistically(auctionToBidOn.AuctionID!.Value, expVersion, ClassLibrary.Enum.AuctionStatus.ENDED_SOLD, transaction))
+                if (newVersionFromFirstUpdate == null) // Optimistic lock failed
                 {
-                    transaction.Rollback();
-                    return "Error with auction status update";
+                    // No need to manually rollback, 'using var transaction' will if not committed.
+                    // But explicit is fine too.
+                    transaction.Rollback(); // Handled by using if exception or no commit
+                    return "Auction has been updated by another user, please refresh the page";
                 }
-            }
 
-            // Did the wallet update go through?
-            if (!await _walletLogic.ReserveFundsAsync(userWallet.WalletId!.Value, bid.Amount, expectedWalletVersion, transaction))
+                // 2. Insert the Bid
+                var insertedBidId = await _bidDao.InsertBidAsync(bid, transaction);
+                if (insertedBidId <= 0) // Or based on whatever InsertBidAsync returns on failure
+                {
+                    return "Bid could not be placed"; // Transaction will be rolled back by using
+                }
+                // The check `currentHighestBid!=null && currentHighestBid.BidId>=insertedBidId` is still potentially problematic
+                // and might not be necessary if InsertBidAsync is reliable. Consider removing or making it more robust.
+
+                // 3. Buyout Condition
+                if (bid.Amount >= auctionToBidOn.BuyOutPrice)
+                {
+                    // We USE the newVersionFromFirstUpdate for the next optimistic lock.
+                    // NO NEED to call _auctionLogic.GetAuctionByIdAsync here.
+                    byte[] versionForStatusUpdate = newVersionFromFirstUpdate;
+
+                    bool statusUpdated = await _auctionLogic.UpdateAuctionStatusOptimistically(
+                        auctionToBidOn.AuctionID!.Value,
+                        versionForStatusUpdate,
+                        ClassLibrary.Enum.AuctionStatus.ENDED_SOLD,
+                        transaction);
+
+                    if (!statusUpdated) // Optimistic lock for status update failed
+                    {
+                        return "Error with auction status update (e.g., version mismatch during buyout)"; // Txn rolled back
+                    }
+                }
+
+                // 4. Wallet Update
+                if (!await _walletLogic.ReserveFundsAsync(userWallet.WalletId!.Value, bid.Amount, expectedWalletVersion, transaction))
+                {
+                    return "Error with wallet version, please try again."; // Txn rolled back
+                }
+
+                transaction.Commit();
+                return "Bid placed succesfully :)";
+            }
+            catch (Exception ex)
             {
-                transaction.Rollback();
-                return "Error with wallet version, please try again.";
+                // Log the exception (ex.ToString())
+                // The transaction will be rolled back automatically by the 'using' statement if an exception occurs
+                // before Commit() is called.
+                return $"An unexpected error occurred: {ex.Message}";
             }
-
-            transaction.Commit();
-            return "Bid placed succesfully :)";
-
-
+            finally
+            {
+                // The 'using var transaction' will dispose the transaction (rolling back if not committed).
+                // The 'connectionForTransaction' needs to be disposed/closed if we opened it.
+                if (connectionForTransaction != null && connectionForTransaction.State == ConnectionState.Open)
+                {
+                    if (connectionForTransaction is SqlConnection sqlConn) await sqlConn.CloseAsync();
+                    else connectionForTransaction.Close();
+                }
+                connectionForTransaction?.Dispose();
+            }
         }
 
 
-    }
+        }
 }
