@@ -101,6 +101,7 @@
             Savebtn.TabIndex = 5;
             Savebtn.Text = "Save";
             Savebtn.UseVisualStyleBackColor = true;
+            Savebtn.Click += Savebtn_Click;
             // 
             // Searchtxtbox
             // 

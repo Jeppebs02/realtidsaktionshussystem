@@ -1,5 +1,7 @@
 ﻿using AuctionHouse.ClassLibrary.Model;
 using AuctionHouse.Requester;
+using System.Net;
+using System.Text;
 using System.Text.Json;
 
 namespace AuctionHouse.DesktopApp
@@ -104,5 +106,65 @@ namespace AuctionHouse.DesktopApp
             CantBuycheckbox.Checked = false;
             CantSellcheckbox.Checked = false;
         }
+
+
+        private async void Savebtn_Click(object sender, EventArgs e)
+        {
+            // 0. Make sure someone is highlighted
+            if (Userlistbox.SelectedItem is not User user)
+            {
+                MessageBox.Show("Select a user first.", "Nothing to save",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                Savebtn.Enabled = false;
+                Cursor.Current = Cursors.WaitCursor;
+
+                // 1. Copy UI → object
+                user.FirstName = FirstNametxtbox.Text.Trim();
+                user.LastName = LastNametxtbox.Text.Trim();
+                user.UserName = Usernametxtbox.Text.Trim();
+                user.Email = Emailtxtbox.Text.Trim();
+                user.PhoneNumber = PhoneNumbertxtbox.Text.Trim();
+                user.Address = Addresstxtbox.Text.Trim();
+                user.CantBuy = CantBuycheckbox.Checked;
+                user.CantSell = CantSellcheckbox.Checked;
+
+                // 2. Serialize & ship with PUT
+                var json = JsonSerializer.Serialize(user,
+                                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var resp = await _apiRequester.Put($"api/user/{user.UserId}", user)
+                                                             .ConfigureAwait(false);   // see note ⬇
+
+                //if (!resp.IsSuccessStatusCode)
+                //{
+                //    MessageBox.Show($"Server returned {(int)resp.StatusCode} {resp.ReasonPhrase}",
+                //                    "Save failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //    return;
+                //}
+
+                // 3. Refresh the row’s caption so the ListBox shows new data
+                Userlistbox.Refresh();           // simple; or re-data-bind if you prefer
+                MessageBox.Show("User saved 👍", "Success",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to save user:\n{ex.Message}",
+                                "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+                Savebtn.Enabled = true;
+            }
+        }
+
+        
     }
 }
