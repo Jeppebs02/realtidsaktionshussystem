@@ -194,7 +194,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<bool> UpdateAuctionOptimistically(int auctionId, byte[] expectedVersion, IDbTransaction transaction = null, int newBids = 1)
         {
-            
+
             var conn = _connectionFactory();
 
             //Make sure to use the same connection as the transaction if it is not null
@@ -203,10 +203,17 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 conn = transaction.Connection;
             }
 
-                const string sql = @"UPDATE Auction
-                                 SET AmountOfBids = AmountOfBids + @AmountOfBids
-                                 WHERE AuctionId = @AuctionId
-                                 AND Version = @ExpectedVersion";
+            // Adds a 3 second delay after trying to update, to allow overlap between threads
+            // for Worst case testing purposes. It can be moved to line 208 to allow a thighter race between the threads
+            const string sql = @"
+
+                                UPDATE Auction
+                                SET AmountOfBids = AmountOfBids + @AmountOfBids
+                                WHERE AuctionId = @AuctionId
+                                AND Version = @ExpectedVersion;
+
+                                WAITFOR DELAY '00:00:03';
+                                ";
             var parameters = new DynamicParameters();
             parameters.Add("AuctionId", auctionId);
             parameters.Add("AmountOfBids", newBids);
@@ -219,7 +226,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<bool> UpdateAuctionStatusOptimisticallyAsync(int auctionId, byte[] expectedVersion, AuctionStatus newStatus, IDbTransaction transaction = null)
         {
 
-            
+
             var conn = _connectionFactory();
 
             //Make sure to use the same connection as the transaction if it is not null
