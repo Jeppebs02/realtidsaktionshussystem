@@ -69,36 +69,73 @@ namespace AuctionHouse.DataAccessLayer.DAO
         public async Task<User> GetByIdAsync(int id)
         {
             using var conn = _connectionFactory();
-            const string sql = @"SELECT
-                            u.UserId, u.CantBuy, u.CantSell, u.UserName, u.PasswordHash,
-                            u.RegistrationDate, u.FirstName, u.LastName, u.Email,
-                            u.PhoneNumber, u.Address, u.IsDeleted,
-                            w.WalletId AS Wallet_WalletId, w.TotalBalance AS Wallet_TotalBalance,
-                            w.ReservedBalance AS Wallet_ReservedBalance, w.UserId AS Wallet_UserId,
-                            w.Version AS Wallet_Version
-                        FROM [User] u
-                        LEFT JOIN Wallet w ON u.UserId = w.UserId
-                        WHERE u.UserId = @UserId;";
+            // SQL to fetch User, then Wallet in two separate select statements in one batch
+            const string sql = @"
+        SELECT -- User part
+            u.UserId, u.CantBuy, u.CantSell, u.UserName, u.PasswordHash,
+            u.RegistrationDate, u.FirstName, u.LastName, u.Email,
+            u.PhoneNumber, u.Address, u.IsDeleted
+        FROM [User] u
+        WHERE u.UserId = @UserIdParam;
 
-            var userResult = await conn.QueryAsync<User, Wallet, User>(
-                sql,
-                (user, wallet) =>
+        SELECT -- Wallet part
+            w.WalletId, w.TotalBalance, w.ReservedBalance,
+            w.UserId, w.Version
+        FROM Wallet w
+        WHERE w.UserId = @UserIdParam;
+    ";
+
+            User user = null;
+            Wallet wallet = null;
+
+            Console.WriteLine($"Executing QueryMultiple for GetByIdAsync with UserId: {id}");
+
+            using (var multi = await conn.QueryMultipleAsync(sql, new { UserIdParam = id }))
+            {
+                // Read the first result set (User)
+                user = await multi.ReadSingleOrDefaultAsync<User>();
+
+                if (user != null)
                 {
-                    if (user != null) // User should exist if found by ID
+                    Console.WriteLine($"User read from QueryMultiple: UserId={user.UserId}, UserName={user.UserName}");
+                    // Read the second result set (Wallet)
+                    wallet = await multi.ReadSingleOrDefaultAsync<Wallet>();
+
+                    if (wallet != null)
                     {
-                        user.Wallet = wallet; // Wallet can be null if LEFT JOIN and no wallet exists
-                        if (user.Wallet != null)
+                        Console.WriteLine($"Wallet read from QueryMultiple: WalletId={wallet.WalletId}, Version present={wallet.Version != null}");
+                        if (wallet.Version != null)
                         {
-                            user.Wallet.Transactions = new List<Transaction>(); // Initialize, don't load
+                            Console.WriteLine($"Wallet Version Length: {wallet.Version.Length}");
+                        }
+                        user.Wallet = wallet; // Assign the fetched wallet
+                        if (user.Wallet.Transactions == null) // Should be initialized by Wallet constructor
+                        {
+                            user.Wallet.Transactions = new List<Transaction>();
                         }
                     }
-                    return user;
-                },
-                new { UserId = id },
-                splitOn: "Wallet_WalletId" // Dapper splits to a new Wallet object here
-            );
+                    else
+                    {
+                        Console.WriteLine($"No wallet found for UserId {id} in the second result set.");
+                        user.Wallet = null; // Explicitly set to null if no wallet
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"No user found for UserId {id} in the first result set.");
+                }
+            }
 
-            return userResult.SingleOrDefault();
+            if (user != null && user.Wallet != null)
+            {
+                Console.WriteLine($"Final User.Wallet (QueryMultiple): WalletId={user.Wallet.WalletId}, Version present={user.Wallet.Version != null}");
+            }
+            else if (user != null)
+            {
+                Console.WriteLine($"Final User.Wallet is NULL for user {user.UserId} (QueryMultiple)");
+            }
+
+            return user;
         }
 
         public async Task<int> InsertAsync(User entity)
@@ -147,6 +184,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             return Task.FromResult(rowsaffected > 0).Result;
         }
+
+
+
+
+
+
+
+        // TEMPORARY TEST METHOD
+
+
+
+
     }
 
     

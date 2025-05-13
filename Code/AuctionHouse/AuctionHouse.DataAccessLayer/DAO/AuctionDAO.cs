@@ -35,61 +35,18 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<IEnumerable<Auction>> GetAllActiveAsync()
         {
-            using var conn = _connectionFactory();
-            const string sql = @"SELECT
-                            AuctionId,
-                            StartTime,
-                            EndTime,
-                            StartPrice,
-                            BuyOutPrice,
-                            MinimumBidIncrement,
-                            AuctionStatus,
-                            Version,
-                            Notify,
-                            ItemId,
-                            AmountOfBids
-                        FROM dbo.Auction
-                        WHERE AuctionStatus = 'ACTIVE'";
-
-            var auctions = (await conn.QueryAsync<Auction>(sql)).ToList();
-            var result = new List<Auction>();
-
-
-            foreach (var auction in auctions)
-            {
-                // These calls will internally create their own connections and run efficient queries :)
-                var bidsTask = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
-                var itemTask = _itemDao.GetByIdAsync(auction.itemId!.Value); // Assuming item.itemId is populated by the first query
-
-                await Task.WhenAll(bidsTask, itemTask);
-
-                auction.Bids = bidsTask.Result; // This is already a List<Bid>
-                auction.item = itemTask.Result;
-                
-            }
-            return auctions; // Return the modified list of auctions
-
+            const string sql = @"SELECT AuctionId, StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId, AmountOfBids
+                                FROM dbo.Auction WHERE AuctionStatus = @Status;";
+            return await GetAllAuctionsWithDetails(sql, new { Status = AuctionStatus.ACTIVE.ToString() });
         }
 
         public async Task<List<Auction>> GetAllAsync()
         {
-            // Similar logic to GetAllActiveAsync
-            using var conn = _connectionFactory();
-
             const string sql = @"SELECT AuctionId, StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId, AmountOfBids
-                        FROM dbo.Auction;";
-            var auctions = (await conn.QueryAsync<Auction>(sql)).ToList();
-
-            foreach (var auction in auctions)
-            {
-                var bidsTask = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
-                var itemTask = _itemDao.GetByIdAsync(auction.itemId!.Value);
-                await Task.WhenAll(bidsTask, itemTask);
-                auction.Bids = bidsTask.Result;
-                auction.item = itemTask.Result;
-            }
-            return auctions;
+                                FROM dbo.Auction;";
+            return await GetAllAuctionsWithDetails(sql);
         }
+
 
         public Task<IEnumerable<Auction>> GetAllByUserIDAsync(int userId)
         {
@@ -224,6 +181,75 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             throw new NotImplementedException();
         }
+
+
+
+
+
+        private async Task<List<Auction>> GetAllAuctionsWithDetails(string auctionFilterSql, object filterParams = null)
+        {
+            using var conn = _connectionFactory();
+
+            // 1. Fetch base auctions
+            var auctions = (await conn.QueryAsync<Auction>(auctionFilterSql, filterParams)).ToList();
+            if (!auctions.Any()) return auctions;
+
+            var auctionIds = auctions.Select(a => a.AuctionID!.Value).ToList();
+            var itemIdsToFetch = auctions.Where(a => a.itemId.HasValue).Select(a => a.itemId!.Value).Distinct().ToList();
+
+            // 2. Batch fetch all items for these auctions (Items will include their User+Wallet)
+            Dictionary<int, Item> itemsMap = new Dictionary<int, Item>();
+            if (itemIdsToFetch.Any())
+            {
+                // Re-using ItemDAO.GetByIdAsync in a loop is N+1. We need a GetItemsByIdsAsync
+                // For now, let's assume ItemDAO needs a GetItemsByIdsAsync similar to how we did UserDAO.GetAllAsync
+                // For simplicity of this example, I'll use the existing GetByIdAsync in a loop,
+                // BUT THIS SHOULD BE OPTIMIZED in ItemDAO with a "GetByIds" method.
+                // This part is where you'd call a hypothetical _itemDao.GetItemsByIdsAsync(itemIdsToFetch)
+                List<Task<Item>> itemTasks = itemIdsToFetch.Select(itemId => _itemDao.GetByIdAsync(itemId)).ToList();
+                Item[] fetchedItems = await Task.WhenAll(itemTasks);
+                itemsMap = fetchedItems.Where(i => i != null).ToDictionary(i => i.ItemId!.Value);
+            }
+
+            // 3. Batch fetch all bids for these auctions (Bids will include their User+Wallet)
+            Dictionary<int, List<Bid>> bidsByAuctionIdMap = new Dictionary<int, List<Bid>>();
+            if (auctionIds.Any())
+            {
+                // Similar to items, BidDAO should have a GetAllBidsForAuctionIdsAsync
+                // For simplicity, using existing GetAllByAuctionIdAsync in a loop. OPTIMIZE THIS.
+                List<Task<(int auctionId, List<Bid> bids)>> bidTasks = auctionIds.Select(async auctionId =>
+                {
+                    var bidsForAuction = await _bidDao.GetAllByAuctionIdAsync(auctionId);
+                    return (auctionId, bidsForAuction);
+                }).ToList();
+                var fetchedBidsForAllAuctions = await Task.WhenAll(bidTasks);
+                foreach (var bidData in fetchedBidsForAllAuctions)
+                {
+                    bidsByAuctionIdMap[bidData.auctionId] = bidData.bids;
+                }
+            }
+
+            // 4. Map items and bids back to auctions
+            foreach (var auction in auctions)
+            {
+                if (auction.itemId.HasValue && itemsMap.TryGetValue(auction.itemId.Value, out Item item))
+                {
+                    auction.item = item;
+                }
+                if (bidsByAuctionIdMap.TryGetValue(auction.AuctionID!.Value, out List<Bid> bids))
+                {
+                    auction.Bids = bids;
+                }
+                else
+                {
+                    auction.Bids = new List<Bid>(); // Ensure initialized
+                }
+            }
+            return auctions;
+        }
+
+
+
     }
 
 }
