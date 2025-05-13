@@ -73,7 +73,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
                             u.UserId, u.CantBuy, u.CantSell, u.UserName, u.PasswordHash,
                             u.RegistrationDate, u.FirstName, u.LastName, u.Email,
                             u.PhoneNumber, u.Address, u.IsDeleted,
-                            -- Wallet part (aliased for Dapper multi-mapping)
                             w.WalletId AS Wallet_WalletId, w.TotalBalance AS Wallet_TotalBalance,
                             w.ReservedBalance AS Wallet_ReservedBalance, w.UserId AS Wallet_UserId,
                             w.Version AS Wallet_Version
