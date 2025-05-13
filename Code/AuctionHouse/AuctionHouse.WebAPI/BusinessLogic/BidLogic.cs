@@ -65,6 +65,12 @@ namespace AuctionHouse.WebAPI.BusinessLogic
                 }
             }
 
+            // Is your bid higher than the start price?
+            if (amountToBid < auctionToBidOn.StartPrice)
+            {
+                return "Bid is not higher than the start price";
+            }
+
             // Do you have enough available balance in your wallet?
             if (userWallet.GetAvailableBalance() < amountToBid)
             {
@@ -93,18 +99,18 @@ namespace AuctionHouse.WebAPI.BusinessLogic
                 {
                     // No need to manually rollback, 'using var transaction' will if not committed.
                     // But explicit is fine too.
-                    transaction.Rollback(); // Handled by using if exception or no commit
+                    transaction.Rollback();
                     return "Auction has been updated by another user, please refresh the page";
                 }
 
                 // 2. Insert the Bid
                 var insertedBidId = await _bidDao.InsertBidAsync(bid, transaction);
-                if (insertedBidId <= 0) // Or based on whatever InsertBidAsync returns on failure
+                if (insertedBidId <= 0) 
                 {
-                    return "Bid could not be placed"; // Transaction will be rolled back by using
+                    transaction.Rollback();
+                    return "Bid could not be placed";
                 }
                 // The check `currentHighestBid!=null && currentHighestBid.BidId>=insertedBidId` is still potentially problematic
-                // and might not be necessary if InsertBidAsync is reliable. Consider removing or making it more robust.
 
                 // 3. Buyout Condition
                 if (bid.Amount >= auctionToBidOn.BuyOutPrice)
@@ -121,14 +127,14 @@ namespace AuctionHouse.WebAPI.BusinessLogic
 
                     if (!statusUpdated) // Optimistic lock for status update failed
                     {
-                        return "Error with auction status update (e.g., version mismatch during buyout)"; // Txn rolled back
+                        return "Error with auction status update (e.g., version mismatch during buyout)";
                     }
                 }
 
                 // 4. Wallet Update
                 if (!await _walletLogic.ReserveFundsAsync(userWallet.WalletId!.Value, bid.Amount, expectedWalletVersion, transaction))
                 {
-                    return "Error with wallet version, please try again."; // Txn rolled back
+                    return "Error with wallet version, please try again.";
                 }
 
                 transaction.Commit();

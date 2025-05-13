@@ -83,6 +83,9 @@ namespace AuctionHouse.WebAPI.Controllers
             else if (result.Result == "Error with auction status update")
             {
                 return BadRequest(result.Result);
+            } else if(result.Result == "Bid is not higher than the start price")
+            {
+                return BadRequest(result.Result);
             }
 
 
