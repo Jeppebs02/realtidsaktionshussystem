@@ -133,20 +133,8 @@ namespace AuctionHouse.DesktopApp
                 user.CantBuy = CantBuycheckbox.Checked;
                 user.CantSell = CantSellcheckbox.Checked;
 
-                // 2. Serialize & ship with PUT
-                var json = JsonSerializer.Serialize(user,
-                                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
                 var resp = await _apiRequester.Put($"api/user/{user.UserId}", user)
-                                                             .ConfigureAwait(false);   // see note ⬇
-
-                //if (!resp.IsSuccessStatusCode)
-                //{
-                //    MessageBox.Show($"Server returned {(int)resp.StatusCode} {resp.ReasonPhrase}",
-                //                    "Save failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //    return;
-                //}
+                                                             .ConfigureAwait(false);
 
                 // 3. Refresh the row’s caption so the ListBox shows new data
                 Userlistbox.Refresh();           // simple; or re-data-bind if you prefer
@@ -165,6 +153,68 @@ namespace AuctionHouse.DesktopApp
             }
         }
 
-        
+        private async void DeleteUserbtn_Click(object sender, EventArgs e)
+        {
+            if (Userlistbox.SelectedItem is not User user)
+            {
+                MessageBox.Show("Select a user first.", "Nothing to delete",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+                return;
+            }
+
+            try
+            {
+                DeleteUserbtn.Enabled = false;
+                Cursor.Current = Cursors.WaitCursor;
+
+
+                //TODO FIX USER ID, so delete only takes int it and not a user object
+                //in controller, logic and dao classes
+                var resp = await _apiRequester.Delete($"api/user/{user.UserId}")
+                                                             .ConfigureAwait(false);
+
+
+
+
+                // 3. Refresh the row’s caption so the ListBox shows new data
+                Userlistbox.Refresh();           // simple; or re-data-bind if you prefer
+
+                if (Userlistbox.DataSource is List<User> list)
+                {
+                    list.Remove(user);                 // edit the same list instance
+                    Userlistbox.DataSource = null;     // quick re-bind trick
+                    Userlistbox.DataSource = list;
+                }
+
+                ClearUserFields();
+
+                var answer = MessageBox.Show(this,
+                                 $"Delete “{user.UserName}” (Id {user.UserId})?\n" +
+                                 "This action cannot be undone.",
+                                 "Confirm delete",
+                                 MessageBoxButtons.YesNo,
+                                 MessageBoxIcon.Warning,
+                                 MessageBoxDefaultButton.Button2);
+
+                if (answer != DialogResult.Yes)
+                    return;
+
+                MessageBox.Show("User deleted 👍", "Gone but never forgotten!",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to delete user:\n{ex.Message}",
+                                "Unexpected error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+                DeleteUserbtn.Enabled = true;
+
+            }
+        }
     }
 }

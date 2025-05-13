@@ -136,6 +136,7 @@
             DeleteUserbtn.TabIndex = 9;
             DeleteUserbtn.Text = "Delete User";
             DeleteUserbtn.UseVisualStyleBackColor = true;
+            DeleteUserbtn.Click += DeleteUserbtn_Click;
             // 
             // Emailtxtbox
             // 
