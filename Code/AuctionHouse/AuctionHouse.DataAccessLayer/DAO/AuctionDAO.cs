@@ -60,7 +60,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
                 var item = _itemDao.GetByIdAsync(auction.itemId!.Value);
 
-                Task.WaitAll(bids, item);
+                await Task.WhenAll(bids, item);
 
                 auction.Bids = bids.Result.ToList();
                 auction.item = item.Result;
@@ -97,7 +97,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 var bids = _bidDao.GetAllByAuctionIdAsync(auction.AuctionID!.Value);
                 var item = _itemDao.GetByIdAsync(auction.itemId!.Value);
 
-                Task.WaitAll(bids, item);
+                await Task.WhenAll(bids, item);
 
                 auction.Bids = bids.Result.ToList();
                 auction.item = item.Result;
@@ -136,7 +136,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             var auction = conn.QuerySingleAsync<Auction>(sql, new { AuctionId = id });
             var bids = _bidDao.GetAllByAuctionIdAsync(id);
             var item = _itemDao.GetItemByAuctionIdAsync(id);
-            Task.WaitAll(auction, bids, item);
+            await Task.WhenAll(auction, bids, item);
 
 
             Auction concreteAuction = auction.Result;

@@ -35,10 +35,10 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             var amountToBid = bid.Amount;
 
             // Data from db
-            var auctionToBidOn = _auctionLogic.GetAuctionByIdAsync(bid.AuctionId);
-            var currentHighestBid = _bidDao.GetLatestByAuctionId(bid.AuctionId);
+            var auctionToBidOn = await _auctionLogic.GetAuctionByIdAsync(bid.AuctionId);
+            var currentHighestBid = await _bidDao.GetLatestByAuctionId(bid.AuctionId);
 
-            Task.WaitAll(auctionToBidOn, currentHighestBid);
+            //Task.WaitAll(auctionToBidOn, currentHighestBid);
 
             // Can you account buy?
             if (user.CantBuy)
@@ -47,18 +47,18 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             }
 
             // Is new bid higher than current highest bid?
-            if(currentHighestBid.Result != null)
+            if(currentHighestBid != null)
             {
-                if (amountToBid <= currentHighestBid.Result.Amount)
+                if (amountToBid <= currentHighestBid.Amount)
                 {
                     return "Bid is not higher than current highest bid";
                 }
             }
 
             // Is your bid higher than last bid + minimum increment?
-            if (currentHighestBid.Result != null)
+            if (currentHighestBid != null)
             {
-                if (amountToBid < currentHighestBid.Result.Amount + auctionToBidOn.Result.MinimumBidIncrement)
+                if (amountToBid < currentHighestBid.Amount + auctionToBidOn.MinimumBidIncrement)
                 {
                     return "Bid is not higher than current highest bid + minimum increment";
                 }
@@ -74,23 +74,28 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             using var transaction = _connectionFactory().BeginTransaction();
 
             // Is the expected auction version the same as the current version in the db?
-            if (!_auctionLogic.UpdateAuctionOptimistically(auctionToBidOn.Result.AuctionID!.Value, expectedAuctionVersion, transaction, 1).Result)
+            if (!await _auctionLogic.UpdateAuctionOptimistically(auctionToBidOn.AuctionID!.Value, expectedAuctionVersion, transaction, 1))
             {
                 transaction.Rollback();
                 return "Auction has been updated by another user, please refresh the page";
             }
 
             // Did the new bid go through?
-            if (currentHighestBid.Id>=_bidDao.InsertBidAsync(bid, transaction).Result)
+            var insertedBidId = await _bidDao.InsertBidAsync(bid, transaction);
+            if (currentHighestBid!=null && currentHighestBid.BidId>=insertedBidId)
             {
                 transaction.Rollback();
                 return "Bid could not be placed";
             }
 
             // Is the bid amount equal or higher than buyout? if so, set auction to sold
-            if (bid.Amount >= auctionToBidOn.Result.BuyOutPrice)
+            if (bid.Amount >= auctionToBidOn.BuyOutPrice)
             {
-                if (!_auctionLogic.UpdateAuctionStatusOptimistically(auctionToBidOn.Result.AuctionID!.Value, expectedAuctionVersion, ClassLibrary.Enum.AuctionStatus.ENDED_SOLD, transaction).Result)
+                // get the new version
+                var newAuction = await _auctionLogic.GetAuctionByIdAsync(bid.AuctionId);
+                var expVersion = newAuction.Version;
+
+                if (!await _auctionLogic.UpdateAuctionStatusOptimistically(auctionToBidOn.AuctionID!.Value, expVersion, ClassLibrary.Enum.AuctionStatus.ENDED_SOLD, transaction))
                 {
                     transaction.Rollback();
                     return "Error with auction status update";
@@ -98,7 +103,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             }
 
             // Did the wallet update go through?
-            if (!_walletLogic.ReserveFundsAsync(userWallet.WalletId!.Value, bid.Amount, expectedWalletVersion, transaction).Result)
+            if (!await _walletLogic.ReserveFundsAsync(userWallet.WalletId!.Value, bid.Amount, expectedWalletVersion, transaction))
             {
                 transaction.Rollback();
                 return "Error with wallet version, please try again.";
