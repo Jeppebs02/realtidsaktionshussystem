@@ -15,6 +15,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
         private readonly Func<IDbConnection> _connectionFactory;
         private readonly ITransactionDao _transactionDao;
 
+        // The transaction dao is not currently used, since the methods that use it
+        // are commented out. If we want to get a wallet's transaction, we can uncomment them.
         public WalletDAO(Func<IDbConnection> connectionFactory, ITransactionDao transactionDAO)
         {
             _connectionFactory = connectionFactory;

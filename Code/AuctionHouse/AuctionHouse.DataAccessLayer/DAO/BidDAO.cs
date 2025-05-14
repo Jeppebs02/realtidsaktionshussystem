@@ -14,12 +14,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
     {
 
         private readonly Func<IDbConnection> _connectionFactory;
-        private readonly IUserDao _userDao;
 
-        public BidDAO(Func<IDbConnection> connectionFactory, IUserDao userdao)
+
+        public BidDAO(Func<IDbConnection> connectionFactory)
         {
             _connectionFactory = connectionFactory;
-            _userDao = userdao;
+
         }
 
         public async Task<bool> DeleteAsync(Bid entity)

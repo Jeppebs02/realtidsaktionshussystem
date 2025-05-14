@@ -16,12 +16,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
     public class ItemDAO : IItemDao
     {
         private readonly Func<IDbConnection> _connectionFactory;
-        private readonly IUserDao _userDao;
 
-        public ItemDAO(Func<IDbConnection> connectionFactory, IUserDao userdao)
+
+        public ItemDAO(Func<IDbConnection> connectionFactory)
         {
             _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
-            _userDao = userdao;
+
         }
 
         public async Task<bool> DeleteAsync(Item entity)
