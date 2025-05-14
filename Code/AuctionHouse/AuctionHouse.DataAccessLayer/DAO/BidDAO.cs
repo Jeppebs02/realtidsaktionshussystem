@@ -108,8 +108,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
         public async Task<Bid> GetLatestByAuctionId(int auctionId)
         {
-            // This method seems like it was already efficient, joining User.
-            // Let's adapt it to also join Wallet and use QueryMultiple for robustness.
             using var conn = _connectionFactory();
             const string sql = @"
                 SELECT TOP 1 b.BidId, b.Amount, b.TimeStamp, b.UserId, b.AuctionId
@@ -132,28 +130,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 latestBid = await multi.ReadSingleOrDefaultAsync<Bid>();
                 if (latestBid != null && latestBid.UserId.HasValue)
                 {
-                    // This structure is a bit more complex for ReadSingleOrDefaultAsync<(User, Wallet)> directly from QueryMultiple
-                    // as the second query is conditional on the first. A simpler way is:
+                    //TODO: Remove this line as it is redundant.
                     User user = await multi.ReadSingleOrDefaultAsync<User>(); // Read User from second result set
                     if (user != null)
                     {
-                        // We need to ensure the Wallet part is also read. The second SELECT gets User and Wallet.
-                        // Let's adjust the second query to only fetch wallet if user exists
-                        // Or, more simply, read User and Wallet separately if they are returned as separate objects by Dapper from one SELECT
-
-                        // For simplicity, assuming User object read from second query contains Wallet if joined correctly there
-                        // However, the previous QueryMultiple example for UserDAO.GetByIdAsync is better:
-                        // Read User, then Read Wallet. Let's adapt that.
-                        // The multi-map (User, Wallet, User) is actually for a single SELECT. QueryMultiple needs two SELECTS.
-
-                        // Re-evaluating the second query's return: It returns User and Wallet columns.
-                        // We need to map this potentially combined row to User and then Wallet.
-                        // This is where a temporary helper object or a direct QueryAsync<User,Wallet,User> on that result set might be needed.
-                        // Or, more robustly, always fetch user, then always try to fetch wallet for that user.
-
-                        // Let's assume the second query result is directly mappable to User, and we need to get the Wallet part
-                        // This part is tricky with QueryMultiple if the second query joins User and Wallet.
-                        // A cleaner way if GetByIdAsync_V2 works for Bid:
                         User bidUser = await GetUserWithWalletById(conn, latestBid.UserId.Value); // Helper
                         latestBid.User = bidUser;
                     }
@@ -165,7 +145,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
 
 
-        // Helper method to use within BidDAO if needed, mirroring UserDAO's GetByIdAsync logic
+        // Helper method to use within BidDAO if needed, mirroring UserDAO's GetByIdAsync logic.
+        // This is so we dont need to have a userDAO call inside the BidDAO
         private async Task<User> GetUserWithWalletById(IDbConnection conn, int userId)
         {
             const string userWalletQueryMultipleSql = @"

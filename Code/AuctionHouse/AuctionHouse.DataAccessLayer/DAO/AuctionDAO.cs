@@ -63,9 +63,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
                 ownConnection = true;
                 // Dapper will open/close this connection for its operation if ownConnection is true.
-                // Or, if you prefer explicit open/close:
-                // await conn.OpenAsync();
-                // ownConnection = true;
             }
 
 
@@ -80,14 +77,9 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             // Fetch the auction itself.
             // If a transaction is provided, it's passed to Dapper.
-            // If no transaction, Dapper uses 'conn' and manages its state.
             var auctionTask = conn.QuerySingleOrDefaultAsync<Auction>(auctionSql, new { AuctionId_Param = id }, transaction: transaction);
 
-            // The child DAO calls will manage their own connections as per your existing setup.
-            // They are NOT part of the 'transaction' passed to this parent GetByIdAsync,
-            // unless you modify them to accept and use it (which is generally better for atomicity
-            // if all these reads need to be consistent from the same snapshot).
-            // However, based on your request, they use their internal _connectionFactory.
+
             var bidsTask = _bidDao.GetAllByAuctionIdAsync(id); // 'id' is auctionId
 
             // Task for item will be initialized after auction is fetched, to use auction.itemId
@@ -96,20 +88,10 @@ namespace AuctionHouse.DataAccessLayer.DAO
             // Await the auction fetch first
             Auction? concreteAuction = await auctionTask;
 
-            if (concreteAuction == null)
-            {
-                // If we opened our own connection and it's not part of a transaction, close it.
-                // if (ownConnection && conn.State == ConnectionState.Open) { /* await conn.CloseAsync(); or conn.Dispose(); */ }
-                return null;
-            }
-
             // Now that we have the auction, we can determine the itemId for the itemTask.
             // And we can run bidsTask and itemTask concurrently.
             if (concreteAuction.itemId.HasValue)
             {
-                // Assuming GetByIdAsync is the correct method on IItemDao for fetching by item's own ID.
-                // If GetItemByAuctionIdAsync was intended, and it takes auctionId:
-                // itemTask = _itemDao.GetItemByAuctionIdAsync(id);
                 itemTask = _itemDao.GetByIdAsync(concreteAuction.itemId.Value);
             }
             else
@@ -123,12 +105,6 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             concreteAuction.Bids = await bidsTask ?? new List<Bid>(); // Ensure Bids is initialized
             concreteAuction.item = await itemTask;
-
-            // If we opened our own connection and it's not part of a transaction, close it.
-            // This is typically handled if 'conn' was in a 'using' block when ownConnection is true.
-            // If not using 'using' for 'conn' when ownConnection, manual close/dispose is needed.
-            // However, Dapper's individual Query calls often manage connection state if not explicitly told otherwise via transaction.
-            // For simplicity as requested, I'm omitting explicit close here, assuming Dapper handles the non-transactional 'conn'.
 
             return concreteAuction;
         }
