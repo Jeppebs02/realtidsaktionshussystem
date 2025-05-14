@@ -164,7 +164,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             {
                 item.User = await GetUserWithWalletById(conn, item.UserId.Value);
             }
-            // No default image data assignment here as per your request.
+            // No default image data assignment
             return item;
         }
 
@@ -185,7 +185,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 ImageData = entity.ImageData, // Assuming ImageData is a byte array
                 UserId = entity.User.UserId // Assuming User is not null and has UserId
             };
-            // Execute the query and return the inserted ItemId
+            // Execute the query and return the inserted ItemId (int)
             return await conn.ExecuteScalarAsync<int>(sql, parameters);
 
         }

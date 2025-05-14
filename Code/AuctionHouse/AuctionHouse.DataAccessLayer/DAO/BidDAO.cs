@@ -130,7 +130,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 latestBid = await multi.ReadSingleOrDefaultAsync<Bid>();
                 if (latestBid != null && latestBid.UserId.HasValue)
                 {
-                    //TODO: Remove this line as it is redundant.
+                    //TODO: Remove this line as it is redundant. And also the if check.
                     User user = await multi.ReadSingleOrDefaultAsync<User>(); // Read User from second result set
                     if (user != null)
                     {
