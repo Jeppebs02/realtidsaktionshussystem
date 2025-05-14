@@ -43,7 +43,7 @@ namespace AuctionHouse.Test.DaoTests
             WalletDAO wdao = new WalletDAO(_connectionFactory, tdao);
 
             udao = new UserDAO(_connectionFactory, wdao);
-            _itemDao = new ItemDAO(_connectionFactory, udao);
+            _itemDao = new ItemDAO(_connectionFactory);
 
 
             //Clean tables

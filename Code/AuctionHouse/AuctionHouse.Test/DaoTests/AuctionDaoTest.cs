@@ -46,8 +46,8 @@ namespace AuctionHouse.Test.DaoTests
             _transactionDao = new TransactionDAO(_connectionFactory);
             _walletDao = new WalletDAO(_connectionFactory, _transactionDao);
             _userDao = new UserDAO(_connectionFactory,_walletDao);
-            _bidDao = new BidDAO(_connectionFactory, _userDao);
-            _itemDao = new ItemDAO(_connectionFactory, _userDao);
+            _bidDao = new BidDAO(_connectionFactory);
+            _itemDao = new ItemDAO(_connectionFactory);
             _auctionDao = new AuctionDAO(_connectionFactory,_bidDao, _itemDao, _userDao);
 
             //Clean tables

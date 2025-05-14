@@ -41,7 +41,7 @@ namespace AuctionHouse.Test.DaoTests
 
             _userDao = new UserDAO(_connectionFactory, wdao);
 
-            _bidDao = new BidDAO(_connectionFactory, _userDao);
+            _bidDao = new BidDAO(_connectionFactory);
 
             //Clean tables
             CleanAndBuild.CleanDB();
