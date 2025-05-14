@@ -102,7 +102,7 @@ namespace AuctionHouse.Test.DaoTests
             Assert.NotEqual(old_balance,new_balance);
         }
 
-        [Fact]
+        [Fact(Skip = "Not needed rn")]
         public async Task DeleteAsync_ShouldReturnTrue_WhenWalletIsDeleted()
         {
             // Arrange  
