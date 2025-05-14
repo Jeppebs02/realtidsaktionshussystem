@@ -156,9 +156,16 @@
                 const dropdown = document.getElementById('userSelect');
                 const avail = document.getElementById('availLbl');
                 const reserv = document.getElementById('resLbl');
+                // hardcoded api key
+                const api_key = "8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad";
 
 				// We fetch the users from the API and take the Json and save it in "users"
-                const response = await fetch('http://localhost:5002/api/user');
+                const response = await fetch('http://localhost:5002/api/user', {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': api_key
+                    }
+                });
                 const users = await response.json();
 
                 // We will also need a userId, so we get that from the cookie.
@@ -187,7 +194,12 @@
                 // We make sure to check that the userid is indeed a number.
                 if (!isNaN(selectedUserId)) {
 
-                    const responseUID = await fetch(`http://localhost:5002/api/user/${selectedUserId}`);
+                    const responseUID = await fetch(`http://localhost:5002/api/user/${selectedUserId}`, {
+                        method: 'GET',
+                        headers: {
+                            'x-api-key': api_key
+                        }
+                    });
                     const user = await responseUID.json();
                     //Remember, "user" is JSON, so we check if it has a "wallet" key.
                     if (user.wallet) {
@@ -217,7 +229,12 @@
                     // that cause the dropdown to change (ie. the event)
                     const selectedUserId = e.target.value;
                     // So importantly, now we use the value of the selected option, and not the cookie, although they will most likely be the same
-                    const responseChange = await fetch(`http://localhost:5002/api/user/${selectedUserId}`);
+                    const responseChange = await fetch(`http://localhost:5002/api/user/${selectedUserId}`, {
+                        method: 'GET',
+                        headers: {
+                            'x-api-key': api_key
+                        }
+                    });
                     const user = await responseChange.json();
                     if (user.wallet) {
                         //Update the HTML, the same as before.
@@ -262,7 +279,12 @@
                         return;
                     }
 
-                    const userWallet = await fetch(`http://localhost:5002/api/user/${selectedUserId}`);
+                    const userWallet = await fetch(`http://localhost:5002/api/user/${selectedUserId}`, {
+                        method: 'GET',
+                        headers: {
+                            'x-api-key': api_key
+                        }
+                    });
 					const user = await userWallet.json();
                     const wallet = user.wallet;
                     if (!wallet) {
@@ -276,7 +298,8 @@
                     const result = await fetch(`http://localhost:5002/api/wallet/${wallet.walletId}`, {
                         method: 'PUT',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'x-api-key': api_key
                         },
 						// We use JSON.stringify to convert the wallet object to a JSON string
                         body: JSON.stringify(wallet)

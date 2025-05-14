@@ -19,13 +19,13 @@ namespace AuctionHouse.WebSite.Pages.Homepage
         [BindProperty(SupportsGet = true)]
         public Category? SelectedCategory { get; set; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
 
             //get json response from API
             _apiRequester = new APIRequester(new HttpClient());
 
-            var json = _apiRequester.Get("api/auction").Result;
+            var json = await _apiRequester.Get("api/auction");
             Console.WriteLine(json);
             // Deserialize the JSON response into a list of auctions
 

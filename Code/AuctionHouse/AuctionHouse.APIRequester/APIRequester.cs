@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Text;
+using System.Security.AccessControl;
 
 namespace AuctionHouse.Requester
 {
@@ -9,6 +10,7 @@ namespace AuctionHouse.Requester
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;
+        private readonly string _apiKey;
         private readonly JsonSerializerOptions _serializerOptions;
         
 
@@ -16,12 +18,17 @@ namespace AuctionHouse.Requester
         {
             _httpClient = httpClient;
             _baseUrl = Environment.GetEnvironmentVariable("AuctionApiBaseUrl");
+            //Trim to avoidm issues :)
+            _apiKey = Environment.GetEnvironmentVariable("api-key").Trim();
             _serializerOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = true,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            };  
+            };
+            // Add the API key to the headers on our client, which is used for all requests
+            // The rest of the class we dont need to change, very simple fix here.
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", _apiKey);
         }
 
         public async Task<string> Get(string endpoint)
@@ -29,6 +36,7 @@ namespace AuctionHouse.Requester
             Console.WriteLine($"Sending GET request to: {_baseUrl}/{endpoint}"); // Just logging
             // Send a Get request for a JSON Response
             var response = await _httpClient.GetAsync($"{_baseUrl}/{endpoint}");
+
 
             // Exception if unsuccesfull
             response.EnsureSuccessStatusCode();

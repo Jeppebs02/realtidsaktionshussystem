@@ -80,7 +80,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// This is the "chain" of things going on in the http request pipeline.
+// The order of these matters. We enable CORS first, then we add our middleware.
+// Then the middleware's RequestDelegate will point to the next step in the pipeline.
+// which is app.usehttpsredirection, then app.useauthorization, etc.
+
 app.UseCors("AllowAll"); // Enable CORS globally
+app.UseMiddleware<ApiKeyAuthMiddleware>(); // This is the added middleware for API key authentication :)
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
