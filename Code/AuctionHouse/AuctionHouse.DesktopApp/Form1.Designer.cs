@@ -81,6 +81,7 @@
             Userlistbox.Name = "Userlistbox";
             Userlistbox.Size = new Size(786, 304);
             Userlistbox.TabIndex = 3;
+            Userlistbox.SelectedIndexChanged += Userlistbox_SelectedIndexChanged;
             // 
             // GetAllUsersbtn
             // 
@@ -90,6 +91,7 @@
             GetAllUsersbtn.TabIndex = 4;
             GetAllUsersbtn.Text = "Get All Users";
             GetAllUsersbtn.UseVisualStyleBackColor = true;
+            GetAllUsersbtn.Click += GetAllUsersbtn_Click;
             // 
             // Savebtn
             // 
@@ -99,6 +101,7 @@
             Savebtn.TabIndex = 5;
             Savebtn.Text = "Save";
             Savebtn.UseVisualStyleBackColor = true;
+            Savebtn.Click += Savebtn_Click;
             // 
             // Searchtxtbox
             // 
@@ -133,6 +136,7 @@
             DeleteUserbtn.TabIndex = 9;
             DeleteUserbtn.Text = "Delete User";
             DeleteUserbtn.UseVisualStyleBackColor = true;
+            DeleteUserbtn.Click += DeleteUserbtn_Click;
             // 
             // Emailtxtbox
             // 
