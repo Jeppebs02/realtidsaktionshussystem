@@ -134,17 +134,13 @@ namespace AuctionHouse.DesktopApp
                 user.CantBuy = CantBuycheckbox.Checked;
                 user.CantSell = CantSellcheckbox.Checked;
 
-<<<<<<< Updated upstream
-                
 
-                var resp = await _apiRequester.Put($"api/user/{user.UserId}", user);
-                                                             //.ConfigureAwait(true);
-=======
+
                 user.Wallet.Version = new byte[0];
 
                 var resp = await _apiRequester.Put($"api/user/{user.UserId}", user)
                                                              .ConfigureAwait(false);
->>>>>>> Stashed changes
+
 
 
                 // 3. Refresh the row’s caption so the ListBox shows new data
