@@ -77,6 +77,11 @@ namespace AuctionHouse.WebAPI.BusinessLogic
                 return "You dont have enough money in the wallet";
             }
 
+<<<<<<< Updated upstream
+=======
+            // our transaction so we can do all operations in one transaction
+            using var transaction = _connectionFactory().BeginTransaction(IsolationLevel.ReadUncommitted);
+>>>>>>> Stashed changes
 
 
             IDbConnection? connectionForTransaction = null; // Declare here for finally block
