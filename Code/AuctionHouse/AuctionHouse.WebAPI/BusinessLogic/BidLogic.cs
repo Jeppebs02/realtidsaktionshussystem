@@ -79,6 +79,8 @@ namespace AuctionHouse.WebAPI.BusinessLogic
 
 
 
+
+
             IDbConnection? connectionForTransaction = null; // Declare here for finally block
             IDbTransaction? transaction = null;
 
@@ -86,7 +88,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             {
                 connectionForTransaction = _connectionFactory();
                 //if (connectionForTransaction.State != ConnectionState.Open) await connectionForTransaction.OpenAsync();
-                transaction = connectionForTransaction.BeginTransaction();
+                transaction = connectionForTransaction.BeginTransaction(IsolationLevel.ReadUncommitted);
 
                 // 1. Update Auction Optimistically and get the NEW version
                 byte[]? newVersionFromFirstUpdate = await _auctionLogic.UpdateAuctionOptimistically(
