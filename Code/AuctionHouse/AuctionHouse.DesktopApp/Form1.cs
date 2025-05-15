@@ -27,8 +27,8 @@ namespace AuctionHouse.DesktopApp
                 Cursor.Current = Cursors.WaitCursor;
 
                 // 2. Call the API asynchronously
-                string json = await _apiRequester.Get("api/user")
-                                                 .ConfigureAwait(false);
+                string json = await _apiRequester.Get("api/user");
+                                                 
 
                 // 3. Switch back to the UI thread to update controls
                 if (InvokeRequired)
@@ -64,7 +64,8 @@ namespace AuctionHouse.DesktopApp
 
             // If you have FirstName + LastName, expose a FullName property
             //   - OR - override ToString() and just set DisplayMember = null
-            Userlistbox.SelectedIndex = -1;                      // no pre-selection
+            // no pre-selection
+            Userlistbox.SelectedIndex = -1;
 
             // ───── 3. Wire the handler exactly once ─────
             Userlistbox.SelectedIndexChanged -= Userlistbox_SelectedIndexChanged;
@@ -133,8 +134,10 @@ namespace AuctionHouse.DesktopApp
                 user.CantBuy = CantBuycheckbox.Checked;
                 user.CantSell = CantSellcheckbox.Checked;
 
-                var resp = await _apiRequester.Put($"api/user/{user.UserId}", user)
-                                                             .ConfigureAwait(false);
+                
+
+                var resp = await _apiRequester.Put($"api/user/{user.UserId}", user);
+                                                             //.ConfigureAwait(true);
 
                 // 3. Refresh the row’s caption so the ListBox shows new data
                 Userlistbox.Refresh();           // simple; or re-data-bind if you prefer
@@ -170,8 +173,8 @@ namespace AuctionHouse.DesktopApp
 
                 //TODO FIX USER ID, so delete only takes int it and not a user object
                 //in controller, logic and dao classes
-                var resp = await _apiRequester.Delete($"api/user/{user.UserId}")
-                                                             .ConfigureAwait(false);
+                var resp = await _apiRequester.Delete($"api/user/{user.UserId}");
+                                                             //.ConfigureAwait(false);
 
 
 
