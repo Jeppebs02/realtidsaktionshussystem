@@ -36,6 +36,14 @@ namespace AuctionHouse.DataAccessLayer.DAO
             return rowsAffected > 0;
         }
 
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            using var conn = _connectionFactory();
+            const string sql = "UPDATE [User] set isDeleted = 1 where UserId = @UserId";
+            int rowsAffected = await conn.ExecuteAsync(sql, new { UserId = id });
+            return rowsAffected > 0;
+        }
+
         public async Task<List<User>> GetAllAsync()
         {
             using var conn = _connectionFactory();

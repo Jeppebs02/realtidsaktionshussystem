@@ -206,7 +206,7 @@ namespace AuctionHouse.DesktopApp
                 if (answer != DialogResult.Yes)
                     return;
 
-                MessageBox.Show("User deleted 👍", "Gone but never forgotten!",
+                MessageBox.Show("User deleted 👍 - Gone but never forgotten!", "Success",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
 
 

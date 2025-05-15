@@ -19,9 +19,9 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             return await _userDao.InsertAsync(user);
         }
 
-        public async Task<bool> DeleteUserAsync(User user)
+        public async Task<bool> DeleteUserAsync(int id)
         {
-            return await _userDao.DeleteAsync(user);
+            return await _userDao.DeleteByIdAsync(id);
         }
 
         public async Task<List<User>> GetAllUsersAsync()

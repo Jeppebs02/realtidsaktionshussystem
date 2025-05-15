@@ -9,7 +9,8 @@ namespace AuctionHouse.DataAccessLayer.Interfaces
 {
     public interface IUserDao : IGenericDao<User>
     {
-       
+
+        Task<bool> DeleteByIdAsync(int id);
         
     }
 }

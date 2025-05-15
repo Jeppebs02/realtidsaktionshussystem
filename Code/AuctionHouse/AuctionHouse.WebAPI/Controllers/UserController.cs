@@ -47,9 +47,9 @@ namespace AuctionHouse.WebAPI.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public async Task<bool> Delete(User user)
+        public async Task<bool> Delete([FromRoute] int id)
         {
-            return await _userLogic.DeleteUserAsync(user);
+            return await _userLogic.DeleteUserAsync(id);
         }
     }
 }
