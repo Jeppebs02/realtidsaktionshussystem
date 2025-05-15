@@ -77,11 +77,8 @@ namespace AuctionHouse.WebAPI.BusinessLogic
                 return "You dont have enough money in the wallet";
             }
 
-<<<<<<< Updated upstream
-=======
-            // our transaction so we can do all operations in one transaction
-            using var transaction = _connectionFactory().BeginTransaction(IsolationLevel.ReadUncommitted);
->>>>>>> Stashed changes
+
+
 
 
             IDbConnection? connectionForTransaction = null; // Declare here for finally block
@@ -91,7 +88,7 @@ namespace AuctionHouse.WebAPI.BusinessLogic
             {
                 connectionForTransaction = _connectionFactory();
                 //if (connectionForTransaction.State != ConnectionState.Open) await connectionForTransaction.OpenAsync();
-                transaction = connectionForTransaction.BeginTransaction();
+                transaction = connectionForTransaction.BeginTransaction(IsolationLevel.ReadUncommitted);
 
                 // 1. Update Auction Optimistically and get the NEW version
                 byte[]? newVersionFromFirstUpdate = await _auctionLogic.UpdateAuctionOptimistically(
