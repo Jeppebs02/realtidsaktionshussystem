@@ -255,7 +255,12 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
 
 
-
+        /// <summary>
+        /// Gets all auctions with their details (items and bids) based on the provided SQL query.
+        /// </summary>
+        /// <param name="auctionFilterSql"></param>
+        /// <param name="filterParams"></param>
+        /// <returns></returns>
         private async Task<List<Auction>> GetAllAuctionsWithDetails(string auctionFilterSql, object filterParams = null)
         {
             using var conn = _connectionFactory();
