@@ -24,7 +24,7 @@ public class ApiKeyAuthMiddleware
         if (string.IsNullOrWhiteSpace(_expectedApiKey))
         {
             // if no api key, give error
-            Console.WriteLine("CRITICAL ERROR: API Key ('ApiKey' in config or YOUR_ENV_VARIABLE_FOR_API_KEY) is not configured on the server!");
+            Console.WriteLine("CRITICAL ERROR: API Key ('ApiKey' in config or docker api key env) is not configured on the server!");
             // create random key, so we are forced to stop the program and set the key
             _expectedApiKey = Guid.NewGuid().ToString();
         }
