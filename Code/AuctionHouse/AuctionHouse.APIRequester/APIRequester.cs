@@ -18,7 +18,7 @@ namespace AuctionHouse.Requester
         {
             _httpClient = httpClient;
             _baseUrl = Environment.GetEnvironmentVariable("AuctionApiBaseUrl");
-            //Trim to avoidm issues :)
+            //Trim to avoid issues :)
             _apiKey = Environment.GetEnvironmentVariable("api-key").Trim();
             _serializerOptions = new JsonSerializerOptions
             {
