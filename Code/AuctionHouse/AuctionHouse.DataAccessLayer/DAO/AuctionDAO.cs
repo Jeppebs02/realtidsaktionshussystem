@@ -37,6 +37,8 @@ namespace AuctionHouse.DataAccessLayer.DAO
         {
             const string sql = @"SELECT AuctionId, StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Version, Notify, ItemId, AmountOfBids
                                 FROM dbo.Auction WHERE AuctionStatus = @Status;";
+
+            // Since this method has a parameter @Status, we pass it as an anonymous object. So the sql will work. It serves the same purpose as dynamic params.
             return await GetAllAuctionsWithDetails(sql, new { Status = AuctionStatus.ACTIVE.ToString() });
         }
 
