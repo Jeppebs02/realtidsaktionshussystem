@@ -289,15 +289,19 @@ namespace AuctionHouse.DataAccessLayer.DAO
             Dictionary<int, List<Bid>> bidsByAuctionIdMap = new Dictionary<int, List<Bid>>();
             if (auctionIds.Any())
             {
-
+                // Select "converts" an int to a Task<(int auctionId, List<Bid> bids)>
+                // This is done for each id in auctionIds, so we do .ToList at the end
+                // This also matches the type of  "bidTasks".
                 List<Task<(int auctionId, List<Bid> bids)>> bidTasks = auctionIds.Select(async auctionId =>
                 {
                     var bidsForAuction = await _bidDao.GetAllByAuctionIdAsync(auctionId);
                     return (auctionId, bidsForAuction);
                 }).ToList();
+                // Await all tasks and get the results
                 var fetchedBidsForAllAuctions = await Task.WhenAll(bidTasks);
                 foreach (var bidData in fetchedBidsForAllAuctions)
                 {
+                    //put the auctionId and list of Bids in the dictionary
                     bidsByAuctionIdMap[bidData.auctionId] = bidData.bids;
                 }
             }
@@ -315,7 +319,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
                 }
                 else
                 {
-                    auction.Bids = new List<Bid>(); // Ensure initialized
+                    auction.Bids = new List<Bid>(); // If no list of bids for a given auction, make a new empty list.
                 }
             }
             return auctions;
