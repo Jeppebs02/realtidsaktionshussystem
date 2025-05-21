@@ -262,20 +262,19 @@ namespace AuctionHouse.DataAccessLayer.DAO
 
             // 1. Fetch base auctions
             var auctions = (await conn.QueryAsync<Auction>(auctionFilterSql, filterParams)).ToList();
-            if (!auctions.Any()) return auctions;
+            if (!auctions.Any()) { return auctions; } 
 
+            // Select "converts" the Auction object to an int.
             var auctionIds = auctions.Select(a => a.AuctionID!.Value).ToList();
+            // Where filters auctions where the itemId property is not null
+            // Then we select the itemId property and only take unique ids.
             var itemIdsToFetch = auctions.Where(a => a.itemId.HasValue).Select(a => a.itemId!.Value).Distinct().ToList();
 
             // 2. Batch fetch all items for these auctions (Items will include their User+Wallet)
             Dictionary<int, Item> itemsMap = new Dictionary<int, Item>();
             if (itemIdsToFetch.Any())
             {
-                // Re-using ItemDAO.GetByIdAsync in a loop is N+1. We need a GetItemsByIdsAsync
-                // For now, let's assume ItemDAO needs a GetItemsByIdsAsync similar to how we did UserDAO.GetAllAsync
-                // For simplicity of this example, I'll use the existing GetByIdAsync in a loop,
-                // BUT THIS SHOULD BE OPTIMIZED in ItemDAO with a "GetByIds" method.
-                // This part is where you'd call a hypothetical _itemDao.GetItemsByIdsAsync(itemIdsToFetch)
+                // Select takes an int and "converts" it to a Task<Item>
                 List<Task<Item>> itemTasks = itemIdsToFetch.Select(itemId => _itemDao.GetByIdAsync(itemId)).ToList();
                 Item[] fetchedItems = await Task.WhenAll(itemTasks);
                 itemsMap = fetchedItems.Where(i => i != null).ToDictionary(i => i.ItemId!.Value);
@@ -285,8 +284,7 @@ namespace AuctionHouse.DataAccessLayer.DAO
             Dictionary<int, List<Bid>> bidsByAuctionIdMap = new Dictionary<int, List<Bid>>();
             if (auctionIds.Any())
             {
-                // Similar to items, BidDAO should have a GetAllBidsForAuctionIdsAsync
-                // For simplicity, using existing GetAllByAuctionIdAsync in a loop. OPTIMIZE THIS.
+
                 List<Task<(int auctionId, List<Bid> bids)>> bidTasks = auctionIds.Select(async auctionId =>
                 {
                     var bidsForAuction = await _bidDao.GetAllByAuctionIdAsync(auctionId);
