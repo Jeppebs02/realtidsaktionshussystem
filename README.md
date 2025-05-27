@@ -64,15 +64,35 @@ This project can be launched using Docker Compose with either a **local** or **r
 
 ---
 
+### 🖥️ Desktop App Setup (Local Machine)
+
+To run the **desktop application**, you need to set the following **user-level environment variables** on your PC (not system-level):
+
+| Variable Name              | Value                                  |
+| -------------------------- | -------------------------------------- |
+| `DatabaseConnectionString` | Your own DB connection string          |
+| `api-key`                  | `8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad` |
+| `AuctionApiBaseUrl`        | `http://auction-api:5002`              |
+
+#### ✅ How to Set User Environment Variables (Windows)
+
+1. Press `Win + S`, search for `Environment Variables`.
+2. Click **Environment Variables**.
+3. Under "User variables", click **New\...**.
+4. Add each variable above.
+
+---
+
 ## 📂 Folder Structure
 
 - `SQL-Script/`: Contains the SQL scripts needed for initial database setup.
 
 ---
 
-## 🌐 Access the Website
+## 🌐 Access the Website and desktopapp
 To access the website after starting the Docker containers, open your browser and go to:
 
 ```
 http://localhost:5000
 ```
+You may start the desktop app from visual studio. Make sure to run it in normal mode and NOT debugging mode. 
