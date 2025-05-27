@@ -41,7 +41,7 @@ INSERT INTO dbo.Item (Name, Description, Category, Image, UserId) VALUES
 INSERT INTO dbo.Auction (StartTime, EndTime, StartPrice, BuyOutPrice, MinimumBidIncrement, AuctionStatus, Notify, ItemId)
 VALUES
 (GETDATE(), DATEADD(DAY, 7, GETDATE()), 500.00, 2000.00, 50.00, 'ACTIVE', 1, 1),
-(GETDATE(), DATEADD(DAY, 5, GETDATE()), 300.00, NULL, 25.00, 'ACTIVE', 0, 2),
+(GETDATE(), DATEADD(DAY, 5, GETDATE()), 300.00, 8000.00, 25.00, 'ACTIVE', 0, 2),
 (GETDATE(), DATEADD(DAY, 10, GETDATE()), 800.00, 2500.00, 100.00, 'ACTIVE', 1, 3);
 
 -- BID & TRANSACTION
