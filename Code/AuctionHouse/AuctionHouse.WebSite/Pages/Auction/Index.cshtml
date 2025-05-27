@@ -1,0 +1,298 @@
+﻿@page "/auction/{auctionId:int}"
+@using System.Globalization
+@model AuctionHouse.WebSite.Pages.Auction.IndexModel
+@{
+}
+
+@{
+    ViewData["Title"] = "Auction Details";
+}
+
+<html>
+
+<head>
+
+</head>
+
+
+<body>
+    <h1>Auction</h1>
+    <br />
+
+    <h2>@Model.specificAuction.item.Name</h2>
+    <br />
+
+    <p>description: @Model.specificAuction.item.Description</p>
+
+    <p>Auction status: @Model.specificAuction.AuctionStatus.ToString()</p>
+
+    <br />
+    <!-- Live preview -->
+    <img id="preview" alt="Image preview" hidden style="max-width:240px;margin-top:1rem;" />
+
+    <br />
+
+    @{
+        // Pull message from either source
+        var popupMessage = (ViewData["PopupMessage"] as string)
+        ?? (TempData["PopupMessage"] as string);
+    }
+
+    <!-- rest of your page -->
+    @if (!string.IsNullOrEmpty(popupMessage))
+    {
+        <!-- Bootstrap 5 modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <button type="button" class="btn-close"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>@popupMessage</p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"
+                                data-bs-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Show the modal as soon as the DOM is ready
+            document.addEventListener("DOMContentLoaded", () => {
+                const modal = new bootstrap.Modal(document.getElementById("errorModal"));
+                modal.show();
+            });
+        </script>
+    }
+
+
+    @if (Model.specificAuction.item.ImageData != null && Model.specificAuction.item.ImageData.Length > 0)
+    {
+        // Convert byte array to Base64 string
+        var imageBase64 = Convert.ToBase64String(Model.specificAuction.item.ImageData);
+        // Specify MIME type.
+        var imageSrc = $"data:image/jpeg;base64,{imageBase64}";
+
+        <img src="@imageSrc" alt="Image for @Model.specificAuction.item.Name" style="max-width: 400px; margin-top: 1rem;" />
+        // Adjust style maybe
+    }
+    else
+    {
+        <p>No image available for this item.</p>
+    }
+
+
+
+    <br />
+
+    @if (Model.specificAuction.AuctionStatus == ClassLibrary.Enum.AuctionStatus.ACTIVE){
+
+    <!-- Countdown until auction ends -->
+    <div>
+        <strong>Time remaining:</strong>
+        <span id="countdown">Loading...</span> <!-- Placeholder for the timer-->
+    </div>
+    <br />
+
+        <!--Show starting price of auction-->
+        <h3>
+            <strong>Start price:</strong>
+            @{
+                // Get the starting price
+                var startingPrice = Model.specificAuction.StartPrice;
+            }
+            @if (startingPrice != null)
+            {
+                // If a starting price exists, display its amount
+                <span>@startingPrice.ToString("C", CultureInfo.GetCultureInfo("da-DK"))</span>
+            }
+        </h3>
+    }
+
+    <!-- Script to make the countdown above work -->
+    <script>
+        // This line makes sure that all the html is loaded before the JS below is executed
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Get the countdown element (the span with id "countdown")
+            const countdownElement = document.getElementById('countdown');
+            // Get the auction end time from the Auction object as a raw string
+            const endDateString = '@Html.Raw(Model.specificAuction.EndTime.ToString("o"))';
+            // Parse the string into a JavaScript Date object. This is different from a C# DateTime object
+            // And that is why we need to make it a JS Date object
+            const endDate = new Date(endDateString);
+
+            // Check if the date is valid. If no countdownElement (the html element), or if the date is invalid (NaN means Not a Number)
+            // then we log an error and stop the execution of the script
+            if (!countdownElement || isNaN(endDate.getTime())) {
+                console.error("Countdown element not found or end date is invalid:", endDateString);
+                 if(countdownElement) countdownElement.textContent = "Error loading timer.";
+                return; // Stop the JS
+            }
+            
+            // We need an intervalId to update the timer and stop it, etc.
+            let intervalId = null; 
+
+            // Function to update the countdown timer
+            function updateCountdown() {
+                // Get the current date and time
+                const now = new Date();
+                // Calculate the difference between the end time from the auction the current date
+                const difference = endDate.getTime() - now.getTime();
+
+                //if the difference is negative, then the auction has ended.
+                // (current time cannot be greater than the end time of the auction, that means the auction has ended.)
+                if (difference <= 0) {
+                    // Set the text of the html element to "Auction Ended"
+                    countdownElement.textContent = "Auction Ended";
+                    countdownElement.classList.add("ended");
+                    clearInterval(intervalId); // Stop the timer
+                    // Optional: Disable bid form elements. This should be based on the auction status in the future
+
+                    //TODO: BIG TODO GUYS MAKE THIS BASED ON AUCTION STATUS!!!!!
+
+                    const bidForm = document.querySelector('form[asp-page-handler="Bid"]');
+                     if(bidForm) {
+                       bidForm.style.display = 'none';
+                     }
+                } else {
+                    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                    let parts = [];
+                    if (days > 0) parts.push(days + "d");
+                    if (hours > 0 || days > 0) parts.push(hours + "h");
+                    if (minutes > 0 || hours > 0 || days > 0) parts.push(minutes + "m");
+                    parts.push(seconds + "s");
+
+                    countdownElement.textContent = parts.join(" ");
+                    countdownElement.classList.remove("ended");
+                }
+            }
+
+            updateCountdown(); // Initial call
+
+            if (endDate.getTime() > new Date().getTime()) {
+                intervalId = setInterval(updateCountdown, 1000); // Update every second
+            }
+        });
+    </script>
+
+
+    <br />
+
+
+    <h3>
+        Minimum bid increment:
+		
+        <span>@Model.specificAuction.MinimumBidIncrement.ToString("C", CultureInfo.GetCultureInfo("da-DK"))</span>
+
+    </h3>
+
+    <br />
+
+
+
+    <!-- Only show Auction bid button if the Auction is active-->
+    @if (Model.specificAuction.AuctionStatus == ClassLibrary.Enum.AuctionStatus.ACTIVE)
+    {
+
+        <!-- Show the current highest bid -->
+        <h3>
+            Current highest bid:
+            @{
+                // Get the highest bid
+                var highestBid = Model.specificAuction.GetHighestBid();
+            }
+            @if (highestBid != null)
+            {
+                // If a bid exists, display its amount (formatted as currency)
+                <span>@highestBid.Amount.ToString("C", CultureInfo.GetCultureInfo("da-DK"))</span>
+            }
+            else
+            {
+                // If highestBid is null, display the message
+                <span>No bids yet</span>
+            }
+        </h3>
+
+        <!-- Show buyout price-->
+        <h3>
+            Buyout price:
+            @{
+                // Get the buyout price
+                var buyoutPrice = Model.specificAuction.BuyOutPrice;
+            }
+            @if (buyoutPrice != null)
+            {
+                // If a buyout price exists, display its amount
+                <span>@buyoutPrice.ToString("C", CultureInfo.GetCultureInfo("da-DK"))</span>
+            }
+            else
+            {
+                // If buyoutPrice is null, display
+                <span>No buyout price set</span>
+            }
+
+        </h3>
+
+
+        <br />
+
+     <div>
+        <form method="post" asp-page-handler="Bid">
+            <div>
+            <label for="bid">Place your bid here: </label>
+            <br />
+            <input type="number" name="amount" required />
+        </div>
+        <button type="submit">Bid</button>
+        </form>
+
+        <br />
+
+        <form method="post" asp-page-handler="BuyOut">
+            <button type="submit">Buyout</button>
+        </form>
+
+
+     </div>
+    }
+    else
+    {
+        <p>Sorry, this auction is closed.</p>
+    }
+
+
+    <!-- Show an error if an error is set in the C# code-->
+    @if (!string.IsNullOrEmpty(Model.errorMessage))
+    {
+        <script>
+            alert('@Model.errorMessage');
+        </script>
+    }
+
+
+    </body>
+
+
+
+</html>
+
+
+<script>
+
+//Write some scrip here maybe.
+
+</script>
+

@@ -398,4 +398,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Code/AuctionHouse/docker-compose.yml
 Code/AuctionHouse/docker-compose.yml.bak

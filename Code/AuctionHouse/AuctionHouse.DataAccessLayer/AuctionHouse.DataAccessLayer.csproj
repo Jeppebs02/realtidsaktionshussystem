@@ -6,4 +6,26 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Interfaces_temp\**" />
+    <Compile Remove="SqlServer\**" />
+    <Compile Remove="Stub\**" />
+    <EmbeddedResource Remove="Interfaces_temp\**" />
+    <EmbeddedResource Remove="SqlServer\**" />
+    <EmbeddedResource Remove="Stub\**" />
+    <None Remove="Interfaces_temp\**" />
+    <None Remove="SqlServer\**" />
+    <None Remove="Stub\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuctionHouse.ClassLibrary\AuctionHouse.ClassLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.4" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,75 @@
+﻿@page
+@model AuctionHouse.WebSite.Pages.CreateUser.IndexModel
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - AuctionHouse.WebSite</title>
+</head>
+
+<body>
+    <div class="container py-5">
+        <h1 class="mb-4 text-center fw-bold">Create Account</h1>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+
+                        <form method="post" asp-page-handler="CreateAccount" novalidate>
+                            <!-- Username -->
+                            <div class="mb-3">
+                                <label class="form-label" for="userName">Username</label>
+                                <input class="form-control" id="userName" name="userName" required />
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label class="form-label" for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required />
+                            </div>
+
+                            <div class="row">
+                                <!-- First name -->
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="firstName">First name</label>
+                                    <input class="form-control" id="firstName" name="firstName" required />
+                                </div>
+                                <!-- Last name -->
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label" for="lastName">Last name</label>
+                                    <input class="form-control" id="lastName" name="lastName" required />
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label class="form-label" for="email">E-mail</label>
+                                <input type="email" class="form-control" id="email" name="email" required />
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="mb-3">
+                                <label class="form-label" for="phoneNumber">Phone number</label>
+                                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required />
+                            </div>
+
+                            <!-- Address -->
+                            <div class="mb-4">
+                                <label class="form-label" for="address">Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                            </div>
+
+                            <button class="btn btn-primary w-100" type="submit">Create Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

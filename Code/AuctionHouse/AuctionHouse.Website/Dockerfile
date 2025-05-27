@@ -1,30 +1,43 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
+# Use the ASP.NET runtime image for the final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 5002
-EXPOSE 5003
+# EXPOSE 5003 # Only if you configure and use HTTPS within the container
 
-
-# This stage is used to build the service project
+# Use the SDK image for building and publishing
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# --- Step 1: Copy ONLY the .csproj files needed for restore ---
+# Copy the main project file
 COPY ["AuctionHouse.WebSite/AuctionHouse.WebSite.csproj", "AuctionHouse.WebSite/"]
-RUN dotnet restore "./AuctionHouse.WebSite/AuctionHouse.WebSite.csproj"
-COPY . .
+# Copy project file for its direct dependency
+COPY ["AuctionHouse.ClassLibrary/AuctionHouse.ClassLibrary.csproj", "AuctionHouse.ClassLibrary/"]
+COPY ["AuctionHouse.APIRequester/AuctionHouse.APIRequester.csproj", "AuctionHouse.APIRequester/"]
+
+# --- Step 2: Restore dependencies ---
+# Restore the main project; it restores ClassLibrary transitively
+RUN dotnet restore "AuctionHouse.WebSite/AuctionHouse.WebSite.csproj"
+
+# --- Step 3: Copy ALL necessary source code ---
+# Copy the main project's code
+COPY ["AuctionHouse.WebSite/", "AuctionHouse.WebSite/"]
+# Copy the code for its direct dependency
+COPY ["AuctionHouse.ClassLibrary/", "AuctionHouse.ClassLibrary/"]
+COPY ["AuctionHouse.APIRequester/", "AuctionHouse.APIRequester/"]
+
+# --- Step 4: Build and Publish ---
+# Set WORKDIR to the project to be published
 WORKDIR "/src/AuctionHouse.WebSite"
-RUN dotnet build "./AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Run publish - it handles the build implicitly and puts ALL necessary output
+# (including ClassLibrary.dll) correctly into /app/publish
+RUN dotnet publish "AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false --no-restore
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AuctionHouse.WebSite.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+# --- Step 5: Final runtime image ---
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+# Copy the successfully published output from the 'build' stage
+COPY --from=build /app/publish .
+# Ensure this DLL name matches your project's output Assembly Name
 ENTRYPOINT ["dotnet", "AuctionHouse.WebSite.dll"]

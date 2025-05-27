@@ -1,52 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="15.1">
-  <zoom_level>7</zoom_level>
+  <zoom_level>9</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>553</x>
-      <y>301</y>
-      <w>147</w>
-      <h>56</h>
+      <x>468</x>
+      <y>342</y>
+      <w>189</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>Bid
 --
 Amount
 TimeStamp
 
-</panel_attributes>
+
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>623</x>
-      <y>63</y>
-      <w>147</w>
-      <h>154</h>
+      <x>486</x>
+      <y>36</y>
+      <w>189</w>
+      <h>198</h>
     </coordinates>
     <panel_attributes>User
 --
 CantBuy
 CantSell
 UserName
-PasswordHash
+Password
 RegistrationDate
-LastLoginDate
 FirstName
 LastName
 Email
 PhoneNumber
-Address</panel_attributes>
+Address
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>623</x>
-      <y>483</y>
-      <w>147</w>
-      <h>133</h>
+      <x>486</x>
+      <y>477</y>
+      <w>189</w>
+      <h>171</h>
     </coordinates>
     <panel_attributes>Auction
 --
@@ -59,71 +60,76 @@ MinimumBidIncrement
 AuctionStatus
 Version
 Notify
-</panel_attributes>
+
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>294</x>
-      <y>63</y>
-      <w>147</w>
-      <h>56</h>
+      <x>207</x>
+      <y>36</y>
+      <w>189</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>Wallet
 --
 TotalBalance
-ReservedBalance</panel_attributes>
+ReservedBalance
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>644</x>
-      <y>210</y>
-      <w>35</w>
-      <h>105</h>
+      <x>531</x>
+      <y>225</y>
+      <w>45</w>
+      <h>135</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1
 m2=0..*
-</panel_attributes>
+
+bg=NONE</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>658</x>
-      <y>350</y>
-      <w>35</w>
-      <h>147</h>
+      <x>531</x>
+      <y>405</y>
+      <w>45</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 m1=1
-m2=0..*</panel_attributes>
-    <additional_attributes>10.0;190.0;10.0;10.0</additional_attributes>
+m2=0..*
+bg=NONE</panel_attributes>
+    <additional_attributes>10.0;80.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>434</x>
-      <y>70</y>
-      <w>203</w>
-      <h>35</h>
+      <x>387</x>
+      <y>45</y>
+      <w>117</w>
+      <h>45</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 m1=1
 m2=1
-</panel_attributes>
-    <additional_attributes>270.0;20.0;10.0;20.0</additional_attributes>
+
+bg=NONE</panel_attributes>
+    <additional_attributes>110.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>294</x>
-      <y>259</y>
-      <w>147</w>
-      <h>91</h>
+      <x>207</x>
+      <y>180</y>
+      <w>189</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>Transaction
 --
@@ -131,16 +137,17 @@ Type
 Amount
 TimeStamp
 Description
-</panel_attributes>
+
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>854</x>
-      <y>294</y>
-      <w>147</w>
-      <h>84</h>
+      <x>720</x>
+      <y>333</y>
+      <w>189</w>
+      <h>108</h>
     </coordinates>
     <panel_attributes>Item
 --
@@ -148,147 +155,126 @@ Name
 Description
 Category
 Image
-ItemStatus</panel_attributes>
+ItemStatus
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1064</x>
-      <y>336</y>
-      <w>147</w>
-      <h>84</h>
+      <x>207</x>
+      <y>342</y>
+      <w>189</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
-ITEMSTATUS
---
-AVAILABLE
-IN_AUCTION
-SOLD
-WITHDRAWN</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>63</x>
-      <y>259</y>
-      <w>147</w>
-      <h>91</h>
-    </coordinates>
-    <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
-Type
+TransanctionType
 --
 WITHDRAWAL
 DEPOSIT
-ACTION_PAYMENT
+AUCTION_PAYMENT
 AUCTION_PAYOUT
 FEE
-</panel_attributes>
+
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>763</x>
-      <y>133</y>
-      <w>203</w>
-      <h>175</h>
+      <x>657</x>
+      <y>225</y>
+      <w>117</w>
+      <h>126</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=0..*
 m2=1
-</panel_attributes>
-    <additional_attributes>250.0;230.0;250.0;20.0;10.0;20.0</additional_attributes>
+
+bg=NONE</panel_attributes>
+    <additional_attributes>90.0;120.0;90.0;90.0;10.0;90.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>763</x>
-      <y>371</y>
-      <w>196</w>
-      <h>161</h>
+      <x>666</x>
+      <y>432</y>
+      <w>108</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1
-m2=0..1</panel_attributes>
-    <additional_attributes>250.0;10.0;250.0;200.0;10.0;200.0</additional_attributes>
+m2=0..1
+bg=NONE</panel_attributes>
+    <additional_attributes>90.0;10.0;90.0;70.0;10.0;70.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>623</x>
-      <y>714</y>
-      <w>147</w>
-      <h>91</h>
+      <x>207</x>
+      <y>531</y>
+      <w>189</w>
+      <h>117</h>
     </coordinates>
     <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
-CURRENTSTATUS
+AuctionStatus
 --
 SCHEDULED
 ACTIVE
 ENDED_SOLD
 ENDED_UNSOLD
-CANCELLED</panel_attributes>
+CANCELLED
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>357</x>
-      <y>112</y>
-      <w>35</w>
-      <h>161</h>
+      <x>288</x>
+      <y>99</y>
+      <w>45</w>
+      <h>99</h>
     </coordinates>
     <panel_attributes>lt=-
 m1=1
 m2=0..*
-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;210.0</additional_attributes>
+
+bg=NONE</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;90.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>203</x>
-      <y>294</y>
-      <w>105</w>
-      <h>28</h>
+      <x>297</x>
+      <y>288</y>
+      <w>72</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>lt=.&gt;
-&lt;&lt;Uses&gt;&gt;</panel_attributes>
-    <additional_attributes>130.0;20.0;10.0;20.0</additional_attributes>
+&lt;&lt;Uses&gt;&gt;
+bg=NONE</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>686</x>
-      <y>609</y>
-      <w>56</w>
-      <h>119</h>
+      <x>387</x>
+      <y>567</y>
+      <w>117</w>
+      <h>36</h>
     </coordinates>
     <panel_attributes>lt=.&gt;
-&lt;&lt;Uses&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;150.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>994</x>
-      <y>357</y>
-      <w>84</w>
-      <h>28</h>
-    </coordinates>
-    <panel_attributes>lt=.&gt;
-&lt;&lt;Uses&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;20.0;100.0;20.0</additional_attributes>
+&lt;&lt;Uses&gt;&gt;
+bg=NONE</panel_attributes>
+    <additional_attributes>110.0;20.0;10.0;20.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1064</x>
-      <y>126</y>
-      <w>147</w>
-      <h>203</h>
+      <x>720</x>
+      <y>36</y>
+      <w>189</w>
+      <h>261</h>
     </coordinates>
     <panel_attributes>&lt;&lt;ENUMERATION&gt;&gt;
 Category
@@ -307,19 +293,21 @@ Category
  SPORTS_OUTDOORS
  TOYS_GAMES
  INDUSTRIAL_MATERIALS
- OTHER</panel_attributes>
+ OTHER
+bg=NONE</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>994</x>
-      <y>294</y>
-      <w>84</w>
-      <h>28</h>
+      <x>792</x>
+      <y>288</y>
+      <w>72</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>lt=.&gt;
-&lt;&lt;Uses&gt;&gt;</panel_attributes>
-    <additional_attributes>10.0;20.0;100.0;20.0</additional_attributes>
+&lt;&lt;Uses&gt;&gt;
+bg=NONE</panel_attributes>
+    <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
   </element>
 </diagram>

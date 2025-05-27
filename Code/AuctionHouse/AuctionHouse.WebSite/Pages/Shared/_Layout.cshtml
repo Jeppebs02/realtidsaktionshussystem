@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using AuctionHouse.ClassLibrary.Interfaces
+
+@{
+    var userName = "";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,9 +18,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
+
                 <a class="navbar-brand" asp-area="" asp-page="/Index">AuctionHouse.WebSite</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
@@ -25,10 +32,84 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Auction/Create/Index">Create Auction</a>
+                        </li>
                     </ul>
+                        <!-- Transfer funds button -->
+                    <div>
+                        <button class="btn btn-outline-primary ms-3"
+                                data-bs-toggle="modal" data-bs-target="#depositModal">
+                            Add Funds
+                        </button>
+                    </div>
+
+                    <!-- Deposit modal -->
+                    <div class="modal fade" id="depositModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form id="depositForm" class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add funds to wallet</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <label for="amount" class="form-label">Amount (DKK)</label>
+                                    <input type="number" min="1" step="0.01"
+                                           class="form-control" id="amount" required />
+                                    <div class="invalid-feedback">Amount must be positive</div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Login Modal -->
+                    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form id="loginForm" class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="loginModalLabel">User Login</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="username" name="username" required />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" required />
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Log In</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Wallet info to the right -->
+                    <div class="navbar-text fw-semibold">
+                        💰 Available: <span id="availLbl" class="text-success"> DKK</span> |
+                        🔒 Reserved:  <span id="resLbl" class="text-danger"> DKK</span>
+                    </div>
+
+                    <!--Login button-->
+                    <select id="userSelect" class="form-select form-select-sm me-3" style="width: auto;">
+                        <option selected disabled>Select user</option>
+                    </select>
+
                 </div>
             </div>
         </nav>
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -41,10 +122,213 @@
             &copy; 2025 - AuctionHouse.WebSite - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+
+        // This is an Immediately Invoked Function Expression (IIFE)
+		// It allows us to create a private scope for our code
+        // basically we make sure that all of the script in this file doesnt interfere with any other JS in other pages.
+        //         (function () {
+        //        ... code here ...
+        //                  })();
+
+        (function () {
+
+
+			// Function to get a cookie value by name
+            // This is a JS function, we use regex to search for "selectedUserId=" in document.cookie
+			// We can do this because document.cookie is a string that contains all cookies (for our website).
+            function getCookie(name) {
+                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                return match ? decodeURIComponent(match[2]) : null;
+            }
+
+            // This is an eventlistener, it is like an eventlistener in Winforms, or Java SWING
+			// It waits for the DOM to be fully loaded before executing the function
+            window.addEventListener('DOMContentLoaded', async () => {
+                console.log("DOMContentLoaded fired");
+                // all logic inside this runs only after DOM is fully parsed.
+				// The DOM is the structure of the HTML document, it is like a tree of elements.
+
+                // Here we get the different html elements by their id so we can use them in our JS.
+                const dropdown = document.getElementById('userSelect');
+                const avail = document.getElementById('availLbl');
+                const reserv = document.getElementById('resLbl');
+                // hardcoded api key
+                const api_key = "8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad";
+
+				// We fetch the users from the API and take the Json and save it in "users"
+                const response = await fetch('http://localhost:5002/api/user', {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': api_key
+                    }
+                });
+                const users = await response.json();
+
+                // We will also need a userId, so we get that from the cookie.
+				// As I mentioned, the cookie is a string, so we use parseInt to convert it to an int.
+				// We use 10 as the second parameter to parseInt to specify that we want to parse a decimal number (base 10).
+                const selectedUserId = parseInt(getCookie("selectedUserId"), 10);
+
+				// We loop through the users and create an option for each user in the JSON
+                users.forEach(user => {
+                    // Create an option element, you can see it looks like this in the html: <option selected disabled>Select user</option>
+                    // So for each user, we will create an option to select.
+                    const opt = document.createElement('option');
+					// We set the value to the userId and the textContent to the userName
+					// So while we see a username, if we select it, we will get the userId. This is important for later.
+                    opt.value = user.userId;
+                    opt.textContent = user.userName;
+                    // Check if the cookies userid matches the userid from the user from the JSON
+                    if (selectedUserId == user.userId) {
+                        opt.selected = true;
+                    }
+                    // Here we add the option for this user to the list of options in the html
+                    dropdown.appendChild(opt);
+                });
+
+                // Here we load the selected user's wallet (again based on the userid)
+                // We make sure to check that the userid is indeed a number.
+                if (!isNaN(selectedUserId)) {
+
+                    const responseUID = await fetch(`http://localhost:5002/api/user/${selectedUserId}`, {
+                        method: 'GET',
+                        headers: {
+                            'x-api-key': api_key
+                        }
+                    });
+                    const user = await responseUID.json();
+                    //Remember, "user" is JSON, so we check if it has a "wallet" key.
+                    if (user.wallet) {
+						// If it does, we calculate the available balance based on the total-reserved.
+                        let availableBalance = user.wallet.totalBalance - user.wallet.reservedBalance;
+                        // Set the text of "availLbl" and "resLbl" parts of the html. No that was not a typo.
+
+						// We use toFixed(2) to make sure we have 2 decimal places. Since we are working with DECIMAL C#
+                        avail.textContent = availableBalance.toFixed(2);
+                        reserv.textContent = user.wallet.reservedBalance.toFixed(2);
+                    }
+                }
+
+				// Here we add an event listener to the dropdown. The event is "change", so the code will execute when the dropdown changes
+				// We use async because we will fetch the user from the API again.
+				// async e => { ... } is an arrow function, it is like a lambda in C#.
+                // So whenever the event happens, the code within async e => { ... } will be executed.
+                dropdown.addEventListener('change', async e => {
+                    
+                    // As you can see, we use "e" from above, which is the event that we just listened to.
+
+                    // In JavaScript, when an event like click, change, or submit occurs, the browser creates an event object
+                    // (e in this case) and passes it to the event handler.
+                    // The .target property of that event object refers to the specific HTML element that triggered the event.
+
+					// So we can get the value of the selected option from the dropdown. Since the selected option is the thing
+                    // that cause the dropdown to change (ie. the event)
+                    const selectedUserId = e.target.value;
+                    // So importantly, now we use the value of the selected option, and not the cookie, although they will most likely be the same
+                    const responseChange = await fetch(`http://localhost:5002/api/user/${selectedUserId}`, {
+                        method: 'GET',
+                        headers: {
+                            'x-api-key': api_key
+                        }
+                    });
+                    const user = await responseChange.json();
+                    if (user.wallet) {
+                        //Update the HTML, the same as before.
+                        let availableBalance = user.wallet.totalBalance - user.wallet.reservedBalance;
+                        avail.textContent = availableBalance.toFixed(2);
+                        reserv.textContent = user.wallet.reservedBalance.toFixed(2);
+
+						// Here we set the cookie to the selected userId, so we can use it later.
+                        // we use path=/ which means its available to all pages of the website (like /auction/1 or /auction/create)
+                        document.cookie = `selectedUserId=${selectedUserId}; path=/`;
+                        // This is like pressing F5 in the browser
+                        window.location.reload();
+                    }
+                });
+
+                // Here we get the deposit form from the html and add the submit event listener
+
+                        const form = document.getElementById('depositForm');
+                        console.log("Form found:", form);
+                form.addEventListener('submit', async function (e) {
+                    console.log("Add funds pressed");
+                    // Since this is a form that we can submit with, we use the line below to prevent the
+					// default action of the form, which is to refresh the page and submit data.
+                    // We want custom logic so we dont want to immediately refresh the page and submit data.
+                    e.preventDefault();
+
+                    
+
+					// We get the amount from the input field and parse it to a float
+                    const amountInput = document.getElementById('amount');
+                    const amount = parseFloat(amountInput.value);
+                    // Basic checks, I have already written an essay on the code above, so I wont be as verbose here.
+                    if (isNaN(amount) || amount <= 0) {
+                        // x.classList.add ads a css class to the html element (its a list because elements can have multiple css classes)
+                        amountInput.classList.add('is-invalid');
+                        return;
+                    }
+
+                    const selectedUserId = getCookie('selectedUserId');
+                    if (!selectedUserId) {
+                        alert("No user selected.");
+                        return;
+                    }
+
+                    const userWallet = await fetch(`http://localhost:5002/api/user/${selectedUserId}`, {
+                        method: 'GET',
+                        headers: {
+                            'x-api-key': api_key
+                        }
+                    });
+					const user = await userWallet.json();
+                    const wallet = user.wallet;
+                    if (!wallet) {
+                        alert("Wallet not found.");
+                        return;
+                    }
+
+                    wallet.totalBalance += amount;
+
+					// Here we make a PUT request to the API to update the wallet with the new amount
+                    const result = await fetch(`http://localhost:5002/api/wallet/${wallet.walletId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-api-key': api_key
+                        },
+						// We use JSON.stringify to convert the wallet object to a JSON string
+                        body: JSON.stringify(wallet)
+                    });
+
+                    if (!result.ok) {
+                        alert("Failed to update wallet.");
+                        return;
+                    }
+
+                    const newVersion = await result.json();
+                    // In JavaScript, objects are reference types.
+					// This means that when we assign an object to a variable, we are not creating a new copy of the object.
+
+                    wallet.version = newVersion;
+                    // Is equivalent to
+                    // user.wallet.version = newVersion
+
+                    let availableBalance = wallet.totalBalance - wallet.reservedBalance;
+                    avail.textContent = availableBalance.toFixed(2);
+                    reserv.textContent = wallet.reservedBalance.toFixed(2);
+
+                    amountInput.value = '';
+                    bootstrap.Modal.getInstance(document.getElementById('depositModal')).hide();
+                });
+            });
+        })();
+    </script>
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -10,10 +10,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\..\SQL-Script\GenerateTestData.sql" Link="GenerateTestData.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\SQL-Script\TruncateTables.sql" Link="TruncateTables.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuctionHouse.ClassLibrary\AuctionHouse.ClassLibrary.csproj" />
+    <ProjectReference Include="..\AuctionHouse.DataAccessLayer\AuctionHouse.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\AuctionHouse.WebAPI\AuctionHouse.WebAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
