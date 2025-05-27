@@ -1,0 +1,39 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+    ports:
+      - "1433:1433"
+    restart: unless-stopped
+
+  auction-api:
+    build:
+      context: .
+      dockerfile: AuctionHouse.WebAPI/Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5002
+      - DatabaseConnectionString=Server=mssql;Database=AuctionHouse;User Id=sa;Password=YourStrong@Passw0rd
+      - api-key=8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad
+    working_dir: /app
+    depends_on:
+      - mssql
+    restart: unless-stopped
+
+  auction-site:
+    build:
+      context: .
+      dockerfile: AuctionHouse.WebSite/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - api-key=8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad
+      - AuctionApiBaseUrl=http://auction-api:5002
+    working_dir: /app
+    restart: unless-stopped

@@ -1,0 +1,27 @@
+services:
+  auction-api:
+    build:
+      context: .
+      dockerfile: AuctionHouse.WebAPI/Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5002
+      - 'DatabaseConnectionString=<Database host>;Database=AuctionHouse;User Id=<UserName>;Password=<Password>'
+    working_dir: /app
+    restart: unless-stopped
+
+  auction-site:
+    build:
+      context: .
+      dockerfile: AuctionHouse.WebSite/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+
+      - AuctionApiBaseUrl=http://auction-api:5002
+    working_dir: /app
+    restart: unless-stopped
