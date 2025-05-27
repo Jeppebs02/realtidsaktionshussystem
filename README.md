@@ -1,5 +1,25 @@
 # Project Launch Instructions
 
+---
+
+### 📥 Clone the Repository
+
+First, clone the repository or download it manually:
+
+```bash
+git clone https://github.com/Jeppebs02/realtidsaktionshussystem.git
+```
+
+Then navigate to the following project directory:
+
+```bash
+realtidsaktionshussystem/Code/AuctionHouse
+```
+
+This is where the Docker Compose files (`docker-compose-db-local-release.yml` and `docker-compose-db-remote-release.yml`) are located.
+
+---
+
 This project can be launched using Docker Compose with either a **local** or **remote** database configuration.
 
 ---
