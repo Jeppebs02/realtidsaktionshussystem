@@ -70,11 +70,6 @@ This project can be launched using Docker Compose with either a **local** or **r
 
 ---
 
-## ✅ Notes
-
-- Ensure Docker is installed and running on your system.
-- Use `docker compose logs -f` to monitor logs if needed.
-
 ## 🌐 Access the Website
 To access the website after starting the Docker containers, open your browser and go to:
 
