@@ -17,7 +17,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5002
-      - DatabaseConnectionString=Server=mssql;Database=AuctionHouse;User Id=sa;Password=YourStrong@Passw0rd
+      - DatabaseConnectionString=Server=mssql;Database=AuctionHouse;User Id=sa;Password=YourStrong@Passw0rd;MultipleActiveResultSets=True;
       - api-key=8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad
     working_dir: /app
     depends_on:

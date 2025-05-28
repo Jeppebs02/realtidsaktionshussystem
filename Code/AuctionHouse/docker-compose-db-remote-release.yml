@@ -8,7 +8,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5002
-      - 'DatabaseConnectionString=Server=<Database host>;Database=AuctionHouse;User Id=<Username>;Password=<Password>'
+      - 'DatabaseConnectionString=Server=<Database host>;Database=AuctionHouse;User Id=<Username>;Password=<Password>;MultipleActiveResultSets=True;'
       - api-key=8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad
     working_dir: /app
     restart: unless-stopped
