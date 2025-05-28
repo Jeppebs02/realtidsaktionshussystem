@@ -72,7 +72,7 @@ To run the **desktop application**, you need to set the following **user-level e
 | -------------------------- | -------------------------------------- |
 | `DatabaseConnectionString` | Your own DB connection string          |
 | `api-key`                  | `8ea0cd87-f2aa-4c82-9ba9-5e9508f6e0ad` |
-| `AuctionApiBaseUrl`        | `http://auction-api:5002`              |
+| `AuctionApiBaseUrl`        | `http://localhost:5002`              |
 
 #### ✅ How to Set User Environment Variables (Windows)
 
