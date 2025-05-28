@@ -133,6 +133,53 @@ namespace AuctionHouse.Test.APITests
             Assert.Equal("Bid placed succesfully :)", result_bidder1.Result);
             Assert.Equal("Auction has been updated by another user, please refresh the page", result_bidder2.Result);
         }
+        [Fact]
+        public async Task PlaceBidAsync_ValidWallet_ConcurrencyTest_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var auction1 = await _auctionDao.GetByIdAsync(1);
+            var auction2 = await _auctionDao.GetByIdAsync(3);
+            var expectedAuctionVersion1 = auction1.Version;
+            var expectedAuctionVersion2 = auction2.Version;
+            //Bidder must not own the auction
+            var bidder1 = await _userDao.GetByIdAsync(2);
+            
+            
+
+            Bid bid1 = new Bid
+            {
+                AuctionId = auction1.AuctionID!.Value,
+                Amount = 650,
+                TimeStamp = DateTime.Now,
+                User = bidder1
+            };
+
+
+            Bid bid2 = new Bid
+            {
+                AuctionId = auction2.AuctionID!.Value,
+                Amount = 1000,
+                TimeStamp = DateTime.Now,
+                User = bidder1
+            };
+
+            // Act
+            var result_bid1 = _bidLogic.PlaceBidAsync(bid1, expectedAuctionVersion1);
+
+            var result_bid2 = _bidLogic.PlaceBidAsync(bid2, expectedAuctionVersion2);
+
+            Task.WaitAll(result_bid1, result_bid2);
+
+            var newauction1 = await _auctionLogic.GetAuctionByIdAsync(auction1.AuctionID!.Value);
+            var newauction2 = await _auctionLogic.GetAuctionByIdAsync(auction2.AuctionID!.Value);
+            // Assert
+
+
+            Assert.Equal(1, newauction1.AmountOfBids);
+            Assert.Equal(0, newauction2.AmountOfBids);
+            Assert.Equal("Bid placed succesfully :)", result_bid1.Result);
+            Assert.Equal("Error with wallet version, please try again.", result_bid2.Result);
+        }
 
         #endregion
 
