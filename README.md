@@ -50,17 +50,17 @@ This project can be launched using Docker Compose with either a **local** or **r
 1. **No Configuration Needed**  
    The local database connection string is already pre-configured.
 
-2. **Prepare the Database**  
-   Run the same SQL scripts as the remote setup:
-   
-   - `CreateDBAuction_V.2.sql`
-   - `GenerateTestData.sql`
-
-3. **Launch the Application**  
+2. **Launch the Application**  
    Start the containers with:
    ```bash
    docker compose -f docker-compose-db-local-release.yml up -d
    ```
+
+3. **Prepare the Database**  
+   Run the same SQL scripts as the remote setup:
+   
+   - `CreateDBAuction_V.2.sql`
+   - `GenerateTestData.sql`
 
 ---
 
